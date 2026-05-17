@@ -68,7 +68,28 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-  .block-container { padding-top: 2rem !important; font-size: 1.05rem; }
+  .block-container {
+      padding-top: 0.8rem !important;       /* abans 2rem (-60%) */
+      padding-left: 0.5rem !important;      /* abans ~1.25rem default (-60%) */
+      padding-right: 0.5rem !important;
+      font-size: 1.05rem;
+  }
+  /* Titol de l'app "Prova Cangur". */
+  h2.app-title {
+      font-size: 1.1rem !important;
+      font-weight: 700;
+      margin: 0.25rem 0 0.5rem 0 !important;
+      padding: 0 !important;
+      line-height: 1.3 !important;
+  }
+  /* Titol del problema "1ESO-2026. Pregunta N...". */
+  h3.problem-title {
+      font-size: 1.0rem !important;
+      font-weight: 700;
+      margin: 0.2rem 0 0.4rem 0 !important;
+      padding: 0 !important;
+      line-height: 1.3 !important;
+  }
   hr { margin: 0.6rem 0 !important; }
 
   /* --- Fil de xat --- */
@@ -142,21 +163,27 @@ st.markdown("""
      Si el seu contingut natural es mes alt que la finestra, fa scroll
      propi gracies a `overflow-y: auto`.
 
-     Avantatges sobre `position: fixed`:
-       - No surt del flux: no cal placeholder
-       - `align-self: flex-start` evita el problema d'`align-items: stretch`
-         que tenen per defecte les columnes de Streamlit (flexbox)
-       - Independent de l'estat del sidebar (sense `width: inherit`)
-       - Sense `z-index` warriors
-       - Es comporta naturalment si el panell es petit (queda visible
-         tota l'estona sense necessitat d'enganxar-se) */
-  div[data-testid="stColumn"]:has(> div > .st-key-problem_panel) {
-      position: sticky;
-      top: 3.5rem;
-      align-self: flex-start;
-      max-height: calc(100vh - 4rem);
-      overflow-y: auto;
-      overflow-x: hidden;
+     IMPORTANT: cal forçar `align-items: flex-start` al pare (stHorizontalBlock,
+     que es flexbox) perque per defecte Streamlit fa que els fills s'estirin
+     a la mateixa alçada (`align-items: stretch`). Si no ho fem, la columna
+     sticky creix fins igualar la dreta i sticky no te efecte (no hi ha
+     diferencia d'alçades entre fill i pare).
+
+     El selector usa `:has(.st-key-problem_panel)` (descendent a qualsevol
+     profunditat), NO `:has(> div > ...)` que requereix profunditat exacta.
+     Streamlit embolcalla els containers amb wrappers (stVerticalBlockBorderWrapper
+     > stVerticalBlock > .st-key-...), aixi que el descendent es l'unic
+     selector robust. */
+  div[data-testid="stHorizontalBlock"]:has(.st-key-problem_panel) {
+      align-items: flex-start !important;
+  }
+  div[data-testid="stColumn"]:has(.st-key-problem_panel) {
+      position: sticky !important;
+      top: 0.5rem !important;
+      align-self: flex-start !important;
+      max-height: calc(100vh - 1rem) !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
   }
   /* Padding suau al panell del problema per separar-lo visualment */
   .st-key-problem_panel {
@@ -391,6 +418,48 @@ def _render_history_expander(state):
             st.markdown("---")
 
 
+@st.cache_data(show_spinner=False)
+def _load_problem_image_b64(img_path: str, mime: str,
+                            crop_pct: float = 0.05) -> str:
+    """Llegeix la imatge de l'enunciat i en retalla `crop_pct` a cada
+    costat horitzontal abans de codificar-la en base64.
+
+    Per que retallem: les imatges escannejades de les proves Cangur
+    porten sempre marges blancs laterals que no aporten res. Si els
+    treiem, com que el `<img>` ocupa el 100% de l'amplada del seu
+    contenidor, el contingut util (text + opcions) queda visualment
+    magnificat ~11% sense reescalat ni perdua de qualitat.
+
+    Cachejat amb `@st.cache_data` perque el crop no s'executi a cada
+    rerun de Streamlit (el resultat es el mateix per a la mateixa
+    imatge en disc).
+    """
+    from io import BytesIO
+    from PIL import Image
+    import base64 as _b64
+
+    with Image.open(img_path) as img:
+        w, h = img.size
+        crop_x = int(w * crop_pct)
+        # crop(left, upper, right, lower)
+        cropped = img.crop((crop_x, 0, w - crop_x, h))
+
+        fmt_map = {"jpeg": "JPEG", "png": "PNG",
+                   "gif": "GIF", "webp": "WEBP"}
+        fmt = fmt_map.get(mime, "JPEG")
+
+        # JPEG no admet canal alfa: convertim a RGB si cal
+        if fmt == "JPEG" and cropped.mode not in ("RGB", "L"):
+            cropped = cropped.convert("RGB")
+
+        buf = BytesIO()
+        if fmt == "JPEG":
+            cropped.save(buf, format=fmt, quality=92, optimize=True)
+        else:
+            cropped.save(buf, format=fmt)
+        return _b64.b64encode(buf.getvalue()).decode("ascii")
+
+
 # ============================================================
 # Selector de problema al main pane (en lloc del sidebar de
 # Streamlit, que ara queda amagat). L'expander es replega
@@ -399,7 +468,10 @@ def _render_history_expander(state):
 # ============================================================
 _session_active = st.session_state.get("tutor_state") is not None
 
-st.markdown("## 🦘 Prova Cangur")
+st.markdown(
+    '<h2 class="app-title">🦘 Prova Cangur</h2>',
+    unsafe_allow_html=True,
+)
 
 with st.expander(
     "📚 Selecció de problema" if _session_active else "📚 Tria un problema per començar",
@@ -504,7 +576,7 @@ else:
     # que la columna del problema es quedi enganxada al top
     # quan l'usuari fa scroll al dialeg.
     # ========================================================
-    col_problem, col_dialeg = st.columns([7, 3], gap="medium")
+    col_problem, col_dialeg = st.columns([8, 2], gap="medium")
 
     # --------------------------------------------------------
     # Panell ESQUERRE: enunciat + opcions A-E + botons d'accio
@@ -519,8 +591,9 @@ else:
             _tema_raw = problem.get("tema") or "tema no especificat"
             _tema = _tema_raw[:1].upper() + _tema_raw[1:]
             st.markdown(
-                f"### {_categoria}-{_any}. Pregunta {_numero} "
-                f"({_punts} punts) · {_tema}"
+                f'<h3 class="problem-title">{_categoria}-{_any}. '
+                f'Pregunta {_numero} ({_punts} punts) · {_tema}</h3>',
+                unsafe_allow_html=True,
             )
 
             # Imatge
@@ -529,13 +602,11 @@ else:
                 base_dir = os.path.dirname(os.path.abspath(__file__))
                 img_path = os.path.join(base_dir, "data", imatge)
                 if os.path.exists(img_path):
-                    import base64 as _b64
-                    with open(img_path, "rb") as _fh:
-                        _img_b64 = _b64.b64encode(_fh.read()).decode("ascii")
                     _ext = os.path.splitext(imatge)[1].lower().lstrip(".")
                     _mime = {"jpg": "jpeg", "jpeg": "jpeg",
                              "png": "png", "gif": "gif",
                              "webp": "webp"}.get(_ext, "jpeg")
+                    _img_b64 = _load_problem_image_b64(img_path, _mime)
                     st.markdown(
                         f'<div class="header-image"><img '
                         f'src="data:image/{_mime};base64,{_img_b64}" '
