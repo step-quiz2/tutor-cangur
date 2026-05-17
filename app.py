@@ -22,7 +22,7 @@ Disseny UI
     [✋ Ja tinc la resposta] — entra al mode commit (5 botons A-E)
 """
 
-import osgit add .
+import os
 import uuid
 from datetime import datetime
 
