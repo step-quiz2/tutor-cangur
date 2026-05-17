@@ -147,10 +147,11 @@ st.markdown("""
   /* CRITIC per al sticky: cap ancestor de l'element sticky pot tenir
      `overflow` diferent de `visible`. Si en te, l'especificacio CSS diu
      que el sticky es queda "atrapat" dins aquell ancestor i no funciona.
-     Streamlit posa overflow als seus contenidors interns. Forcem visible
-     a tota la cadena d'ancestors del nostre stHorizontalBlock. */
-  div[data-testid="stAppViewContainer"],
-  section[data-testid="stMain"],
+     PERO no podem tocar `stMain` ni `stAppViewContainer`: alguns dels seus
+     `overflow` son els que proporcionen el scroll a la pagina sencera.
+     Si els forcem a visible, el sticky funciona pero la pagina no fa scroll.
+     Per tant: forcem `overflow: visible` nomes als contenidors INTERIORS
+     entre el scroll container (stMain) i el sticky element. */
   div[data-testid="stMainBlockContainer"],
   div.main,
   .block-container,
