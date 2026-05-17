@@ -273,18 +273,35 @@ st.markdown("""
       color: #000 !important;
   }
 
-  /* Boto "Inicia el problema seguent": border blau gruixut + text en
-     negreta; en passar-hi el ratoli, fons blau suau i border negre. */
-  .st-key-start_next button {
+  /* Botons d'inici "🎯 Inicia el problema" i "⏩ Inicia el problema
+     seguent": comparteixen estil — border blau gruixut + text en negreta;
+     en passar-hi el ratoli, fons blau suau i border negre. */
+  .st-key-start_next button,
+  .st-key-start_btn button {
       border: 3px solid #2563eb !important;
       font-weight: 700 !important;
       color: #1a1a1a !important;
       transition: background-color 0.15s, border-color 0.15s;
   }
-  .st-key-start_next button:hover {
+  .st-key-start_next button:hover,
+  .st-key-start_btn button:hover {
       background-color: #dbeafe !important;
       border: 3px solid #000 !important;
       color: #1a1a1a !important;
+  }
+
+  /* Pastilles (Curs / Punts) seleccionades: gris suau + border negre,
+     en lloc del vermell per defecte de Streamlit. */
+  button[data-testid="stBaseButton-pillsActive"],
+  button[data-testid="stBaseButton-pillsActive"]:hover,
+  button[data-testid="stBaseButton-pillsActive"]:focus,
+  button[data-testid="stBaseButton-pillsActive"]:active,
+  button[kind="pillsActive"],
+  button[kind="pillsActive"]:hover {
+      background-color: #d1d5db !important;
+      border: 1px solid #000 !important;
+      color: #1a1a1a !important;
+      font-weight: 600 !important;
   }
 
   /* El sidebar de Streamlit ja no es fa servir: tots els controls
@@ -538,7 +555,6 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
             options=["1ESO", "2ESO", "3ESO", "4ESO"],
             selection_mode="single",
             default="1ESO",
-            help="Tria el curs (1r, 2n, 3r o 4t d'ESO).",
         )
         # Punts: continua sent seleccio multiple.
         puntuacions_filter = st.pills(
@@ -546,7 +562,6 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
             options=[3, 4, 5],
             selection_mode="multi",
             default=[3, 4, 5],
-            help="3 punts (fàcils), 4 punts (mitjans), 5 punts (difícils).",
         )
         filtered = [
             pid for pid in available
@@ -613,7 +628,7 @@ if state is not None:
     # que la columna del problema es quedi enganxada al top
     # quan l'usuari fa scroll al dialeg.
     # ========================================================
-    col_problem, col_dialeg = st.columns([8, 2], gap="medium")
+    col_problem, col_dialeg = st.columns([7, 3], gap="medium")
 
     # --------------------------------------------------------
     # Panell ESQUERRE: enunciat + opcions A-E + botons d'accio
