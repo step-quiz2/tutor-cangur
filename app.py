@@ -468,10 +468,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-with st.expander(
-    "📚 Selecció de problema" if _session_active else "📚 Tria un problema per començar",
-    expanded=(not _session_active),
-):
+# Missatge de benvinguda: ara just sota el titol, abans del selector,
+# perque sigui el primer que veu l'alumne en obrir l'app.
+if not _session_active:
+    st.info(
+        "👋 Et donem la benvinguda a la pràctica de Prova Cangur.\n\n"
+        "Tria un problema aquí sota i prem **🎯 Inicia el problema**."
+    )
+
+with st.expander("📚 Escull un problema", expanded=(not _session_active)):
     available = PB.get_available_problems()
     if not available:
         st.warning(
@@ -479,25 +484,31 @@ with st.expander(
             "Edita `problems.py` per afegir els 30 problemes."
         )
     else:
-        _col_curs, _col_punts = st.columns(2)
-        with _col_curs:
-            curs_filter = st.multiselect(
-                "Curs",
-                options=["1ESO", "2ESO", "3ESO", "4ESO"],
-                default=["1ESO", "2ESO", "3ESO", "4ESO"],
-                help="Filtra per curs (1r, 2n, 3r o 4t d'ESO).",
-            )
-        with _col_punts:
-            puntuacions_filter = st.multiselect(
-                "Punts",
-                options=[3, 4, 5],
-                default=[3, 4, 5],
-                help="3 punts (fàcils), 4 punts (mitjans), 5 punts (difícils).",
-            )
+        # Reservem la cel·la superior dreta per al boto d'inici. El boto
+        # es renderitza aqui (a dalt) pero el seu codi s'executa mes avall,
+        # un cop `selected_pid` ja existeix.
+        _, _slot_btn = st.columns([2, 1])
+
+        # Curs: ara es seleccio UNICA (abans en permetia diverses).
+        curs_filter = st.pills(
+            "Curs",
+            options=["1ESO", "2ESO", "3ESO", "4ESO"],
+            selection_mode="single",
+            default="1ESO",
+            help="Tria el curs (1r, 2n, 3r o 4t d'ESO).",
+        )
+        # Punts: continua sent seleccio multiple.
+        puntuacions_filter = st.pills(
+            "Punts",
+            options=[3, 4, 5],
+            selection_mode="multi",
+            default=[3, 4, 5],
+            help="3 punts (fàcils), 4 punts (mitjans), 5 punts (difícils).",
+        )
         filtered = [
             pid for pid in available
-            if PB.PROBLEMS[pid].get("punts") in puntuacions_filter
-            and PB.PROBLEMS[pid].get("categoria") in curs_filter
+            if PB.PROBLEMS[pid].get("punts") in (puntuacions_filter or [])
+            and PB.PROBLEMS[pid].get("categoria") == curs_filter
         ]
 
         if not filtered:
@@ -510,21 +521,14 @@ with st.expander(
                 display_id = pid.removeprefix("CAN-")
                 return f"{display_id} · {tema}"
 
-            _col_sel, _col_btn = st.columns([3, 1])
-            with _col_sel:
-                selected_pid = st.selectbox(
-                    "Problema",
-                    options=filtered,
-                    format_func=_format_option,
-                    key="problem_selector",
-                )
-            with _col_btn:
-                # Espai per alinear verticalment el boto amb el selectbox
-                st.markdown(
-                    "<div style='height:1.85rem'></div>",
-                    unsafe_allow_html=True,
-                )
-                if st.button("▶ Iniciar problema", key="start_btn",
+            selected_pid = st.selectbox(
+                "Problema",
+                options=filtered,
+                format_func=_format_option,
+                key="problem_selector",
+            )
+            with _slot_btn:
+                if st.button("🎯 Inicia el problema", key="start_btn",
                              use_container_width=True):
                     try:
                         st.session_state.tutor_state = T.new_session_state(selected_pid)
@@ -550,12 +554,7 @@ with st.expander(
 # ============================================================
 state = st.session_state.tutor_state
 
-if state is None:
-    st.info(
-        "👋 Et donem la benvinguda a la pràctica de Prova Cangur.\n\n"
-        "Selecciona un problema al panell esquerre i prem **▶ Iniciar problema**."
-    )
-else:
+if state is not None:
     # Re-aplicar el context de log defensivament (els reruns de Streamlit
     # poden fer que es perdi).
     L.set_log_context(student_id=state.get("student_id"),
