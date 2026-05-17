@@ -22,7 +22,7 @@ Disseny UI
     [✋ Ja tinc la resposta] — entra al mode commit (5 botons A-E)
 """
 
-import os
+import osgit add .
 import uuid
 from datetime import datetime
 
@@ -158,6 +158,17 @@ st.markdown("""
   div[data-testid="stVerticalBlock"],
   div[data-testid="stVerticalBlockBorderWrapper"] {
       overflow: visible !important;
+  }
+
+  /* Amaguem la capçalera fixa de Streamlit. Es `position: fixed` i ocupa
+     la franja superior del viewport (~3.75rem); si la deixem visible, el
+     panell sticky s'enganxa PER SOTA seu i la imatge de l'enunciat queda
+     tapada/retallada. Amagant-la, `top: 0.5rem` ja s'enganxa a la vora
+     real del viewport. No perdem res util: la sidebar esta col·lapsada,
+     l'app ja te el seu propi titol, i els `st.spinner` cobreixen el
+     feedback d'"executant". */
+  header[data-testid="stHeader"] {
+      display: none !important;
   }
 
   /* LAYOUT EN DUES COLUMNES amb panell del problema STICKY. */
