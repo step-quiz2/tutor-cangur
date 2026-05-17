@@ -144,36 +144,22 @@ st.markdown("""
       margin: 1.2rem 0 0.4rem 0;
   }
 
-  /* LAYOUT EN DUES COLUMNES amb panell del problema STICKY.
-     ----------------------------------------------------
-     En lloc de fer servir `position: fixed` per a un header que ha de viure
-     al damunt del flux normal (fragil: depen del sidebar, de l'amplada,
-     de selectors interns de Streamlit, requereix placeholder...), reorganitzem
-     el viewport en dues columnes:
+  /* CRITIC per al sticky: cap ancestor de l'element sticky pot tenir
+     `overflow` diferent de `visible`. Si en te, l'especificacio CSS diu
+     que el sticky es queda "atrapat" dins aquell ancestor i no funciona.
+     Streamlit posa overflow als seus contenidors interns. Forcem visible
+     a tota la cadena d'ancestors del nostre stHorizontalBlock. */
+  div[data-testid="stAppViewContainer"],
+  section[data-testid="stMain"],
+  div[data-testid="stMainBlockContainer"],
+  div.main,
+  .block-container,
+  div[data-testid="stVerticalBlock"],
+  div[data-testid="stVerticalBlockBorderWrapper"] {
+      overflow: visible !important;
+  }
 
-       [ Panell problema  ]  [  Panell dialeg          ]
-       [ - titol          ]  [  - fil de xat           ]
-       [ - imatge         ]  [  - missatges flash      ]
-       [ - opcions A-E    ]  [  - input + boto enviar  ]
-       [ - botons accio   ]  [                         ]
-
-     El panell esquerre te `position: sticky; top: ...` aixi quan l'usuari
-     fa scroll a la columna dreta (que pot creixer molt amb el dialeg),
-     el panell del problema es queda enganxat al top del viewport.
-     Si el seu contingut natural es mes alt que la finestra, fa scroll
-     propi gracies a `overflow-y: auto`.
-
-     IMPORTANT: cal forçar `align-items: flex-start` al pare (stHorizontalBlock,
-     que es flexbox) perque per defecte Streamlit fa que els fills s'estirin
-     a la mateixa alçada (`align-items: stretch`). Si no ho fem, la columna
-     sticky creix fins igualar la dreta i sticky no te efecte (no hi ha
-     diferencia d'alçades entre fill i pare).
-
-     El selector usa `:has(.st-key-problem_panel)` (descendent a qualsevol
-     profunditat), NO `:has(> div > ...)` que requereix profunditat exacta.
-     Streamlit embolcalla els containers amb wrappers (stVerticalBlockBorderWrapper
-     > stVerticalBlock > .st-key-...), aixi que el descendent es l'unic
-     selector robust. */
+  /* LAYOUT EN DUES COLUMNES amb panell del problema STICKY. */
   div[data-testid="stHorizontalBlock"]:has(.st-key-problem_panel) {
       align-items: flex-start !important;
   }
@@ -181,9 +167,6 @@ st.markdown("""
       position: sticky !important;
       top: 0.5rem !important;
       align-self: flex-start !important;
-      max-height: calc(100vh - 1rem) !important;
-      overflow-y: auto !important;
-      overflow-x: hidden !important;
   }
   /* Padding suau al panell del problema per separar-lo visualment */
   .st-key-problem_panel {
