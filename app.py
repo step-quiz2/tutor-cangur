@@ -236,6 +236,12 @@ st.markdown("""
       background-color: #6b7280 !important;
   }
 
+  /* Amaguem la indicacio "Press Ctrl+Enter to apply" / "to submit form"
+     que Streamlit posa automaticament sota els camps de text. */
+  [data-testid="InputInstructions"] {
+      display: none !important;
+  }
+
   /* Botons d'accio "Demanar pista" i "Ja tinc la resposta".
      Streamlit genera automaticament una classe .st-key-<key> al container DOM
      de cada widget amb key. Apuntem-hi directament. */
@@ -455,6 +461,29 @@ def _load_problem_image_b64(img_path: str, mime: str,
         return _b64.b64encode(buf.getvalue()).decode("ascii")
 
 
+def _next_problem_id(current_pid: str):
+    """Retorna l'id del problema SEGUENT dins el mateix curs i any.
+
+    `get_available_problems()` ja ve ordenat (1ESO-01..30, 2ESO-01..30,
+    ...), aixi que el seguent es l'element immediatament posterior, sempre
+    que sigui del mateix curs/any. Retorna None si el problema actual es
+    l'ultim del seu curs (o no es troba al cataleg)."""
+    available = PB.get_available_problems()
+    if current_pid not in available:
+        return None
+    idx = available.index(current_pid)
+    if idx + 1 >= len(available):
+        return None
+    nxt = available[idx + 1]
+    cur_p = PB.PROBLEMS[current_pid]
+    nxt_p = PB.PROBLEMS[nxt]
+    same_course = (
+        nxt_p.get("categoria") == cur_p.get("categoria")
+        and nxt_p.get("any") == cur_p.get("any")
+    )
+    return nxt if same_course else None
+
+
 # ============================================================
 # Selector de problema al main pane (en lloc del sidebar de
 # Streamlit, que ara queda amagat). L'expander es replega
@@ -484,11 +513,6 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
             "Edita `problems.py` per afegir els 30 problemes."
         )
     else:
-        # Reservem la cel·la superior dreta per al boto d'inici. El boto
-        # es renderitza aqui (a dalt) pero el seu codi s'executa mes avall,
-        # un cop `selected_pid` ja existeix.
-        _, _slot_btn = st.columns([2, 1])
-
         # Curs: ara es seleccio UNICA (abans en permetia diverses).
         curs_filter = st.pills(
             "Curs",
@@ -527,15 +551,15 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
                 format_func=_format_option,
                 key="problem_selector",
             )
-            with _slot_btn:
-                if st.button("🎯 Inicia el problema", key="start_btn",
-                             use_container_width=True):
-                    try:
-                        st.session_state.tutor_state = T.new_session_state(selected_pid)
-                        st.session_state.input_counter = 0
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"Error iniciant: {e}")
+            # Boto d'inici, just sota el desplegable de problema.
+            if st.button("🎯 Inicia el problema", key="start_btn",
+                         use_container_width=True):
+                try:
+                    st.session_state.tutor_state = T.new_session_state(selected_pid)
+                    st.session_state.input_counter = 0
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Error iniciant: {e}")
 
     # Cost API (només en mode debug)
     if _is_debug_mode():
@@ -659,6 +683,26 @@ if state is not None:
                     st.session_state.tutor_state = T.cancel_commit_mode(state)
                     st.rerun()
 
+            # PROBLEMA ACABAT: drecera per passar directament al seguent
+            # problema del mateix curs (l'alumne que acaba el 11 normalment
+            # voldra el 12). Si ja era l'ultim del curs, no es mostra res.
+            elif _verdict is not None:
+                _next_pid = _next_problem_id(state["problem"]["id"])
+                if _next_pid is not None:
+                    if st.button(
+                        "Inicia el següent problema",
+                        key="start_next",
+                        use_container_width=True,
+                        help=f"Comen\u00e7ar {_next_pid.removeprefix('CAN-')}",
+                    ):
+                        try:
+                            st.session_state.tutor_state = T.new_session_state(
+                                _next_pid)
+                            st.session_state.input_counter = 0
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Error iniciant: {e}")
+
     # --------------------------------------------------------
     # Panell DRET: dialeg + missatges flash + input
     # --------------------------------------------------------
@@ -684,25 +728,30 @@ if state is not None:
                         mime="application/json",
                     )
             elif _mode == "reasoning":
-                # Sessio en curs mode dialeg: text area + boto enviar
+                # Sessio en curs mode dialeg: text area + boto enviar.
+                # Fem servir un st.form perque Ctrl+Enter dins el camp de
+                # text faci el mateix que clicar "Enviar missatge".
+                # `clear_on_submit` buida el camp despres d'enviar (abans
+                # ho feiem amb una `key` dinamica i `input_counter`).
                 st.divider()
-                input_key = f"message_input_{st.session_state.input_counter}"
-                student_text = st.text_area(
-                    "El teu missatge",
-                    key=input_key,
-                    height=110,
-                    label_visibility="hidden",
-                    placeholder=(
-                        "Escriu en què penses. Per exemple, 'crec que és la C', "
-                        "'dubto entre A i D', 'per què la C no era correcta?'"
-                    ),
-                )
-                if st.button("Enviar missatge", key="send_message",
-                             use_container_width=True):
+                with st.form("message_form", clear_on_submit=True,
+                             border=False):
+                    student_text = st.text_area(
+                        "El teu missatge",
+                        key="message_input",
+                        height=110,
+                        label_visibility="hidden",
+                        placeholder=(
+                            "Escriu en què penses. Per exemple, 'crec que és la C', "
+                            "'dubto entre A i D', 'per què la C no era correcta?'"
+                        ),
+                    )
+                    _submitted = st.form_submit_button(
+                        "Enviar missatge", use_container_width=True)
+                if _submitted:
                     with st.spinner("Un moment, si us plau..."):
                         st.session_state.tutor_state = T.process_message(
                             state, student_text)
-                    st.session_state.input_counter += 1
                     st.rerun()
 
     # --------------------------------------------------------
