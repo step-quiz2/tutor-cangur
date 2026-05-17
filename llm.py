@@ -1,0 +1,526 @@
+"""
+Client a l'API de Google Gemini per al Tutor Cangur 1r ESO.
+
+Visió general per a un lector nou
+=================================
+Aquest mòdul aïlla tota la dependència amb Google Gemini. La resta del
+codi mai crida la SDK directament; sempre passa per aquestes 2 funcions
+d'alt nivell:
+
+1. `discuss(problem, image_path, conversation, student_text)` — torn de
+   DIÀLEG socràtic. L'alumne pot expressar qualsevol acte de parla:
+   compartir una hipòtesi ("crec que és la C"), justificar una eliminació
+   ("D no pot ser perquè..."), demanar aclariment post-error ("per què
+   C no era correcte?"), o preguntar a porta tancada ("per on començo?").
+   La IA respon en català, en prosa lliure, mantenint posició socràtica
+   (mai revela la lletra correcta). Retorna el text de la resposta.
+
+2. `generate_hint(problem, image_path, conversation)` — pista on-demand.
+   Es crida NOMÉS quan ja s'ha consumit la pista inicial del catàleg (si
+   en tenia). La IA veu totes les pistes prèvies al multi-torn (cada
+   pista anterior viu com a un torn assistant a la conversation) i
+   gradua la duresa automàticament. Retorna text pla, 1-2 frases.
+
+Diferències respecte a versions anteriors del tutor
+---------------------------------------------------
+- S'ha esborrat `judge_reasoning`. El model "classificador amb veredictes"
+  (correct_path/partial/dead_end/off_track) deixa de tenir sentit en un
+  model conversacional: l'alumne no proposa una solució per ser jutjada,
+  sinó que dialoga.
+- S'ha esborrat `_has_math_content`: vam decidir treure el filtre
+  determinista d'ús inadequat (decisió de l'usuari). La IA ja gestiona
+  un "hola" amb amabilitat redirigint al problema.
+- Multimodal: cada crida envia la imatge del problema (jpg) a la SDK
+  com a part del primer Content. La imatge només es transmet una vegada
+  per crida; Gemini la manté en context al seu costat.
+- Multi-torn: la conversation_history es passa íntegra (amb truncament
+  defensiu si supera ~20 torns). Així la IA recorda què s'ha dit abans
+  sense que l'engine hagi de mantenir cap "estat estructurat" addicional.
+- No hi ha sortida JSON estructurada. Tant `discuss` com `generate_hint`
+  retornen text pla. El "suggests_commit" l'expressa la IA dins el seu
+  text en català (decisió de l'usuari), no com a metadata.
+
+Robustesa
+---------
+- Retry amb exponential backoff (3 intents, base 1.5s → 3s → 6s) per a
+  errors transitoris: 503/UNAVAILABLE, 429/RATE_LIMIT, 500/INTERNAL,
+  DEADLINE_EXCEEDED i timeouts.
+- Tota crida queda gravada al log (`api_logger.py`) amb tokens, cost USD
+  estimat, durada i `student_id`/`session_id` del context actual.
+
+Variables d'entorn:
+- GEMINI_API_KEY (obligatori)
+- GEMINI_MODEL (opcional, default `gemini-2.5-flash`)
+"""
+
+import os
+import time
+import threading
+import uuid
+from pathlib import Path
+
+import api_logger
+
+# La importació de la SDK es fa try/except perquè volem que `import llm`
+# funcioni encara que no estigui instal·lada (útil per a tests amb mocks).
+try:
+    from google import genai
+    from google.genai import types as _genai_types
+except ImportError:
+    genai = None
+    _genai_types = None
+
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+MAX_TOKENS = 400
+
+# Detectem el thinking model per nom (el SDK no exposa una propietat
+# `is_thinking`).
+IS_THINKING_MODEL = "pro" in MODEL.lower()
+TOKEN_MULTIPLIER = 10 if IS_THINKING_MODEL else 1
+
+# Retry config per a errors transitoris de l'API.
+MAX_ATTEMPTS = 3
+BACKOFF_BASE_S = 1.5
+
+RETRIABLE_PATTERNS = (
+    "503", "UNAVAILABLE",
+    "429", "RATE_LIMIT", "RESOURCE_EXHAUSTED",
+    "500", "INTERNAL",
+    "DEADLINE_EXCEEDED",
+    "timeout", "Timeout",
+)
+
+
+# ============================================================
+# Truncament defensiu de la conversa
+# ============================================================
+# Decisió arquitectònica de l'usuari: si la conversa supera ~20 torns,
+# mantenim els 3 primers + els 10 últims. Els 3 primers contenen el
+# context inicial (sovint la primera lectura de l'alumne); els 10 últims
+# contenen on s'està ara la conversa.
+TRUNCATE_THRESHOLD = 20
+TRUNCATE_KEEP_FIRST = 3
+TRUNCATE_KEEP_LAST = 10
+
+
+def truncate_conversation(conversation: list) -> list:
+    """
+    Aplica el truncament defensiu sobre una llista de torns. Si està per
+    sota del llindar, retorna una còpia íntegra. Si està per sobre,
+    retorna els N primers + els M últims.
+    """
+    if len(conversation) <= TRUNCATE_THRESHOLD:
+        return list(conversation)
+    return list(conversation[:TRUNCATE_KEEP_FIRST]) + list(conversation[-TRUNCATE_KEEP_LAST:])
+
+
+# ============================================================
+# Context de logging (thread-local)
+# ============================================================
+_PROCESS_FALLBACK_SESSION = uuid.uuid4().hex[:8]
+_log_ctx = threading.local()
+
+
+def set_log_context(student_id: str, session_id: str):
+    """Fixa el context de logging per al thread actual."""
+    _log_ctx.student_id = student_id
+    _log_ctx.session_id = session_id
+
+
+def _current_session_id() -> str:
+    return getattr(_log_ctx, "session_id", None) or _PROCESS_FALLBACK_SESSION
+
+
+def _current_student_id() -> str:
+    return getattr(_log_ctx, "student_id", None) or "anon"
+
+
+def get_log_context() -> tuple:
+    return (
+        getattr(_log_ctx, "student_id", None),
+        getattr(_log_ctx, "session_id", None),
+    )
+
+
+def get_session_id() -> str:
+    return _current_session_id()
+
+
+_progress_callback = None
+
+
+def set_progress_callback(callback):
+    global _progress_callback
+    _progress_callback = callback
+
+
+def _notify(msg: str):
+    if _progress_callback is not None:
+        try:
+            _progress_callback(msg)
+        except Exception:
+            pass
+
+
+def _is_retriable(err: Exception) -> bool:
+    s = str(err)
+    return any(p in s for p in RETRIABLE_PATTERNS)
+
+
+# ============================================================
+# Client Gemini (lazy)
+# ============================================================
+_client = None
+
+
+def _get_client():
+    global _client
+    if _client is None:
+        _client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+    return _client
+
+
+# ============================================================
+# Cache d'imatges
+# ============================================================
+# Una sessió pot tenir 10+ torns sobre el mateix problema. Llegir el
+# JPG de disc cada cop és un I/O innecessari. Cachejem per path absolut.
+_image_cache: dict = {}
+
+
+def _load_image_bytes(image_path: str) -> bytes:
+    """Llegeix el JPG (i el cachegem). Llança FileNotFoundError si no existeix."""
+    abs_path = str(Path(image_path).resolve())
+    if abs_path in _image_cache:
+        return _image_cache[abs_path]
+    with open(abs_path, "rb") as f:
+        data = f.read()
+    _image_cache[abs_path] = data
+    return data
+
+
+def _detect_mime(image_path: str) -> str:
+    """Detecció mínima del MIME type pel sufix."""
+    ext = Path(image_path).suffix.lower()
+    if ext in (".jpg", ".jpeg"):
+        return "image/jpeg"
+    if ext == ".png":
+        return "image/png"
+    if ext == ".webp":
+        return "image/webp"
+    return "image/jpeg"
+
+
+# ============================================================
+# Construcció dels `contents` multi-torn per a Gemini
+# ============================================================
+def _build_contents(image_path, conversation: list, new_user_text):
+    """
+    Construeix la llista `contents` que rep la SDK de Gemini.
+
+    Inclou:
+    - Imatge del problema al PRIMER Content de tipus user (només una vegada).
+      Si no es troba al disc, continuem sense imatge (fallback elegant).
+    - Els torns previs de la conversa, traduïts a Content amb el seu role.
+      Els kinds especials es prefixen amb marcadors textuals:
+        * kind="message"        → text tal qual
+        * kind="hint"           → prefixat amb "[PISTA] "
+        * kind="system_event"   → prefixat amb "[Sistema] "
+    - El missatge nou de l'alumne (`new_user_text`), si se'n passa un.
+
+    Detalls de la SDK
+    -----------------
+    - role del torn assistant: "model" (Gemini), no "assistant".
+    - Imatge: Part.from_bytes amb mime_type.
+    """
+    types = _genai_types
+    contents = []
+
+    image_bytes = None
+    image_mime = None
+    if image_path:
+        try:
+            image_bytes = _load_image_bytes(image_path)
+            image_mime = _detect_mime(image_path)
+        except FileNotFoundError:
+            _notify(f"Imatge no trobada: {image_path}. Procedim sense imatge.")
+
+    image_consumed = False
+    for turn in conversation:
+        role = turn.get("role", "user")
+        gemini_role = "model" if role == "assistant" else "user"
+        kind = turn.get("kind", "message")
+        content = turn.get("content", "")
+
+        if kind == "hint":
+            content_text = f"[PISTA] {content}"
+        elif kind == "system_event":
+            content_text = f"[Sistema] {content}"
+        else:
+            content_text = content
+
+        parts = []
+        if (image_bytes is not None and not image_consumed
+                and gemini_role == "user"):
+            parts.append(types.Part.from_bytes(
+                data=image_bytes, mime_type=image_mime,
+            ))
+            image_consumed = True
+        parts.append(types.Part.from_text(text=content_text))
+        contents.append(types.Content(role=gemini_role, parts=parts))
+
+    if new_user_text is not None:
+        parts = []
+        if image_bytes is not None and not image_consumed:
+            parts.append(types.Part.from_bytes(
+                data=image_bytes, mime_type=image_mime,
+            ))
+            image_consumed = True
+        parts.append(types.Part.from_text(text=new_user_text))
+        contents.append(types.Content(role="user", parts=parts))
+
+    return contents
+
+
+# ============================================================
+# Crida amb retry + logging
+# ============================================================
+def _build_config(system: str, max_tokens: int, temperature: float):
+    types = _genai_types
+    cfg = {
+        "system_instruction": system,
+        "max_output_tokens": max_tokens * TOKEN_MULTIPLIER,
+        "temperature": temperature,
+    }
+    if not IS_THINKING_MODEL:
+        cfg["thinking_config"] = types.ThinkingConfig(thinking_budget=0)
+    return types.GenerateContentConfig(**cfg)
+
+
+def _do_call(system: str, contents: list, max_tokens: int, temperature: float):
+    client = _get_client()
+    config = _build_config(system, max_tokens, temperature)
+    response = client.models.generate_content(
+        model=MODEL, contents=contents, config=config,
+    )
+    text = response.text or ""
+    if not text.strip():
+        finish = "?"
+        if response.candidates:
+            finish = getattr(response.candidates[0], "finish_reason", "?")
+        raise RuntimeError(
+            f"Resposta buida del model {MODEL} (finish_reason={finish})."
+        )
+    usage = getattr(response, "usage_metadata", None)
+    tokens = None
+    if usage is not None:
+        tokens = {
+            "input":    int(getattr(usage, "prompt_token_count", 0) or 0),
+            "output":   int(getattr(usage, "candidates_token_count", 0) or 0),
+            "thoughts": int(getattr(usage, "thoughts_token_count", 0) or 0),
+            "total":    int(getattr(usage, "total_token_count", 0) or 0),
+        }
+    return text, tokens
+
+
+def _call_with_retry(function_name: str, system: str, contents: list,
+                     max_tokens: int, temperature: float,
+                     input_data_for_log: dict) -> str:
+    last_error = None
+    for attempt in range(1, MAX_ATTEMPTS + 1):
+        t0 = time.time()
+        try:
+            text, tokens = _do_call(system, contents, max_tokens, temperature)
+            elapsed = time.time() - t0
+            api_logger.log_call(
+                session_id=_current_session_id(),
+                student_id=_current_student_id(),
+                function=function_name,
+                model=MODEL, attempt=attempt, ok=True,
+                elapsed_s=elapsed, input_data=input_data_for_log,
+                output_data={"text_preview": text[:500], "len": len(text)},
+                tokens=tokens,
+            )
+            return text
+        except Exception as e:
+            elapsed = time.time() - t0
+            err_str = str(e)
+            api_logger.log_call(
+                session_id=_current_session_id(),
+                student_id=_current_student_id(),
+                function=function_name,
+                model=MODEL, attempt=attempt, ok=False,
+                elapsed_s=elapsed, input_data=input_data_for_log,
+                error=err_str,
+            )
+            last_error = e
+            if attempt < MAX_ATTEMPTS and _is_retriable(e):
+                backoff = BACKOFF_BASE_S * (2 ** (attempt - 1))
+                _notify(
+                    f"L'API ha donat un error temporal (intent {attempt}/{MAX_ATTEMPTS}). "
+                    f"Reintentant en {backoff:.0f}s..."
+                )
+                time.sleep(backoff)
+                continue
+            break
+    raise RuntimeError(
+        f"L'API ha fallat després de {MAX_ATTEMPTS} intents. Últim error: {last_error}"
+    )
+
+
+# ============================================================
+# Prompts del sistema (català)
+# ============================================================
+_SYSTEM_DISCUSS = """
+Ets un tutor socràtic de matemàtiques per a alumnes de l'ESO (entre 11 anys i 16 anys) que es preparen per a la Prova Cangur de Catalunya.
+
+L'alumne està treballant un problema tipus test amb 5 opcions A-E. Veus la imatge sencera del problema (enunciat + opcions) i saps a priori quina és la resposta correcta, perquè tens la clau de respostes. MAI pots revelar la resposta correcta, sota cap circumstància, ni directament ni indirectament.
+
+L'alumne pot fer molts tipus de coses a cada torn. Mira el context:
+- compartir una hipòtesi: "crec que és la C"
+- comparar opcions: "dubto entre A i C, m'inclino per A"
+- justificar una eliminació: "D no pot ser perquè..."
+- preguntar després d'un commit fallit: "per què la C no era correcta?"
+- demanar orientació general: "no sé per on començar"
+- escriure alguna cosa no relacionada amb el problema: "hola", "ajuda"
+- escriure una tonteria pròpia de comportament adolescent immadur: "patata", "yabadabadu".
+- escriure una frase en castellà no es considera un error, perquè hi ha alumnes que porten menys de 2 anys a Catalunya. Per tant, el sistema ho accepta i sempre respondrà en català.
+
+El teu rol és DIALOGAR amb l'alumne, no jutjar-lo:
+
+1. Identifica què està fent l'alumne i respon-li en consonància.
+2. Si la seva hipòtesi/eliminació/raonament és COHERENT amb la resposta correcta, has de validar breument el que ha dit i has de guiar l'alumne cap al següent pas. NO diguis "és correcta!" perquè això filtra la lletra: digues "aquesta línia té sentit, què passa si...".
+3. Si NO és coherent, NO diguis "estàs equivocat": fes una pregunta socràtica que l'ajudi a veure el problema des d'un angle nou o que el faci dubtar de la premissa que falla.
+4. Si l'alumne ja ha raonat clarament el camí cap a la resposta correcta i ja no té dubtes, suggereix-li que pot prémer el botó "Ja tinc la resposta" (escriu-ho dins el text de la teva resposta, sense format especial; per exemple: "Sembla que ja ho tens: prem 'Ja tinc la resposta'").
+5. Si l'alumne escriu res no relacionat amb el problema, respon amablement però redirigeix al problema sense moralitzar.
+
+Marcadors al multi-torn:
+- "[PISTA] ..." són pistes que TU (el tutor IA o el catàleg pre-escrit per la persona) has donat anteriorment. No les repeteixis; tingues-les en compte com a coneixement que l'alumne ja té.
+- "[Sistema] ..." són esdeveniments automàtics del programa (ex: "L'alumne ha comprovat la lletra X i el comprovador ha indicat que no és correcta"). NO són missatges de l'alumne; tingues-los en compte com a context.
+
+Regles d'estil:
+- Resposta breu: 1-3 frases típicament. Mai paràgrafs llargs.
+- Català adequat a 12 anys, planer, sense argot.
+- Sense LaTeX: matemàtiques en text pla ("2 × 3", "1/4").
+- To col·legial respectuós, sense paternalismes ni exclamacions excessives.
+- NO reveles la lletra correcta, mai, sota cap circumstància, ni tampoc indirectament (no diguis "la que comença per...", ni tampoc "la que té el quadrat...", etc.).
+"""
+
+
+_SYSTEM_HINT = """
+Ets un tutor socràtic de matemàtiques per a alumnes de 1r d'ESO (12 anys). L'alumne ha demanat EXPLÍCITAMENT una pista sobre el problema Cangur que està treballant.
+
+Veus la imatge del problema, saps la lletra correcta (MAI la reveles), i veus tot el que has dit prèviament en aquesta sessió a través del multi-torn. Algunes coses ja les hauràs dit; algunes pistes ja les hauràs donat (prefixades amb [PISTA] al context).
+
+Regles:
+- Donar una pista NOVA, NO repetir cap pista ja donada.
+- Si és la 1a pista que dones, parteix del moment del raonament on està l'alumne i suggereix UNA acció concreta (dibuixar, comparar dues opcions, fixar-se en una dada específica de l'enunciat o la figura).
+- Si és la 2a, 3a o més pista, ja pots ser més directe: senyala un tret concret de l'enunciat o de les opcions, però mai dir-li quina lletra és la correcta.
+- Màxim 2 frases.
+- Català adequat a 12 anys, sense argot, sense LaTeX (matemàtiques en text pla).
+- NO reveles la lletra correcta, mai, sota cap circumstància, ni indirectament.
+- Si veus que ja has donat moltes pistes i l'alumne no avança, el millor és suggerir que torni a llegir l'enunciat sencer amb calma, no donar la resposta encoberta.
+"""
+
+
+# ============================================================
+# Crida 1: discuss (diàleg socràtic)
+# ============================================================
+def discuss(problem: dict, image_path, conversation: list,
+            student_text: str) -> str:
+    """
+    Torn de diàleg socràtic. La IA llegeix la imatge + tot l'històric de
+    la conversa + el missatge nou de l'alumne, i respon en prosa lliure
+    en català.
+
+    Paràmetres:
+    - `problem`: dict del catàleg amb `resposta_correcta`.
+    - `image_path`: path al JPG (None o no trobat → fallback sense imatge).
+    - `conversation`: llista de torns previs SENSE el missatge nou.
+    - `student_text`: missatge nou de l'alumne.
+
+    Retorna: text de la resposta de la IA (1-3 frases, en català).
+    Si la IA creu que l'alumne pot ja comprometre's, ho dirà DINS el
+    text mateix (cap metadada estructurada).
+    """
+    sys_with_answer = (
+        _SYSTEM_DISCUSS
+        + f"\n\nResposta correcta del problema: {problem.get('resposta_correcta', '?')}"
+    )
+    expected = problem.get("expected_reasoning")
+    if expected:
+        sys_with_answer += f"\nRaonament de referència (NO el revelis):\n  {expected}"
+    comentaris = problem.get("comentaris_distractors") or {}
+    if comentaris:
+        rc = problem.get("resposta_correcta")
+        comm_lines = [
+            f"  {L}: {desc}" for L, desc in comentaris.items() if L != rc
+        ]
+        if comm_lines:
+            sys_with_answer += "\nComentaris sobre per què algú podria triar cada distractor:\n" + "\n".join(comm_lines)
+
+    conv_truncated = truncate_conversation(conversation)
+    contents = _build_contents(image_path, conv_truncated, student_text)
+
+    input_data = {
+        "system_preview": sys_with_answer[:200],
+        "problem_id":     problem.get("id"),
+        "n_turns_in":     len(conv_truncated),
+        "n_turns_full":   len(conversation),
+        "truncated":      len(conversation) > len(conv_truncated),
+        "image_path":     image_path,
+        "student_text":   student_text,
+        "temperature":    0.4,
+    }
+    return _call_with_retry(
+        "discuss", sys_with_answer, contents,
+        max_tokens=MAX_TOKENS, temperature=0.4,
+        input_data_for_log=input_data,
+    ).strip()
+
+
+# ============================================================
+# Crida 2: generate_hint (pista on-demand)
+# ============================================================
+def generate_hint(problem: dict, image_path, conversation: list) -> str:
+    """
+    Pista on-demand. Es crida NOMÉS quan ja s'ha consumit la pista
+    inicial del catàleg (si en tenia). Veu el multi-torn complet, no
+    repeteix pistes prèvies, gradua duresa automàticament.
+
+    Retorna text pla, 1-2 frases, sense revelar la lletra correcta.
+    """
+    sys_with_answer = (
+        _SYSTEM_HINT
+        + f"\n\nResposta correcta del problema: {problem.get('resposta_correcta', '?')}"
+    )
+    expected = problem.get("expected_reasoning")
+    if expected:
+        sys_with_answer += f"\nRaonament de referència (NO el revelis):\n  {expected}"
+
+    # Per a la pista NO hi ha "missatge nou de l'alumne": l'alumne ha
+    # premut un botó. Per evitar que Gemini truqui amb un torn user que
+    # no acaba en demanda explícita, afegim un torn user sintètic.
+    conv_truncated = truncate_conversation(conversation)
+    contents = _build_contents(
+        image_path, conv_truncated,
+        new_user_text=(
+            "L'alumne acaba de prémer el botó 'Demanar pista'. "
+            "Dóna-li una pista nova segons les regles del sistema."
+        ),
+    )
+
+    input_data = {
+        "system_preview": sys_with_answer[:200],
+        "problem_id":     problem.get("id"),
+        "n_turns_in":     len(conv_truncated),
+        "n_turns_full":   len(conversation),
+        "truncated":      len(conversation) > len(conv_truncated),
+        "image_path":     image_path,
+        "temperature":    0.4,
+    }
+    return _call_with_retry(
+        "generate_hint", sys_with_answer, contents,
+        max_tokens=150, temperature=0.4,
+        input_data_for_log=input_data,
+    ).strip()
