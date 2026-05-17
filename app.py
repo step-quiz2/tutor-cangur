@@ -90,6 +90,11 @@ st.markdown("""
       padding: 0 !important;
       line-height: 1.3 !important;
   }
+  /* Titol "Diàleg" del panell dret: un 20% mes petit. `zoom` escala
+     tot el bloc del titol (text i marges) exactament al 80%. */
+  h4.dialeg-title {
+      zoom: 0.8;
+  }
   hr { margin: 0.6rem 0 !important; }
 
   /* --- Fil de xat --- */
@@ -266,6 +271,20 @@ st.markdown("""
       background-color: #4ade80 !important;
       border: 2px solid #000 !important;
       color: #000 !important;
+  }
+
+  /* Boto "Inicia el problema seguent": border blau gruixut + text en
+     negreta; en passar-hi el ratoli, fons blau suau i border negre. */
+  .st-key-start_next button {
+      border: 3px solid #2563eb !important;
+      font-weight: 700 !important;
+      color: #1a1a1a !important;
+      transition: background-color 0.15s, border-color 0.15s;
+  }
+  .st-key-start_next button:hover {
+      background-color: #dbeafe !important;
+      border: 3px solid #000 !important;
+      color: #1a1a1a !important;
   }
 
   /* El sidebar de Streamlit ja no es fa servir: tots els controls
@@ -605,12 +624,11 @@ if state is not None:
             _categoria = problem.get("categoria", "?")
             _any = problem.get("any", "?")
             _numero = problem.get("numero", "?")
-            _punts = problem.get("punts", "?")
             _tema_raw = problem.get("tema") or "tema no especificat"
             _tema = _tema_raw[:1].upper() + _tema_raw[1:]
             st.markdown(
-                f'<h3 class="problem-title">{_categoria}-{_any}. '
-                f'Pregunta {_numero} ({_punts} punts) · {_tema}</h3>',
+                f'<h3 class="problem-title">{_categoria} ({_any}) '
+                f'Q{_numero} · {_tema}</h3>',
                 unsafe_allow_html=True,
             )
 
@@ -690,7 +708,7 @@ if state is not None:
                 _next_pid = _next_problem_id(state["problem"]["id"])
                 if _next_pid is not None:
                     if st.button(
-                        "Inicia el següent problema",
+                        "\u23e9\ufe0e Inicia el problema següent",
                         key="start_next",
                         use_container_width=True,
                         help=f"Comen\u00e7ar {_next_pid.removeprefix('CAN-')}",
@@ -709,7 +727,8 @@ if state is not None:
     with col_dialeg:
         with st.container(key="dialogue_panel"):
             # Fil de xat
-            st.markdown("#### Di\u00e0leg")
+            st.markdown('<h4 class="dialeg-title">Di\u00e0leg</h4>',
+                        unsafe_allow_html=True)
             _render_conversation(state)
 
             # Missatges flash (errors API, commits)
