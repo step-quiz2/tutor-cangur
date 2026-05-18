@@ -1,0 +1,6 @@
+[theme]
+# Color "primari" que Streamlit fa servir per a elements interactius i
+# destacats (sel·leccionats de st.pills, st.segmented_control, etc.).
+# El default és un vermell viu (#ff4b4b). El fixem a un gris neutre
+# perquè els pills de Curs (1ESO/2ESO/...) i Punts (3/4/5) surtin grisos.
+primaryColor = "#6b7280"

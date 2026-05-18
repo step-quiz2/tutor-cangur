@@ -487,10 +487,23 @@ def _render_conversation(state):
             rendered_anything = True
 
 
-def _render_flash_messages(state):
-    """Pinta els missatges UI transitoris (errors API, commit ok/fail)."""
+def _render_flash_messages(state, only_kind=None, exclude_kind=None):
+    """Pinta els missatges UI transitoris (errors API, commit ok/fail).
+
+    Si es passa `only_kind` (string o set), només es pinten els missatges
+    d'aquests kinds. Si es passa `exclude_kind` (string o set), els
+    missatges d'aquests kinds s'amaguen. Permet decidir des de cada
+    columna quins missatges renderitzar."""
+    if isinstance(only_kind, str):
+        only_kind = {only_kind}
+    if isinstance(exclude_kind, str):
+        exclude_kind = {exclude_kind}
     for m in state.get("messages", []):
         kind = m.get("kind", "warning")
+        if only_kind is not None and kind not in only_kind:
+            continue
+        if exclude_kind is not None and kind in exclude_kind:
+            continue
         html = _format_md(m.get("text", ""))
         st.markdown(f'<div class="msg-{kind}">{html}</div>',
                     unsafe_allow_html=True)
@@ -627,7 +640,6 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
             options=["1ESO", "2ESO", "3ESO", "4ESO"],
             selection_mode="single",
             default="1ESO",
-            help="Tria el curs (1r, 2n, 3r o 4t d'ESO).",
         )
         # Punts: continua sent seleccio multiple.
         puntuacions_filter = st.pills(
@@ -635,7 +647,6 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
             options=[3, 4, 5],
             selection_mode="multi",
             default=[3, 4, 5],
-            help="3 punts (fàcils), 4 punts (mitjans), 5 punts (difícils).",
         )
         filtered = [
             pid for pid in available
@@ -702,7 +713,7 @@ if state is not None:
     # que la columna del problema es quedi enganxada al top
     # quan l'usuari fa scroll al dialeg.
     # ========================================================
-    col_problem, col_dialeg = st.columns([8, 2], gap="medium")
+    col_problem, col_dialeg = st.columns([7, 3], gap="medium")
 
     # --------------------------------------------------------
     # Panell ESQUERRE: enunciat + opcions A-E + botons d'accio
@@ -801,6 +812,12 @@ if state is not None:
             # problema del mateix curs (l'alumne que acaba el 11 normalment
             # voldra el 12). Si ja era l'ultim del curs, no es mostra res.
             elif _verdict is not None:
+                # Excepcionalment, el missatge "Correcte!" es renderitza
+                # aquí (col_problem) en comptes de la columna del diàleg,
+                # perquè quedi just abans del botó "Inicia el problema
+                # següent". Així l'alumne veu el feliçitació i el botó
+                # d'acció seguits, en lloc d'haver de canviar de columna.
+                _render_flash_messages(state, only_kind="commit_ok")
                 _next_pid = _next_problem_id(state["problem"]["id"])
                 if _next_pid is not None:
                     if st.button(
@@ -827,8 +844,12 @@ if state is not None:
                         unsafe_allow_html=True)
             _render_conversation(state)
 
-            # Missatges flash (errors API, commits)
-            _render_flash_messages(state)
+            # Missatges flash (errors API, commits fallits, etc.).
+            # NOTA: el `commit_ok` es renderitza específicament a
+            # col_problem (just abans del botó "Inicia el problema
+            # següent"), de manera que aquí l'excloem per evitar
+            # duplicar-lo a les dues columnes.
+            _render_flash_messages(state, exclude_kind="commit_ok")
 
             # Si la sessio ha acabat, mostrar resum final i amagar inputs.
             if _verdict is not None:
