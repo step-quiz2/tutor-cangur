@@ -63,12 +63,38 @@ st.set_page_config(
     page_title="Prova Cangur",
     page_icon="🦘",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 st.markdown("""
 <style>
-  .block-container { padding-top: 2rem !important; font-size: 1.05rem; }
+  .block-container {
+      padding-top: 0.8rem !important;       /* abans 2rem (-60%) */
+      padding-left: 0.5rem !important;      /* abans ~1.25rem default (-60%) */
+      padding-right: 0.5rem !important;
+      font-size: 1.05rem;
+  }
+  /* Titol de l'app "Prova Cangur". */
+  h2.app-title {
+      font-size: 1.1rem !important;
+      font-weight: 700;
+      margin: 0.25rem 0 0.5rem 0 !important;
+      padding: 0 !important;
+      line-height: 1.3 !important;
+  }
+  /* Titol del problema "1ESO-2026. Pregunta N...". */
+  h3.problem-title {
+      font-size: 1.0rem !important;
+      font-weight: 700;
+      margin: 0.2rem 0 0.4rem 0 !important;
+      padding: 0 !important;
+      line-height: 1.3 !important;
+  }
+  /* Titol "Diàleg" del panell dret: un 20% mes petit. `zoom` escala
+     tot el bloc del titol (text i marges) exactament al 80%. */
+  h4.dialeg-title {
+      zoom: 0.8;
+  }
   hr { margin: 0.6rem 0 !important; }
 
   /* --- Fil de xat --- */
@@ -123,60 +149,62 @@ st.markdown("""
       margin: 1.2rem 0 0.4rem 0;
   }
 
-  /* HEADER FIXAT amb imatge + fila A-E/botons.
-     ----------------------------------------------------
-     Implementació basada en el patró del gist mantingut per la comunitat
-     Streamlit: https://gist.github.com/toolittlecakes/cf1a5d734cbf5b0b2581c28b2530fec2
-     ----------------------------------------------------
-     Idea clau: en lloc de hardcodejar `left/right` (que falla perquè depèn
-     de l'estat del sidebar i de l'amplada del contingut), apuntem al
-     `stVerticalBlockBorderWrapper` que envolta el container amb la clau
-     `problem_header` i li apliquem `position: fixed` amb `width: inherit`.
-     Així el header hereta l'amplada del seu pare natural en el DOM de
-     Streamlit i queda automàticament alineat amb la zona de contingut,
-     respectant el sidebar sense haver de detectar-ne l'estat. */
-  div[data-testid="stVerticalBlockBorderWrapper"]:has(> div[data-testid="stVerticalBlock"] > .st-key-problem_header) {
-      position: fixed;
-      top: 3rem;
-      width: inherit;
-      background-color: #ffffff;
-      padding: 0.5rem 0.5rem 0.75rem 0.5rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      z-index: 99;
-      max-height: 40vh;
-      overflow: hidden;
-      box-sizing: border-box;
+  /* CRITIC per al sticky: cap ancestor de l'element sticky pot tenir
+     `overflow` diferent de `visible`. Si en te, l'especificacio CSS diu
+     que el sticky es queda "atrapat" dins aquell ancestor i no funciona.
+     PERO no podem tocar `stMain` ni `stAppViewContainer`: alguns dels seus
+     `overflow` son els que proporcionen el scroll a la pagina sencera.
+     Si els forcem a visible, el sticky funciona pero la pagina no fa scroll.
+     Per tant: forcem `overflow: visible` nomes als contenidors INTERIORS
+     entre el scroll container (stMain) i el sticky element. */
+  div[data-testid="stMainBlockContainer"],
+  div.main,
+  .block-container,
+  div[data-testid="stVerticalBlock"],
+  div[data-testid="stVerticalBlockBorderWrapper"] {
+      overflow: visible !important;
   }
-  /* Espai extra (~3×) entre el "Escull un problema" del sidebar/expander
-     i el títol del header. */
-  .st-key-problem_header h3 {
-      margin-top: 1.6rem !important;
-      margin-bottom: 0.5rem !important;
+
+  /* Amaguem la capçalera fixa de Streamlit. Es `position: fixed` i ocupa
+     la franja superior del viewport (~3.75rem); si la deixem visible, el
+     panell sticky s'enganxa PER SOTA seu i la imatge de l'enunciat queda
+     tapada/retallada. Amagant-la, `top: 0.5rem` ja s'enganxa a la vora
+     real del viewport. No perdem res util: la sidebar esta col·lapsada,
+     l'app ja te el seu propi titol, i els `st.spinner` cobreixen el
+     feedback d'"executant". */
+  header[data-testid="stHeader"] {
+      display: none !important;
   }
-  /* Imatge dins el header: respecta proporcions naturals, limitada en
-     alçada, mai retallada (object-fit: contain). El margin-bottom 1rem
-     dona ~3× del default per separar bé la imatge de la fila A-E. */
-  .st-key-problem_header .header-image {
+
+  /* LAYOUT EN DUES COLUMNES amb panell del problema STICKY. */
+  div[data-testid="stHorizontalBlock"]:has(.st-key-problem_panel) {
+      align-items: flex-start !important;
+  }
+  div[data-testid="stColumn"]:has(.st-key-problem_panel) {
+      position: sticky !important;
+      top: 0.5rem !important;
+      align-self: flex-start !important;
+  }
+  /* Padding suau al panell del problema per separar-lo visualment */
+  .st-key-problem_panel {
+      padding: 0.25rem 0.5rem 0.5rem 0.5rem;
+  }
+  /* Imatge dins el panell del problema: respecta proporcions naturals,
+     centrada, mai retallada (object-fit: contain). */
+  .st-key-problem_panel .header-image {
       display: flex;
       justify-content: center;
       align-items: center;
       width: 100%;
-      margin-bottom: 1rem;
+      margin: 0.3rem 0;
   }
-  .st-key-problem_header .header-image img {
-      max-height: 18vh;
+  .st-key-problem_panel .header-image img {
       max-width: 100%;
+      max-height: 45vh;
       width: auto;
       height: auto;
       object-fit: contain;
       display: block;
-  }
-  /* Placeholder al flux normal: reserva l'alçada total que el header
-     fixat ocupa al viewport perquè el contingut posterior (diàleg, input)
-     no quedi tapat. Ajustat per acomodar títol + imatge + fila d'accions. */
-  .problem-header-placeholder {
-      height: 40vh;
-      width: 100%;
   }
 
   /* Missatges flash (errors tècnics, commits) */
@@ -207,35 +235,19 @@ st.markdown("""
       text-decoration: line-through;
       background: #f3f4f6;
   }
-  /* Hover sobre la targeta A-E (no clicable): mostrar cursor de
-     prohibit per recordar a l'alumne que aquí no es contesta. */
-  .opcions-card .label-row:hover {
-      cursor: not-allowed;
-  }
-
-  /* Espai extra entre el selector de problema (al sidebar o un
-     expander superior) i el títol del header. Triple del default. */
-  .st-key-problem_header h3 {
-      margin-top: 2.4rem !important;
-      margin-bottom: 0.4rem !important;
-  }
-
-  /* Espai vertical extra entre la fila A-E i tot el que es trobi
-     en columnes a la mateixa fila (botons d'accions). En realitat
-     volem augmentar la separació horitzontal entre la columna A-E
-     i la primera columna de botons; ho fem amb columns([5,1,2,2])
-     al codi Python, però aquesta classe afegeix una mica de padding
-     a la cantonada dreta de la targeta A-E per donar més aire. */
-  .opcions-card {
-      margin-right: 0.5rem;
-  }
 
   /* Tags del multiselect (3p, 4p, 5p) en gris en lloc de vermell */
   [data-testid="stMultiSelect"] [data-baseweb="tag"] {
       background-color: #6b7280 !important;
   }
 
-  /* Botons d'accio "Vull una pista" i "Ja tinc la resposta".
+  /* Amaguem la indicacio "Press Ctrl+Enter to apply" / "to submit form"
+     que Streamlit posa automaticament sota els camps de text. */
+  [data-testid="InputInstructions"] {
+      display: none !important;
+  }
+
+  /* Botons d'accio "Demanar pista" i "Ja tinc la resposta".
      Streamlit genera automaticament una classe .st-key-<key> al container DOM
      de cada widget amb key. Apuntem-hi directament. */
   .st-key-request_hint button {
@@ -261,41 +273,82 @@ st.markdown("""
       color: #000 !important;
   }
 
-  /* Input del diàleg: fons blau-suau, border negre clar, placeholder
-     en cursiva. */
-  .st-key-message_input_0 textarea,
-  div[class*="st-key-message_input_"] textarea {
+  /* Boto "Inicia el problema seguent": border blau gruixut + text en
+     negreta; en passar-hi el ratoli, fons blau suau i border negre. */
+  .st-key-start_next button {
+      border: 3px solid #2563eb !important;
+      font-weight: 700 !important;
+      color: #1a1a1a !important;
+      transition: background-color 0.15s, border-color 0.15s;
+  }
+  .st-key-start_next button:hover {
+      background-color: #dbeafe !important;
+      border: 3px solid #000 !important;
+      color: #1a1a1a !important;
+  }
+
+  /* === Canvis UX recents === */
+  /* Canvi 1: espai extra (~3×) entre l'expander "Escull un problema"
+     i el títol del problema. */
+  h3.problem-title {
+      margin-top: 1.6rem !important;
+  }
+
+  /* Canvi 2: espai extra (~3×) entre la fila A-E (.opcions-card) i la
+     fila de botons d'acció (Vull una pista / Ja tinc la resposta). */
+  .st-key-problem_panel .opcions-card {
+      margin-bottom: 1.4rem !important;
+  }
+
+  /* Canvi 3b: text_area del diàleg amb fons blau-suau, border negre
+     clar i placeholder en cursiva. */
+  .st-key-message_input textarea {
       background-color: #dbeafe !important;
       border: 1px solid #1f2937 !important;
       color: #1f2937 !important;
   }
-  div[class*="st-key-message_input_"] textarea::placeholder {
+  .st-key-message_input textarea::placeholder {
       font-style: italic;
       color: #6b7280 !important;
       opacity: 1;
   }
 
-  /* Botó "Enviar missatge": blau-suau (mateix to que l'input),
-     hover més fort amb border negre 2px (com els altres botons). */
-  .st-key-send_message button {
+  /* Canvi 4: botó "Enviar missatge" amb fons blau-suau (mateix to que
+     l'input), hover blau més fort + border negre 2px (coherent amb els
+     altres botons d'acció). Aquest botó és un st.form_submit_button, i
+     com que no acceptem `key` als form_submit_button de Streamlit, el
+     localitzem via el formulari ancestre. */
+  div[data-testid="stForm"] button[kind="secondaryFormSubmit"],
+  div[data-testid="stForm"] button[data-testid="stBaseButton-secondaryFormSubmit"] {
       background-color: #dbeafe !important;
       border: 1px solid #dbeafe !important;
       color: #1a1a1a !important;
       transition: background-color 0.15s, border-color 0.15s, border-width 0.15s;
   }
-  .st-key-send_message button:hover {
+  div[data-testid="stForm"] button[kind="secondaryFormSubmit"]:hover,
+  div[data-testid="stForm"] button[data-testid="stBaseButton-secondaryFormSubmit"]:hover {
       background-color: #60a5fa !important;
       border: 2px solid #000 !important;
       color: #000 !important;
   }
 
-  /* Amplada del sidebar reduïda un 15% (default ~336px → ~286px) */
-  [data-testid="stSidebar"] {
-      min-width: 286px !important;
-      max-width: 286px !important;
+  /* Canvi 6: cursor de prohibit en passar el ratolí per damunt de
+     les lletres A-E al panell del problema. Recordatori visual que
+     aquí no es contesta (cal clicar "Ja tinc la resposta"). */
+  .st-key-problem_panel .opcions-card .label-row:hover {
+      cursor: not-allowed;
   }
-  [data-testid="stSidebar"] > div:first-child {
-      width: 286px !important;
+
+  /* El sidebar de Streamlit ja no es fa servir: tots els controls
+     (selector de problema, filtres, debug) viuen al main pane dins
+     d'un expander compacte a la part superior. Aixi recuperem tota
+     l'amplada del viewport per al panell del problema + dialeg. */
+  [data-testid="stSidebar"] {
+      display: none !important;
+  }
+  [data-testid="stSidebarCollapsedControl"],
+  [data-testid="collapsedControl"] {
+      display: none !important;
   }
 
   /* Alineacio vertical dels botons d'accio amb la targeta A-E */
@@ -437,12 +490,93 @@ def _render_history_expander(state):
             st.markdown("---")
 
 
-# ============================================================
-# Sidebar: selector de problema
-# ============================================================
-with st.sidebar:
-    st.title("🦘 Prova Cangur")
+@st.cache_data(show_spinner=False)
+def _load_problem_image_b64(img_path: str, mime: str,
+                            crop_pct: float = 0.05) -> str:
+    """Llegeix la imatge de l'enunciat i en retalla `crop_pct` a cada
+    costat horitzontal abans de codificar-la en base64.
 
+    Per que retallem: les imatges escannejades de les proves Cangur
+    porten sempre marges blancs laterals que no aporten res. Si els
+    treiem, com que el `<img>` ocupa el 100% de l'amplada del seu
+    contenidor, el contingut util (text + opcions) queda visualment
+    magnificat ~11% sense reescalat ni perdua de qualitat.
+
+    Cachejat amb `@st.cache_data` perque el crop no s'executi a cada
+    rerun de Streamlit (el resultat es el mateix per a la mateixa
+    imatge en disc).
+    """
+    from io import BytesIO
+    from PIL import Image
+    import base64 as _b64
+
+    with Image.open(img_path) as img:
+        w, h = img.size
+        crop_x = int(w * crop_pct)
+        # crop(left, upper, right, lower)
+        cropped = img.crop((crop_x, 0, w - crop_x, h))
+
+        fmt_map = {"jpeg": "JPEG", "png": "PNG",
+                   "gif": "GIF", "webp": "WEBP"}
+        fmt = fmt_map.get(mime, "JPEG")
+
+        # JPEG no admet canal alfa: convertim a RGB si cal
+        if fmt == "JPEG" and cropped.mode not in ("RGB", "L"):
+            cropped = cropped.convert("RGB")
+
+        buf = BytesIO()
+        if fmt == "JPEG":
+            cropped.save(buf, format=fmt, quality=92, optimize=True)
+        else:
+            cropped.save(buf, format=fmt)
+        return _b64.b64encode(buf.getvalue()).decode("ascii")
+
+
+def _next_problem_id(current_pid: str):
+    """Retorna l'id del problema SEGUENT dins el mateix curs i any.
+
+    `get_available_problems()` ja ve ordenat (1ESO-01..30, 2ESO-01..30,
+    ...), aixi que el seguent es l'element immediatament posterior, sempre
+    que sigui del mateix curs/any. Retorna None si el problema actual es
+    l'ultim del seu curs (o no es troba al cataleg)."""
+    available = PB.get_available_problems()
+    if current_pid not in available:
+        return None
+    idx = available.index(current_pid)
+    if idx + 1 >= len(available):
+        return None
+    nxt = available[idx + 1]
+    cur_p = PB.PROBLEMS[current_pid]
+    nxt_p = PB.PROBLEMS[nxt]
+    same_course = (
+        nxt_p.get("categoria") == cur_p.get("categoria")
+        and nxt_p.get("any") == cur_p.get("any")
+    )
+    return nxt if same_course else None
+
+
+# ============================================================
+# Selector de problema al main pane (en lloc del sidebar de
+# Streamlit, que ara queda amagat). L'expander es replega
+# automaticament quan hi ha una sessio activa per donar tot
+# l'espai al panell problema + dialeg.
+# ============================================================
+_session_active = st.session_state.get("tutor_state") is not None
+
+st.markdown(
+    '<h2 class="app-title">🦘 Prova Cangur</h2>',
+    unsafe_allow_html=True,
+)
+
+# Missatge de benvinguda: ara just sota el titol, abans del selector,
+# perque sigui el primer que veu l'alumne en obrir l'app.
+if not _session_active:
+    st.info(
+        "👋 Et donem la benvinguda a la pràctica de Prova Cangur.\n\n"
+        "Tria un problema aquí sota i prem **🎯 Inicia el problema**."
+    )
+
+with st.expander("📚 Escull un problema", expanded=(not _session_active)):
     available = PB.get_available_problems()
     if not available:
         st.warning(
@@ -450,33 +584,26 @@ with st.sidebar:
             "Edita `problems.py` per afegir els 30 problemes."
         )
     else:
-        # Si ja hi ha una sessió activa, replega els filtres dins un expander
-        # tancat per defecte. Sense sessió activa, els mostra desplegats per
-        # facilitar la primera tria. El selectbox "Problema" i el botó d'iniciar
-        # queden sempre visibles a fora.
-        _session_active = "tutor_state" in st.session_state
-        if _session_active:
-            _filter_container = st.expander("Filtres", expanded=False)
-        else:
-            st.subheader("Filtres")
-            _filter_container = st.container()
-        with _filter_container:
-            curs_filter = st.multiselect(
-                "Curs",
-                options=["1ESO", "2ESO", "3ESO", "4ESO"],
-                default=["1ESO", "2ESO", "3ESO", "4ESO"],
-                help="Filtra per curs (1r, 2n, 3r o 4t d'ESO).",
-            )
-            puntuacions_filter = st.multiselect(
-                "Punts",
-                options=[3, 4, 5],
-                default=[3, 4, 5],
-                help="3 punts (fàcils), 4 punts (mitjans), 5 punts (difícils).",
-            )
+        # Curs: ara es seleccio UNICA (abans en permetia diverses).
+        curs_filter = st.pills(
+            "Curs",
+            options=["1ESO", "2ESO", "3ESO", "4ESO"],
+            selection_mode="single",
+            default="1ESO",
+            help="Tria el curs (1r, 2n, 3r o 4t d'ESO).",
+        )
+        # Punts: continua sent seleccio multiple.
+        puntuacions_filter = st.pills(
+            "Punts",
+            options=[3, 4, 5],
+            selection_mode="multi",
+            default=[3, 4, 5],
+            help="3 punts (fàcils), 4 punts (mitjans), 5 punts (difícils).",
+        )
         filtered = [
             pid for pid in available
-            if PB.PROBLEMS[pid].get("punts") in puntuacions_filter
-            and PB.PROBLEMS[pid].get("categoria") in curs_filter
+            if PB.PROBLEMS[pid].get("punts") in (puntuacions_filter or [])
+            and PB.PROBLEMS[pid].get("categoria") == curs_filter
         ]
 
         if not filtered:
@@ -495,8 +622,8 @@ with st.sidebar:
                 format_func=_format_option,
                 key="problem_selector",
             )
-
-            if st.button("▶ Iniciar problema", key="start_btn",
+            # Boto d'inici, just sota el desplegable de problema.
+            if st.button("🎯 Inicia el problema", key="start_btn",
                          use_container_width=True):
                 try:
                     st.session_state.tutor_state = T.new_session_state(selected_pid)
@@ -512,9 +639,9 @@ with st.sidebar:
         st.caption(f"Model: `{L.MODEL}`")
         sid = L.get_session_id()
         cost = api_logger.summarize_session(sid)
-        col1, col2 = st.columns(2)
-        col1.metric("Cost USD", f"${cost['cost_usd']:.4f}")
-        col2.metric("Crides", f"{cost['calls_ok']}/{cost['calls_total']}")
+        _col_cost, _col_calls = st.columns(2)
+        _col_cost.metric("Cost USD", f"${cost['cost_usd']:.4f}")
+        _col_calls.metric("Crides", f"{cost['calls_ok']}/{cost['calls_total']}")
 
 
 # ============================================================
@@ -522,101 +649,97 @@ with st.sidebar:
 # ============================================================
 state = st.session_state.tutor_state
 
-if state is None:
-    st.info(
-        "👋 Et donem la benvinguda a la pràctica de Prova Cangur.\n\n"
-        "Selecciona un problema al panell esquerre i prem **▶ Iniciar problema**."
-    )
-else:
+if state is not None:
     # Re-aplicar el context de log defensivament (els reruns de Streamlit
     # poden fer que es perdi).
     L.set_log_context(student_id=state.get("student_id"),
                       session_id=state["session_id"])
 
     problem = state["problem"]
-
-    # Capçalera del problema
-    _categoria = problem.get("categoria", "?")
-    _any = problem.get("any", "?")
-    _numero = problem.get("numero", "?")
-    _punts = problem.get("punts", "?")
-    _tema_raw = problem.get("tema") or "tema no especificat"
-    _tema = _tema_raw[:1].upper() + _tema_raw[1:]
-
-    # Mode actual (per saber si renderitzar la fila d'accions o no dins
-    # del header fixat)
     _mode = state.get("mode", "reasoning")
     _verdict = state.get("verdict_final")
 
-    # HEADER FIXAT: títol + imatge + fila A-E/botons. Tot dins d'un
-    # st.container amb key, perquè Streamlit hi posa la classe
-    # .st-key-problem_header al DOM i el CSS la fa position:fixed. Així
-    # tot el bloc d'identificació + control queda sempre visible.
-    imatge = problem.get("imatge")
-    with st.container(key="problem_header"):
-        # Títol del problema
-        st.markdown(
-            f"### {_categoria}-{_any}. Pregunta {_numero} ({_punts} punts) · {_tema}"
-        )
-        # Imatge
-        if imatge:
-            base_dir = os.path.dirname(os.path.abspath(__file__))
-            img_path = os.path.join(base_dir, "data", imatge)
-            if os.path.exists(img_path):
-                import base64 as _b64
-                with open(img_path, "rb") as _fh:
-                    _img_b64 = _b64.b64encode(_fh.read()).decode("ascii")
-                _ext = os.path.splitext(imatge)[1].lower().lstrip(".")
-                _mime = {"jpg": "jpeg", "jpeg": "jpeg",
-                         "png": "png", "gif": "gif", "webp": "webp"}.get(_ext, "jpeg")
-                st.markdown(
-                    f'<div class="header-image"><img '
-                    f'src="data:image/{_mime};base64,{_img_b64}" '
-                    f'alt="Enunciat del problema"/></div>',
-                    unsafe_allow_html=True,
-                )
-            else:
-                st.warning(f"⚠️ Imatge no trobada: `{img_path}`.")
-        elif problem.get("enunciat"):
-            st.markdown(problem["enunciat"])
+    # ========================================================
+    # LAYOUT en dues columnes: panell del problema (sticky) +
+    # panell del dialeg (scroll natural). El CSS al damunt fa
+    # que la columna del problema es quedi enganxada al top
+    # quan l'usuari fa scroll al dialeg.
+    # ========================================================
+    col_problem, col_dialeg = st.columns([8, 2], gap="medium")
 
-        # Fila A-E + botons d'acció. En mode "reasoning" mostrem la
-        # targeta A-E (no clicable) + botons "Vull una pista" i "Ja
-        # tinc la resposta". En mode "committing" la targeta es
-        # transforma en 5 botons A-E clicables al mateix lloc, i els
-        # botons d'acció es reemplacen per un botó "Cancel·lar".
-        if _verdict is None and _mode == "reasoning":
-            _col_ae, _spacer, _col_hint, _col_commit = st.columns([5, 1, 2, 2])
-            with _col_ae:
+    # --------------------------------------------------------
+    # Panell ESQUERRE: enunciat + opcions A-E + botons d'accio
+    # --------------------------------------------------------
+    with col_problem:
+        with st.container(key="problem_panel"):
+            # Capcalera del problema
+            _categoria = problem.get("categoria", "?")
+            _any = problem.get("any", "?")
+            _numero = problem.get("numero", "?")
+            _tema_raw = problem.get("tema") or "tema no especificat"
+            _tema = _tema_raw[:1].upper() + _tema_raw[1:]
+            st.markdown(
+                f'<h3 class="problem-title">{_categoria} ({_any}) '
+                f'Q{_numero} · {_tema}</h3>',
+                unsafe_allow_html=True,
+            )
+
+            # Imatge
+            imatge = problem.get("imatge")
+            if imatge:
+                base_dir = os.path.dirname(os.path.abspath(__file__))
+                img_path = os.path.join(base_dir, "data", imatge)
+                if os.path.exists(img_path):
+                    _ext = os.path.splitext(imatge)[1].lower().lstrip(".")
+                    _mime = {"jpg": "jpeg", "jpeg": "jpeg",
+                             "png": "png", "gif": "gif",
+                             "webp": "webp"}.get(_ext, "jpeg")
+                    _img_b64 = _load_problem_image_b64(img_path, _mime)
+                    st.markdown(
+                        f'<div class="header-image"><img '
+                        f'src="data:image/{_mime};base64,{_img_b64}" '
+                        f'alt="Enunciat del problema"/></div>',
+                        unsafe_allow_html=True,
+                    )
+                else:
+                    st.warning(f"⚠️ Imatge no trobada: `{img_path}`.")
+            elif problem.get("enunciat"):
+                st.markdown(problem["enunciat"])
+
+            # Targeta A-E (sempre visible, excepte en mode commit que els
+            # 5 botons grans ja fan aquesta funcio)
+            if _mode != "committing":
                 st.markdown(_format_eliminations_card(state),
                             unsafe_allow_html=True)
-            with _col_hint:
-                if st.button("Vull una pista", key="request_hint",
-                             use_container_width=True):
-                    pistes_count = state.get("pistes_count", 0)
-                    has_initial = bool(state["problem"].get("pista_inicial"))
-                    uses_catalog = (pistes_count == 0 and has_initial)
-                    if uses_catalog:
-                        st.session_state.tutor_state = T.request_hint(state)
-                    else:
-                        with st.spinner("S'està generant una pista..."):
+
+            # Botons d'accio segons el mode
+            if _verdict is None and _mode == "reasoning":
+                _col_hint, _col_commit = st.columns(2)
+                with _col_hint:
+                    if st.button("Vull una pista", key="request_hint",
+                                 use_container_width=True):
+                        pistes_count = state.get("pistes_count", 0)
+                        has_initial = bool(state["problem"].get("pista_inicial"))
+                        uses_catalog = (pistes_count == 0 and has_initial)
+                        if uses_catalog:
                             st.session_state.tutor_state = T.request_hint(state)
-                    st.rerun()
-            with _col_commit:
-                if st.button("Ja tinc la resposta", key="enter_commit",
-                             use_container_width=True):
-                    st.session_state.tutor_state = T.request_commit_mode(state)
-                    st.rerun()
-        elif _verdict is None and _mode == "committing":
-            # MODE COMMIT: 5 botons A-E clicables al mateix lloc on hi
-            # havia la targeta no clicable. Espacer + botó de cancel·lar
-            # ocupen la mateixa estructura horitzontal que les accions.
-            _eliminated = set(state.get("eliminated_options", []))
-            _col_ae_btns, _spacer, _col_cancel = st.columns([5, 1, 4])
-            with _col_ae_btns:
-                _btn_cols = st.columns(5)
+                        else:
+                            with st.spinner("S'està generant una pista..."):
+                                st.session_state.tutor_state = T.request_hint(state)
+                        st.rerun()
+                with _col_commit:
+                    if st.button("Ja tinc la resposta", key="enter_commit",
+                                 use_container_width=True):
+                        st.session_state.tutor_state = T.request_commit_mode(state)
+                        st.rerun()
+
+            # MODE COMMIT: 5 botons A-E grans al panell del problema
+            elif _verdict is None and _mode == "committing":
+                st.markdown("**Escull l'opci\u00f3 que creus correcta:**")
+                _eliminated = set(state.get("eliminated_options", []))
+                _cols = st.columns(5)
                 for _i, _letter in enumerate(("A", "B", "C", "D", "E")):
-                    with _btn_cols[_i]:
+                    with _cols[_i]:
                         if st.button(
                             _letter, key=f"commit_{_letter}",
                             disabled=(_letter in _eliminated),
@@ -625,61 +748,86 @@ else:
                             st.session_state.tutor_state = T.process_commit(
                                 state, _letter)
                             st.rerun()
-            with _col_cancel:
-                if st.button("← Tornar a raonar", key="cancel_commit",
+                if st.button("\u2190 Tornar a raonar", key="cancel_commit",
                              use_container_width=True):
                     st.session_state.tutor_state = T.cancel_commit_mode(state)
                     st.rerun()
-        else:
-            # Sessio acabada: només la targeta A-E (mostra estat final).
-            st.markdown(_format_eliminations_card(state),
+
+            # PROBLEMA ACABAT: drecera per passar directament al seguent
+            # problema del mateix curs (l'alumne que acaba el 11 normalment
+            # voldra el 12). Si ja era l'ultim del curs, no es mostra res.
+            elif _verdict is not None:
+                _next_pid = _next_problem_id(state["problem"]["id"])
+                if _next_pid is not None:
+                    if st.button(
+                        "\u23e9\ufe0e Inicia el problema següent",
+                        key="start_next",
+                        use_container_width=True,
+                        help=f"Comen\u00e7ar {_next_pid.removeprefix('CAN-')}",
+                    ):
+                        try:
+                            st.session_state.tutor_state = T.new_session_state(
+                                _next_pid)
+                            st.session_state.input_counter = 0
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Error iniciant: {e}")
+
+    # --------------------------------------------------------
+    # Panell DRET: dialeg + missatges flash + input
+    # --------------------------------------------------------
+    with col_dialeg:
+        with st.container(key="dialogue_panel"):
+            # Fil de xat
+            st.markdown('<h4 class="dialeg-title">Di\u00e0leg</h4>',
                         unsafe_allow_html=True)
+            _render_conversation(state)
 
-    # Placeholder al flux normal: reserva l'espai vertical que ocupa
-    # el header fixat, perquè el contingut posterior (diàleg, input,
-    # etc.) no quedi tapat per sota.
-    st.markdown(
-        '<div class="problem-header-placeholder"></div>',
-        unsafe_allow_html=True,
-    )
+            # Missatges flash (errors API, commits)
+            _render_flash_messages(state)
 
-    # Fil de xat
-    st.markdown("#### Di\u00e0leg")
-    _render_conversation(state)
+            # Si la sessio ha acabat, mostrar resum final i amagar inputs.
+            if _verdict is not None:
+                st.divider()
+                with st.expander("📄 Veure el rastre JSON de la sessió"):
+                    trace = T.build_trace(state)
+                    st.json(trace)
+                    st.download_button(
+                        "⬇ Descarregar rastre JSON",
+                        data=T.serialize_trace(state),
+                        file_name=f"trace_{state['session_id']}.json",
+                        mime="application/json",
+                    )
+            elif _mode == "reasoning":
+                # Sessio en curs mode dialeg: text area + boto enviar.
+                # Fem servir un st.form perque Ctrl+Enter dins el camp de
+                # text faci el mateix que clicar "Enviar missatge".
+                # `clear_on_submit` buida el camp despres d'enviar (abans
+                # ho feiem amb una `key` dinamica i `input_counter`).
+                st.divider()
+                with st.form("message_form", clear_on_submit=True,
+                             border=False):
+                    student_text = st.text_area(
+                        "El teu missatge",
+                        key="message_input",
+                        height=110,
+                        label_visibility="hidden",
+                        placeholder="Escriu aquí la teva frase",
+                    )
+                    _submitted = st.form_submit_button(
+                        "Enviar missatge", use_container_width=True)
+                if _submitted:
+                    with st.spinner("Un moment, si us plau..."):
+                        st.session_state.tutor_state = T.process_message(
+                            state, student_text)
+                    st.rerun()
 
-    # Missatges flash (errors API, commits)
-    _render_flash_messages(state)
-
-    # Si la sessio ha acabat, mostrar resum final i amagar inputs.
-    if _verdict is not None:
-        st.divider()
-        with st.expander("📄 Veure el rastre JSON de la sessió"):
-            trace = T.build_trace(state)
-            st.json(trace)
-            st.download_button(
-                "⬇ Descarregar rastre JSON",
-                data=T.serialize_trace(state),
-                file_name=f"trace_{state['session_id']}.json",
-                mime="application/json",
-            )
-    elif _mode == "reasoning":
-        # Sessio en curs mode dialeg: text area + boto enviar
-        st.divider()
-        input_key = f"message_input_{st.session_state.input_counter}"
-        student_text = st.text_area(
-            "El teu missatge",
-            key=input_key,
-            height=110,
-            label_visibility="hidden",
-            placeholder="Escriu aquí la teva frase",
-        )
-        if st.button("Enviar missatge", key="send_message", use_container_width=True):
-            with st.spinner("Un moment, si us plau..."):
-                st.session_state.tutor_state = T.process_message(state, student_text)
-            st.session_state.input_counter += 1
-            st.rerun()
-
-    # Rastre cronològic + estat intern (només debug)
+    # --------------------------------------------------------
+    # Rastre cronologic + estat intern (fora de les columnes,
+    # a tota l'amplada inferior). Nomes son visibles si l'usuari
+    # ha fet prou scroll, aixi que es queden al peu i no
+    # interfereixen amb el flux principal.
+    # --------------------------------------------------------
     st.divider()
     _render_history_expander(state)
 
