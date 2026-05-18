@@ -339,6 +339,43 @@ st.markdown("""
       cursor: not-allowed;
   }
 
+  /* Mode commit: 5 botons A-E petits amb fons blau-suau. Streamlit
+     genera classes `.st-key-commit_A`, `.st-key-commit_B`, etc. */
+  .st-key-commit_A button,
+  .st-key-commit_B button,
+  .st-key-commit_C button,
+  .st-key-commit_D button,
+  .st-key-commit_E button {
+      background-color: #dbeafe !important;
+      border: 1px solid #dbeafe !important;
+      color: #1a1a1a !important;
+      font-weight: 600 !important;
+      transition: background-color 0.15s, border-color 0.15s, border-width 0.15s;
+  }
+  .st-key-commit_A button:hover,
+  .st-key-commit_B button:hover,
+  .st-key-commit_C button:hover,
+  .st-key-commit_D button:hover,
+  .st-key-commit_E button:hover {
+      background-color: #60a5fa !important;
+      border: 2px solid #000 !important;
+      color: #000 !important;
+  }
+
+  /* Mode commit: botó "← Tornar a raonar" amb fons gris-suau i hover
+     coherent amb els altres botons (border negre 2px). */
+  .st-key-cancel_commit button {
+      background-color: #e5e7eb !important;
+      border: 1px solid #e5e7eb !important;
+      color: #1a1a1a !important;
+      transition: background-color 0.15s, border-color 0.15s, border-width 0.15s;
+  }
+  .st-key-cancel_commit button:hover {
+      background-color: #9ca3af !important;
+      border: 2px solid #000 !important;
+      color: #000 !important;
+  }
+
   /* El sidebar de Streamlit ja no es fa servir: tots els controls
      (selector de problema, filtres, debug) viuen al main pane dins
      d'un expander compacte a la part superior. Aixi recuperem tota
@@ -733,11 +770,17 @@ if state is not None:
                         st.session_state.tutor_state = T.request_commit_mode(state)
                         st.rerun()
 
-            # MODE COMMIT: 5 botons A-E grans al panell del problema
+            # MODE COMMIT: 5 botons A-E al panell del problema. Ocupen
+            # aproximadament el mateix espai que la targeta A-E original
+            # (botons petits a l'esquerra; spacer a la dreta perque no
+            # s'expandeixin). El bloc està marcat amb la classe
+            # `.commit-mode-buttons` perquè el CSS els pugui pintar de
+            # blau-suau amb hover blau-fort, com la resta de botons.
             elif _verdict is None and _mode == "committing":
                 st.markdown("**Escull l'opci\u00f3 que creus correcta:**")
                 _eliminated = set(state.get("eliminated_options", []))
-                _cols = st.columns(5)
+                # Cinc botons petits (1/15 d'amplada cadascun) + spacer 10
+                _cols = st.columns([1, 1, 1, 1, 1, 10])
                 for _i, _letter in enumerate(("A", "B", "C", "D", "E")):
                     with _cols[_i]:
                         if st.button(
@@ -748,8 +791,9 @@ if state is not None:
                             st.session_state.tutor_state = T.process_commit(
                                 state, _letter)
                             st.rerun()
-                if st.button("\u2190 Tornar a raonar", key="cancel_commit",
-                             use_container_width=True):
+                # Botó "Tornar a raonar" amb amplada limitada (no
+                # `use_container_width`, ja que el CSS controlarà la mida).
+                if st.button("\u2190 Tornar a raonar", key="cancel_commit"):
                     st.session_state.tutor_state = T.cancel_commit_mode(state)
                     st.rerun()
 
