@@ -76,6 +76,14 @@ import llm as L
 # IA (cost innecessari, resposta sense valor).
 MIN_MESSAGE_CHARS = 2
 
+# Sostre de missatges de l'alumne per problema. Quan s'arriba al sostre,
+# el botó "Enviar missatge" deixa d'estar disponible; l'alumne pot encara
+# demanar pistes i commit-ejar lletres. La restricció és pedagògica:
+# limita la conversa il·limitada i empeny l'alumne cap a l'acció.
+# Compten només els torns user/message; NO compten pistes (kind=hint) ni
+# events del sistema (kind=system_event).
+MAX_STUDENT_MESSAGES = 10
+
 
 # ============================================================
 # Construcció d'un estat nou
@@ -180,6 +188,30 @@ def _check_choice(letter: str, expected: str) -> bool:
 
 
 # ============================================================
+# Comptadors de missatges de l'alumne
+# ============================================================
+def count_student_messages(state: dict) -> int:
+    """
+    Nombre de missatges de diàleg que l'alumne ha enviat fins ara.
+    NO compten pistes ni system_events; només kind="message" i role="user".
+    """
+    return sum(
+        1 for t in state.get("conversation_history", [])
+        if t.get("kind") == "message" and t.get("role") == "user"
+    )
+
+
+def messages_remaining(state: dict) -> int:
+    """Missatges que encara pot enviar l'alumne abans del sostre."""
+    return max(0, MAX_STUDENT_MESSAGES - count_student_messages(state))
+
+
+def can_send_message(state: dict) -> bool:
+    """True si l'alumne encara pot enviar com a mínim un missatge més."""
+    return messages_remaining(state) > 0
+
+
+# ============================================================
 # Process turn: missatge de diàleg
 # ============================================================
 def process_message(state: dict, student_text: str) -> dict:
@@ -203,6 +235,20 @@ def process_message(state: dict, student_text: str) -> dict:
     state["messages"] = [m for m in state["messages"] if m.get("persistent")]
 
     if state.get("verdict_final") is not None:
+        return state
+
+    # Sostre de missatges per problema. Es comprova ABANS de qualsevol altra
+    # validació o crida a la IA, perquè és una porta dura: superat el límit,
+    # ni s'envia ni es factura cap crida. L'alumne pot demanar pista o
+    # commit-ejar (les dues accions segueixen disponibles).
+    if not can_send_message(state):
+        _push_msg(
+            state, "warning",
+            f"Has fet servir els {MAX_STUDENT_MESSAGES} missatges per a "
+            f"aquest problema. Pots demanar una pista o respondre amb el "
+            f"botó 'Ja tinc la resposta' quan vulguis.",
+            persistent=True,
+        )
         return state
 
     s = (student_text or "").strip()
