@@ -260,6 +260,18 @@ def _build_contents(image_path, conversation: list, new_user_text):
         else:
             content_text = content
 
+        # Si el torn és de la IA i porta un marcador de mode desat,
+        # el restaurem al final del text. Sense això, la IA mira els
+        # seus missatges anteriors a la història, no hi veu cap
+        # marcador (perquè `_extract_mode` el filtra abans de desar
+        # `content`), i deixa de posar-lo a partir del torn 2 — la
+        # IA imita el patró que veu al seu propi historial. Així
+        # mantenim la classificació consistent torn a torn.
+        if (gemini_role == "model"
+                and kind == "message"
+                and turn.get("mode") in ("S", "D")):
+            content_text = f"{content_text}\n[MODE:{turn['mode']}]"
+
         parts = []
         if (image_bytes is not None and not image_consumed
                 and gemini_role == "user"):
