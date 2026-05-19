@@ -680,7 +680,7 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
                 except Exception as e:
                     st.error(f"Error iniciant: {e}")
 
-    # Cost API (només en mode debug)
+    # Cost API + mode d'engatgament (només en mode debug)
     if _is_debug_mode():
         st.divider()
         st.caption("**Mode debug actiu**")
@@ -690,6 +690,25 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
         _col_cost, _col_calls = st.columns(2)
         _col_cost.metric("Cost USD", f"${cost['cost_usd']:.4f}")
         _col_calls.metric("Crides", f"{cost['calls_ok']}/{cost['calls_total']}")
+
+        # Mode d'engatgament del problema actual (classificació feta
+        # per la IA torn a torn). Útil per veure en temps real si la
+        # IA està detectant bé S vs D durant el pilot.
+        _curr_state = st.session_state.get("tutor_state")
+        if _curr_state is not None:
+            _mode_now = T.current_engagement_mode(_curr_state)
+            _n_s = sum(
+                1 for t in _curr_state.get("conversation_history", [])
+                if t.get("role") == "assistant" and t.get("mode") == "S"
+            )
+            _n_d = sum(
+                1 for t in _curr_state.get("conversation_history", [])
+                if t.get("role") == "assistant" and t.get("mode") == "D"
+            )
+            _label = {"S": "🟢 SITUAT", "D": "🟡 DIVAGANT",
+                      None: "— (encara cap torn)"}[_mode_now]
+            st.caption(f"**Mode actual:** {_label}")
+            st.caption(f"Torns S/D acumulats: {_n_s} / {_n_d}")
 
 
 # ============================================================

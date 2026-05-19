@@ -54,6 +54,7 @@ Variables d'entorn:
 """
 
 import os
+import re
 import time
 import threading
 import uuid
@@ -423,6 +424,25 @@ NO el castiguis ni el pressionis. Mateixa calidesa de l'ESPERIT GENERAL. L'objec
 
 == FI DETECCIÓ ==
 
+== MARCATGE DEL MODE (instrucció tècnica, NO és per a l'alumne) ==
+
+Al final de la teva resposta, sempre, sense excepció, afegeix una línia
+nova amb un dels dos marcadors exactes:
+
+[MODE:S]
+[MODE:D]
+
+Tria el que millor descrigui l'estat actual de l'alumne en aquest
+problema, segons els criteris de la secció DETECCIÓ. El marcador NO
+s'ha de mostrar a l'alumne (el codi el filtrarà abans de renderitzar);
+és un senyal intern per al log. Si no estàs segur, prefereix [MODE:S]
+(biaix per defecte cap a S, com diu la secció DETECCIÓ).
+
+NO afegeixis res més després del marcador. NO l'envoltis de codi-blocs
+ni de cometes. Una sola línia, exactament com els dos exemples.
+
+== FI MARCATGE ==
+
 L'alumne pot fer molts tipus de coses a cada torn. Mira el context:
 - compartir una hipòtesi: "crec que és la C"
 - comparar opcions: "dubto entre A i C, m'inclino per A"
@@ -489,8 +509,37 @@ Regles:
 # ============================================================
 # Crida 1: discuss (diàleg socràtic)
 # ============================================================
+_MODE_TAG_RE = re.compile(r"\[MODE\s*:\s*([SD])\s*\]\s*$",
+                          re.IGNORECASE | re.MULTILINE)
+
+
+def _extract_mode(raw: str) -> tuple[str, str | None]:
+    """
+    Separa el marcador [MODE:S] o [MODE:D] del text de la resposta.
+
+    Retorna (text_net, mode) on:
+    - text_net: text per mostrar a l'alumne, sense la línia del marcador.
+    - mode: "S", "D" o None si la IA no ha posat marcador (cas defensiu).
+
+    El marcador es busca al FINAL del text (qualsevol cosa després del
+    marcador es considera soroll i s'elimina). Si n'hi hagués més d'un,
+    es queda l'últim — defensiu davant generacions imperfectes.
+    """
+    if not raw:
+        return "", None
+    matches = list(_MODE_TAG_RE.finditer(raw))
+    if not matches:
+        return raw.strip(), None
+    last = matches[-1]
+    mode = last.group(1).upper()
+    # Tot el que hi ha abans del marcador és el text net; el que hi ha
+    # darrere s'elimina (ha de ser blanc però per si de cas).
+    text_net = raw[:last.start()].rstrip()
+    return text_net, mode
+
+
 def discuss(problem: dict, image_path, conversation: list,
-            student_text: str) -> str:
+            student_text: str) -> tuple[str, str | None]:
     """
     Torn de diàleg socràtic. La IA llegeix la imatge + tot l'històric de
     la conversa + el missatge nou de l'alumne, i respon en prosa lliure
@@ -502,7 +551,12 @@ def discuss(problem: dict, image_path, conversation: list,
     - `conversation`: llista de torns previs SENSE el missatge nou.
     - `student_text`: missatge nou de l'alumne.
 
-    Retorna: text de la resposta de la IA (1-3 frases, en català).
+    Retorna: tupla (text_net, mode) on:
+    - text_net: text de la resposta (1-3 frases, en català) ja net del
+      marcador intern [MODE:X], llest per mostrar a l'alumne.
+    - mode: "S", "D" o None — classificació interna que la IA ha fet de
+      l'engatgament de l'alumne en aquest problema. Es desa al rastre
+      per poder analitzar a posteriori si la IA està detectant bé.
     Si la IA creu que l'alumne pot ja comprometre's, ho dirà DINS el
     text mateix (cap metadada estructurada).
     """
@@ -535,11 +589,13 @@ def discuss(problem: dict, image_path, conversation: list,
         "student_text":   student_text,
         "temperature":    0.4,
     }
-    return _call_with_retry(
+    raw = _call_with_retry(
         "discuss", sys_with_answer, contents,
         max_tokens=MAX_TOKENS, temperature=0.4,
         input_data_for_log=input_data,
-    ).strip()
+    )
+    text_net, mode = _extract_mode(raw)
+    return text_net, mode
 
 
 # ============================================================

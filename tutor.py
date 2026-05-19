@@ -211,6 +211,24 @@ def can_send_message(state: dict) -> bool:
     return messages_remaining(state) > 0
 
 
+def current_engagement_mode(state: dict) -> str | None:
+    """
+    Últim mode d'engatgament que la IA ha marcat en aquest problema.
+    Retorna "S", "D" o None (si encara no hi ha hagut cap torn IA o si
+    la IA no ha posat marcador en l'últim torn).
+
+    Mira el conversation_history del problema actual de darrere a
+    davant i retorna el primer `mode` que trobi en un torn assistant
+    amb kind="message". Útil per a la sidebar de debug.
+    """
+    for turn in reversed(state.get("conversation_history", [])):
+        if (turn.get("role") == "assistant"
+                and turn.get("kind") == "message"
+                and "mode" in turn):
+            return turn["mode"]
+    return None
+
+
 # ============================================================
 # Process turn: missatge de diàleg
 # ============================================================
@@ -275,7 +293,8 @@ def process_message(state: dict, student_text: str) -> dict:
     state["conversation_history"].append(student_turn)
 
     try:
-        ai_text = L.discuss(problem, image_path, prior_conversation, s)
+        ai_text, ai_mode = L.discuss(problem, image_path,
+                                     prior_conversation, s)
     except Exception as e:
         # Treure el torn afegit perquè no s'embruti la history amb un
         # missatge sense resposta.
@@ -283,11 +302,16 @@ def process_message(state: dict, student_text: str) -> dict:
         _push_msg(state, "warning", f"Error de connexió amb la IA: {e}")
         return state
 
-    # Afegeix el torn de la IA.
+    # Afegeix el torn de la IA. El camp `mode` ("S", "D" o None) és la
+    # classificació interna que la IA ha fet del tipus d'engatgament
+    # de l'alumne en aquest problema. Es desa al rastre per poder
+    # auditar a posteriori si la classificació és consistent amb el
+    # que veuria un humà llegint la conversa.
     ai_turn = {
         "role":    "assistant",
         "kind":    "message",
         "content": ai_text,
+        "mode":    ai_mode,
         "ts":      time.time(),
     }
     state["conversation_history"].append(ai_turn)
@@ -297,6 +321,7 @@ def process_message(state: dict, student_text: str) -> dict:
         "type":        "discuss",
         "student":     s,
         "ai_response": ai_text,
+        "mode":        ai_mode,
         "ts":          time.time(),
     })
     return state
@@ -510,6 +535,25 @@ def build_trace(state: dict) -> dict:
         if t.get("kind") == "message" and t.get("role") == "user"
     )
 
+    # Comptadors de mode d'engatgament. La IA marca cada resposta com a
+    # mode "S" (situat) o "D" (divagant) segons criteris del prompt. Els
+    # comptem per saber, a grans trets, com ha vist la IA aquesta sessió.
+    n_mode_S = sum(
+        1 for t in state["conversation_history"]
+        if t.get("role") == "assistant" and t.get("mode") == "S"
+    )
+    n_mode_D = sum(
+        1 for t in state["conversation_history"]
+        if t.get("role") == "assistant" and t.get("mode") == "D"
+    )
+    # Mode actual = últim mode marcat (None si no hi ha hagut torns o
+    # si la IA no ha marcat l'últim).
+    mode_final = None
+    for t in reversed(state["conversation_history"]):
+        if t.get("role") == "assistant" and "mode" in t:
+            mode_final = t["mode"]
+            break
+
     n_commits = len(state["commit_attempts"])
     return {
         "session_id":  state["session_id"],
@@ -528,6 +572,9 @@ def build_trace(state: dict) -> dict:
 
         # Diàleg
         "n_dialeg_turns":       n_dialeg_turns,
+        "n_mode_S":             n_mode_S,
+        "n_mode_D":             n_mode_D,
+        "mode_final":           mode_final,
         "conversation_history": state["conversation_history"],
 
         # Pistes
