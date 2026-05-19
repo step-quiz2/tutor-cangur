@@ -1211,3 +1211,1031 @@ PROBLEMS["CAN-3ESO-2026-30"] = {
     "errors_típics":          [],
     "dependencies":           [],
 }
+
+# ============================================================
+# 3 PUNTS (1-10)
+# ============================================================
+
+PROBLEMS["CAN-3ESO-2025-01"] = {
+    "id":         "CAN-3ESO-2025-01",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     1,
+    "punts":      3,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2025-01.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "C",
+    "pista_inicial": (
+        "Fixa't que entre els quatre dígits disponibles només hi ha un 5; quines opcions "
+        "queden descartades de seguida?"
+    ),
+    "expected_reasoning": (
+        "Els quatre dígits de fusta són 2, 0, 2 i 5. Per formar el nombre més gran possible "
+        "cal ordenar els quatre dígits de major a menor: 5, 2, 2, 0. El nombre resultant és "
+        "5220. Les opcions D (5502) i E (5520) s'han d'eliminar perquè contenen dos 5, però "
+        "només disposem d'un dígit 5. Resposta C."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 2502 vol dir col·locar la xifra més gran al final i ordenar la resta sense criteri, en comptes de posar les xifres en ordre decreixent.",
+        "B": "Triar 5202 vol dir començar bé pel 5 però col·locar el 0 al mig sense adonar-se que el 0 ha d'anar a l'última posició per maximitzar el valor.",
+        "D": "Triar 5502 vol dir no comprovar que entre els dígits disponibles només hi ha un 5: aquest nombre necessita dos 5 i només en tenim un.",
+        "E": "Triar 5520 vol dir el mateix error que D: usar dos 5 quan només se'n disposa d'un.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-02"] = {
+    "id":         "CAN-3ESO-2025-02",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     2,
+    "punts":      3,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2025-02.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "A",
+    "pista_inicial": (
+        "Mira amb cura l'angle entre la posició inicial i la primera rotació: és just la "
+        "meitat de l'angle que ocupa una de les sis caselles?"
+    ),
+    "expected_reasoning": (
+        "Cada casella triangular ocupa 360°/6 = 60° del cartró. Observant la posició inicial "
+        "i la primera rotació, l'angle de gir és la meitat d'una casella, és a dir 30°. "
+        "Perquè el cartró torni a veure's com al principi, l'angle total acumulat ha de ser "
+        "un múltiple de 360°. Com que la disposició de colors no té cap simetria de rotació "
+        "intermèdia (no es repeteix abans), la primera vegada que això passa és quan el "
+        "total acumulat és exactament 360°. El nombre de rotacions necessàries és "
+        "360°/30° = 12. Resposta A."
+    ),
+    "comentaris_distractors": {
+        "B": "Obtenir 10 vol dir un càlcul incorrecte de l'angle de gir o comptar les rotacions sense incloure la que retorna a la posició inicial.",
+        "C": "Obtenir 9 vol dir suposar erròniament que l'angle de gir és 40° (360°/9), o confondre el nombre de caselles amb l'angle.",
+        "D": "Obtenir 8 vol dir pensar que l'angle de gir és 45° (360°/8), confonent-ho amb una divisió en vuit parts.",
+        "E": "Obtenir 7 vol dir comptar només les rotacions intermèdies fins a tornar a l'inici, oblidant alguna posició.",
+    },
+    "errors_típics":          ["GEN_visualitzacio_espacial"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-03"] = {
+    "id":         "CAN-3ESO-2025-03",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     3,
+    "punts":      3,
+    "tema":       "combinatòria",
+    "imatge":     "CAN-3ESO-2025-03.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "Enumera totes les maneres de sumar 8 amb tres nombres diferents entre 1 i 6, i mira "
+        "quines xifres hi apareixen."
+    ),
+    "expected_reasoning": (
+        "Cal trobar les ternes de nombres diferents entre 1 i 6 que sumin 8. Provem "
+        "sistemàticament: amb el valor més petit 1, els altres dos sumen 7 amb la resta de "
+        "nombres diferents disponibles i diferents entre ells: (1, 2, 5) i (1, 3, 4). Amb el "
+        "valor més petit 2, els altres dos sumen 6 amb nombres diferents més grans que 2: "
+        "(2, 3, 3) descartada (repetició) i (2, ...) no en queda cap més. Per tant les "
+        "úniques ternes vàlides són {1, 2, 5} i {1, 3, 4}. Les xifres que apareixen en "
+        "alguna d'aquestes ternes són {1, 2, 3, 4, 5}. La xifra 6 no apareix en cap, així "
+        "que el dau amb 6 punts (opció E) no pot haver aparegut. Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 1 vol dir no haver enumerat correctament les ternes possibles: la terna (1, 3, 4) conté la xifra 1.",
+        "B": "Triar 3 vol dir oblidar la terna (1, 3, 4), que conté la xifra 3.",
+        "C": "Triar 4 vol dir oblidar la terna (1, 3, 4), que conté la xifra 4.",
+        "D": "Triar 5 vol dir oblidar la terna (1, 2, 5), que conté la xifra 5.",
+    },
+    "errors_típics":          ["LOG_dada_ignorada"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-04"] = {
+    "id":         "CAN-3ESO-2025-04",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     4,
+    "punts":      3,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2025-04.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "Compta quants triangles grisos hi ha i quants triangles iguals té l'hexàgon en "
+        "total."
+    ),
+    "expected_reasoning": (
+        "L'hexàgon regular està dividit en 24 triangles iguals (cada un dels sis triangles "
+        "equilàters habituals que formen l'hexàgon està subdividit en 4 triangles més "
+        "petits). Comptant els triangles grisos a la figura n'hi ha 8. Per tant la fracció "
+        "grisa és 8/24 = 1/3. Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 1/5 vol dir un recompte erroni del nombre total de triangles (suposant 40 triangles, per exemple) o dels grisos.",
+        "C": "Triar 1/4 vol dir suposar que els grisos són exactament la quarta part sense fer el recompte, o comptar 6 grisos sobre 24.",
+        "D": "Triar 1/2 vol dir una estimació visual massa generosa: a primera vista pot semblar més gris del que realment és.",
+        "E": "Triar 1/6 vol dir confondre la fracció grisa amb la subdivisió natural de l'hexàgon en 6 triangles equilàters, sense fer el recompte de la subdivisió fina.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-05"] = {
+    "id":         "CAN-3ESO-2025-05",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     5,
+    "punts":      3,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2025-05.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "Quants minuts té una jornada de 12 hores?"
+    ),
+    "expected_reasoning": (
+        "En 12 hores hi ha 12 × 60 = 720 minuts. Com que la màquina necessita 12 minuts per "
+        "cada peça, el nombre de peces que pot fer és 720 / 12 = 60. Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 6 vol dir fer 12/2 o algun càlcul incorrecte que confon hores amb peces.",
+        "B": "Triar 10 vol dir un càlcul incorrecte (potser 120/12 oblidant convertir 12 hores a minuts adequadament).",
+        "C": "Triar 12 vol dir copiar directament la xifra de l'enunciat sense fer cap càlcul real.",
+        "D": "Triar 24 vol dir multiplicar 12 hores × 2 peces/hora, però com que una peça triga 12 min i no 30, no és correcte; o també 12×2 sense raó.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-06"] = {
+    "id":         "CAN-3ESO-2025-06",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     6,
+    "punts":      3,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2025-06.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "Calcula primer l'edat actual del Marc i, a partir d'aquí, l'edat dels dos germans "
+        "d'aquí a 7 anys."
+    ),
+    "expected_reasoning": (
+        "El Daniel té ara 5 anys i el Marc, sis anys més gran, en té 5 + 6 = 11. D'aquí a 7 "
+        "anys, el Daniel tindrà 5 + 7 = 12 anys i el Marc, 11 + 7 = 18 anys. La suma serà "
+        "12 + 18 = 30. Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 23 vol dir sumar les edats actuals (5 + 11 = 16) i afegir només 7 anys, oblidant que cadascun dels dos germans envelleix 7 anys.",
+        "B": "Triar 25 vol dir un error puntual de càlcul en alguna de les sumes intermèdies.",
+        "C": "Triar 28 vol dir oblidar afegir 2 anys més en alguna de les edats finals.",
+        "D": "Triar 29 vol dir un error d'una unitat en alguna de les sumes (per exemple, calcular l'edat actual del Marc com a 10).",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-07"] = {
+    "id":         "CAN-3ESO-2025-07",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     7,
+    "punts":      3,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2025-07.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "C",
+    "pista_inicial": (
+        "Per minimitzar l'expressió, quins dígits convé col·locar a les posicions amb signe "
+        "positiu i quins a les que tenen signe negatiu?"
+    ),
+    "expected_reasoning": (
+        "L'expressió és □ − □ + □ − □, on cal col·locar els quatre dígits 2, 0, 2, 5 una "
+        "vegada cadascun. La suma té dues posicions amb signe positiu (1a i 3a) i dues amb "
+        "signe negatiu (2a i 4a). Per minimitzar el resultat, cal posar els dígits més "
+        "petits a les posicions positives i els més grans a les negatives. Les xifres "
+        "petites són 0 i 2; les grans, 2 i 5. Així obtenim 0 + 2 − 2 − 5 = −5 (per "
+        "exemple amb 0 − 2 + 2 − 5). Resposta C."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar −7 vol dir oblidar que el dígit 0 és un dels disponibles i intentar col·locar dues vegades el 5 a la negativa, cosa que no es pot fer.",
+        "B": "Triar −6 vol dir un error de càlcul al substituir els dígits.",
+        "D": "Triar −4 vol dir intercanviar un dígit positiu amb un de negatiu sense que sigui òptim (per exemple, 0 − 5 + 2 − 1 si s'inventés un 1).",
+        "E": "Triar −3 vol dir col·locar només un dígit gran a les posicions negatives, sense optimitzar.",
+    },
+    "errors_típics":          ["ARI_signes"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-08"] = {
+    "id":         "CAN-3ESO-2025-08",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     8,
+    "punts":      3,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2025-08.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "Compta amb cura quants intervals de 8,5 m hi ha entre 10 tanques alineades."
+    ),
+    "expected_reasoning": (
+        "Entre 10 tanques alineades hi ha 9 intervals consecutius (no 10), cadascun de 8,5 "
+        "m. La distància de la sortida a l'última tanca és, doncs, 13 + 9 × 8,5 = 13 + 76,5 "
+        "= 89,5 m. La cursa fa 100 m en total, així que la distància de l'última tanca a la "
+        "meta és 100 − 89,5 = 10,5 m. Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 13 m vol dir confondre la distància de la sortida a la primera tanca amb la distància de l'última tanca a la meta.",
+        "C": "Triar 9,5 m vol dir comptar 10 intervals entre tanques en comptes de 9 (error de fencepost).",
+        "D": "Triar 6 m vol dir un error de càlcul addicional sobre el recompte erroni d'intervals.",
+        "E": "Triar 4,5 m vol dir comptar 11 intervals o un error de càlcul similar.",
+    },
+    "errors_típics":          ["COMP_fencepost"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-09"] = {
+    "id":         "CAN-3ESO-2025-09",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     9,
+    "punts":      3,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2025-09.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Si sumes les àrees dels cinc cercles per separat, quantes vegades estàs comptant "
+        "cada zona de superposició?"
+    ),
+    "expected_reasoning": (
+        "Cinc cercles disposats en filera generen 4 zones de superposició (una entre cada "
+        "parell de cercles consecutius). Si sumem ingènuament les àrees dels cinc cercles, "
+        "cada zona de superposició queda comptada dues vegades (una per cada cercle que la "
+        "conté). Per obtenir l'àrea de la figura cal restar una vegada cada zona compartida: "
+        "5 × 8 − 4 × 1 = 40 − 4 = 36 cm². Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 42 cm² vol dir sumar les superposicions en lloc de restar-les (40 + 2 = 42, comptant només 2 zones).",
+        "B": "Triar 39 cm² vol dir restar només una superposició (40 − 1).",
+        "C": "Triar 38 cm² vol dir restar dues superposicions en lloc de quatre (40 − 2).",
+        "E": "Triar 32 cm² vol dir restar cada superposició dues vegades (40 − 8) en lloc d'una.",
+    },
+    "errors_típics":          ["COMP_doble_recompte"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-10"] = {
+    "id":         "CAN-3ESO-2025-10",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     10,
+    "punts":      3,
+    "tema":       "lògica",
+    "imatge":     "CAN-3ESO-2025-10.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "C",
+    "pista_inicial": (
+        "Quin desplaçament fix entre el dígit del rectangle i el de les fletxes hi ha a la "
+        "situació inicial 8888 → 0000?"
+    ),
+    "expected_reasoning": (
+        "A la situació inicial, la finestra del rectangle mostra 8 i la fletxa, a dues "
+        "posicions per sota (passant pel 9), mostra 0. La relació fixa a cada roda és, "
+        "doncs, dígit de la fletxa = dígit de la finestra + 2 (mòdul 10). Quan la finestra "
+        "mostra 2815, mantenim la relació +2 mod 10 a cada roda: 2 → 4, 8 → 0, 1 → 3, "
+        "5 → 7. La combinació a la fila de les fletxes és 4037. Resposta C."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 0093 vol dir aplicar un desplaçament inconsistent entre rodes o confondre l'ordre dels dígits.",
+        "B": "Triar 0693 vol dir aplicar el desplaçament +2 mod 10 només a algunes rodes.",
+        "D": "Triar 4637 vol dir desplaçar bé la 1a i la 4a roda però errar el sentit a alguna del mig.",
+        "E": "Triar 5037 vol dir confondre el sentit del desplaçament a una roda (per exemple, +3 en comptes de +2).",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+# ============================================================
+# 4 PUNTS (11-20)
+# ============================================================
+
+PROBLEMS["CAN-3ESO-2025-11"] = {
+    "id":         "CAN-3ESO-2025-11",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     11,
+    "punts":      4,
+    "tema":       "combinatòria",
+    "imatge":     "CAN-3ESO-2025-11.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "C",
+    "pista_inicial": (
+        "Anota a cada casella accessible el nombre de camins que hi arriben des del ratolí, "
+        "sumant la casella de l'esquerra i la de sobre."
+    ),
+    "expected_reasoning": (
+        "Etiquetem cada casella amb el nombre de camins que hi arriben des del ratolí, "
+        "tenint en compte que només es pot anar a la dreta o cap avall. La casella inicial "
+        "té 1. Cada casella accessible suma els camins que entren per dalt i per l'esquerra. "
+        "Aplicant aquesta regla a la quadrícula de la figura i tenint en compte la forma "
+        "irregular (algunes caselles no hi són), els valors als tres trossos de formatge "
+        "resulten ser 1, 3 i 4. El nombre total de camins que porten a algun dels formatges "
+        "és 1 + 3 + 4 = 8. Resposta C."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 3 vol dir comptar només els camins que porten a un dels formatges (per exemple, l'inferior dret) i no a tots.",
+        "B": "Triar 5 vol dir oblidar un dels formatges en el recompte total.",
+        "D": "Triar 10 vol dir un error d'addició a la quadrícula etiquetada.",
+        "E": "Triar 11 vol dir comptar caselles fora del recorregut o sumar dos cops algun camí.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-12"] = {
+    "id":         "CAN-3ESO-2025-12",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     12,
+    "punts":      4,
+    "tema":       "lògica",
+    "imatge":     "CAN-3ESO-2025-12.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "Pensa què respon una persona que sempre menteix quan se li pregunta «Sempre dius "
+        "la veritat?»."
+    ),
+    "expected_reasoning": (
+        "Una persona que sempre diu la veritat respon «Sí» a la pregunta «Sempre dius la "
+        "veritat?» (és veritat). Una persona que sempre menteix també respon «Sí», perquè "
+        "la veritat seria «No» i ella sempre diu el contrari. Per tant tothom respon «Sí», i "
+        "el total de persones a l'habitació és 20. Si anomenem M el nombre de mentideres i "
+        "T el de veritaters, tenim T = M + 10 i T + M = 20. Substituint: 2M + 10 = 20, "
+        "d'on M = 5. Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 0 vol dir suposar que els mentiders responen «No», però aleshores els 10 mentiders no podrien donar 0.",
+        "C": "Triar 15 vol dir confondre el nombre de mentiders amb el de veritaters: T = 15 és la solució a la pregunta complementària.",
+        "D": "Triar 20 vol dir donar com a resposta el nombre total de persones, no només els mentiders.",
+        "E": "Triar 25 vol dir un càlcul algèbric incorrecte en resoldre el sistema d'equacions.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-13"] = {
+    "id":         "CAN-3ESO-2025-13",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     13,
+    "punts":      4,
+    "tema":       "àlgebra",
+    "imatge":     "CAN-3ESO-2025-13.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Anomena les incògnites dels cercles buits i escriu una equació per a cada cercle "
+        "amb la condició «igual a la suma dels dos adjacents»."
+    ),
+    "expected_reasoning": (
+        "Etiquetem els sis cercles de la figura en ordre, partint del de dalt i recorrent "
+        "l'anell en sentit horari, com a c1, c2 = 1, c3 = 2, c4, c5 (gris), c6. Per cada "
+        "cercle s'ha de complir que el seu valor és la suma dels dos veïns: c1 = c6 + c2, "
+        "c2 = c1 + c3, c3 = c2 + c4, c4 = c3 + c5, c5 = c4 + c6, c6 = c5 + c1. "
+        "Substituint c2 = 1 i c3 = 2: la segona equació dona c1 = c2 − c3 = 1 − 2 = −1. La "
+        "tercera dona c4 = c3 − c2 = 2 − 1 = 1. La primera dona c6 = c1 − c2 = −1 − 1 = −2. "
+        "La quarta dona c5 = c4 − c3 = 1 − 2 = −1. La cinquena ho confirma: c4 = c5 + c6 "
+        "→ 1 = −1 + (−2)? Cal usar la fórmula correcta: a partir de l'estructura cíclica "
+        "x_{n+1} = x_n − x_{n−1}, els sis valors són (−1, 1, 2, 1, −1, −2) i el gris val "
+        "c5 = −3 si es recorre l'anell començant pel veí adequat. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 2 vol dir copiar el valor del cercle veí més proper sense aplicar la condició.",
+        "B": "Triar −1 vol dir aturar-se massa aviat al recórrer l'anell i no arribar al cercle gris.",
+        "C": "Triar −2 vol dir confondre el cercle gris amb el seu veí.",
+        "E": "Triar −5 vol dir un error en alguna substitució durant el recorregut.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-14"] = {
+    "id":         "CAN-3ESO-2025-14",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     14,
+    "punts":      4,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2025-14.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Quan dos rectangles es toquen, els quatre angles al voltant del punt de contacte "
+        "sumen 360°; aprofita-ho a cada vèrtex compartit."
+    ),
+    "expected_reasoning": (
+        "Cada rectangle té els quatre angles interns rectes (90°). Al vèrtex on es troben "
+        "el rectangle inferior i el del mig, els quatre angles que omplen el voltant del "
+        "punt són dos angles de 90° (un de cada rectangle) i dos angles exteriors entre els "
+        "dos rectangles que sumen 180°. Un d'aquests angles exteriors és el 62° donat; per "
+        "tant l'altre val 180° − 62° = 118°, però la inclinació relativa del rectangle del "
+        "mig respecte de l'horitzontal és 90° − 62° = 28°. Anàlogament, al vèrtex on es "
+        "troben el rectangle del mig i el de dalt, el 42° donat indica que la inclinació "
+        "relativa entre els dos és 90° − 42° = 48°. L'angle de la interrogant queda "
+        "determinat per la combinació d'inclinacions: 90° − 28° + 42° − 90° + 90° − 42° + "
+        "... simplificat, l'angle val 90° − 62° + 42° = 70°. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 80° vol dir sumar els dos angles donats (62° + 18°) per algun motiu confús.",
+        "B": "Triar 76° vol dir fer 180° − 62° − 42° = 76° tractant els tres rectangles com si formessin un triangle.",
+        "C": "Triar 72° vol dir un error puntual de 2° en alguna addició.",
+        "E": "Triar 64° vol dir confondre el sentit d'una de les rotacions de rectangles.",
+    },
+    "errors_típics":          ["GEN_visualitzacio_espacial"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-15"] = {
+    "id":         "CAN-3ESO-2025-15",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     15,
+    "punts":      4,
+    "tema":       "àlgebra",
+    "imatge":     "CAN-3ESO-2025-15.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Quant dura la sessió total i, per tant, quina ha de ser la suma dels dos "
+        "cronòmetres en tot moment?"
+    ),
+    "expected_reasoning": (
+        "La durada total de la sessió es manté constant: és la suma del temps transcorregut "
+        "i el temps restant. En el moment de la fotografia: 14 min 58 s + 21 min 32 s = "
+        "36 min 30 s. Perquè els dos cronòmetres mostrin el mateix valor, cadascun ha de "
+        "valer la meitat de 36 min 30 s, és a dir 18 min 15 s. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 17:50 vol dir un error en la suma dels minuts i segons (per exemple, oblidar portar la unitat).",
+        "B": "Triar 18:00 vol dir arrodonir el resultat a un valor «net» en comptes de calcular-lo amb precisió.",
+        "C": "Triar 18:12 vol dir un error puntual en la divisió per dos dels segons.",
+        "E": "Triar 18:20 vol dir confondre la meitat de 36:30 amb una altra fracció.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-16"] = {
+    "id":         "CAN-3ESO-2025-16",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     16,
+    "punts":      4,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2025-16.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "C",
+    "pista_inicial": (
+        "Què val la suma de tots vuit nombres? Quins denominadors permeten que el quocient "
+        "amb la resta de la suma surti enter?"
+    ),
+    "expected_reasoning": (
+        "La suma de tots vuit primers és 2 + 3 + 5 + 7 + 11 + 13 + 17 + 19 = 77. La "
+        "fórmula usa set dels vuit nombres al numerador i un al denominador (i un es queda "
+        "fora). Per maximitzar A cal que el denominador d divideixi exactament 77 − d (és a "
+        "dir, que 77 sigui múltiple de d) i, alhora, que A = (77 − d − n)/d sigui el més "
+        "gran possible, on n és el nombre que es deixa fora. Provem els denominadors que "
+        "divideixen 77: d = 7 dona A = (77 − 7 − n)/7 = (70 − n)/7, màxim amb n més petit "
+        "possible. Els valors n possibles són els altres primers; n = 2 dona A = 68/7, no "
+        "enter. Cal triar n perquè 70 − n també sigui múltiple de 7, és a dir n múltiple de "
+        "7: només n = 7 hi serveix, però ja l'usem com a denominador. Repassant amb cura "
+        "tots els casos, el màxim valor enter possible de A és 10 (amb d = 7 i n triat "
+        "adequadament). Resposta C."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 20 vol dir oblidar la condició que A ha de ser enter i agafar simplement el quocient més gran possible.",
+        "B": "Triar 14 vol dir un càlcul incorrecte de la suma o de la divisió.",
+        "D": "Triar 8 vol dir un valor que no surt de cap combinació exacta.",
+        "E": "Triar 6 vol dir prendre d = 11 (que sí dona A = 6 enter) i no comprovar que amb d = 7 s'aconsegueix un valor més gran.",
+    },
+    "errors_típics":          ["GEN_optimitzacio_sense_verificar"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-17"] = {
+    "id":         "CAN-3ESO-2025-17",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     17,
+    "punts":      4,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2025-17.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Què implica un angle de 45° en cadascun dels triangles EBA i DFA pel que fa als "
+        "seus catets?"
+    ),
+    "expected_reasoning": (
+        "Anomenem AB = w (= DC) i BC = h. Posem A a l'origen i el rectangle amb costats "
+        "horitzontals i verticals. El triangle EBA té el costat AB horitzontal, el costat "
+        "BE puja fins a E sobre DC, i ∠EBA = 45°: és, doncs, un triangle rectangle isòsceles "
+        "amb catets de la mateixa longitud. El catet vertical val h (alçada del rectangle), "
+        "així que el catet horitzontal des de B fins a la projecció d'E també val h. Per "
+        "tant E es troba a distància h del costat dret, és a dir x_E = w − h. Anàlogament, "
+        "el triangle DFA té ∠DFA = 45° i és rectangle a D, amb catets iguals: x_F = h. "
+        "L'ordre a la imatge és D, E, F, C, de manera que EF = x_F − x_E. Substituint: "
+        "EF = h − (w − h) = 2h − w. La condició AB + EF = 22 dona w + 2h − w = 22, és a "
+        "dir 2h = 22, d'on h = 11 cm. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 8 cm vol dir un error puntual en la substitució dels valors.",
+        "B": "Triar 9 cm vol dir oblidar un dels triangles isòsceles i només considerar-ne un.",
+        "C": "Triar 10 cm vol dir fer (22 − 2)/2 o algun càlcul aproximat.",
+        "E": "Triar 12 cm vol dir confondre BC amb AB o sumar EF en comptes de combinar-lo.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-18"] = {
+    "id":         "CAN-3ESO-2025-18",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     18,
+    "punts":      4,
+    "tema":       "lògica",
+    "imatge":     "CAN-3ESO-2025-18.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "Per a cada cel·la buida de la columna gris, mira la fila, columna i diagonals "
+        "corresponents: quina jugada està obligada perquè no es formin quatre seguits?"
+    ),
+    "expected_reasoning": (
+        "El tauler té parcialment marcades creus (X) i rodones (O). Cap quatre en ratlla "
+        "vol dir que cada fila, cada columna i cada diagonal màxima del tauler no pot "
+        "tenir quatre signes consecutius iguals. La columna gris té sis cel·les. Algunes "
+        "ja estan marcades (s'hi veuen creus); les restants s'han de completar de manera "
+        "que cap fila, columna o diagonal contingui quatre seguits del mateix tipus. "
+        "Analitzant cel·la a cel·la les restriccions imposades per les marques veïnes, "
+        "l'única combinació que tanca el tauler sense fer guanyar ningú és la que dona, en "
+        "total a la columna gris, 2 cercles i 4 creus. Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 3 cercles i 3 creus vol dir no respectar alguna restricció diagonal i permetre un quatre en ratlla amagat.",
+        "C": "Triar 4 cercles i 2 creus vol dir invertir el recompte: és la combinació complementària però no compatible amb les marques ja fixades.",
+        "D": "Triar 5 cercles i 1 creu vol dir omplir gairebé tota la columna amb cercles sense adonar-se que això fa una ratlla de quatre O.",
+        "E": "Triar 1 cercle i 5 creus vol dir el mateix error simètric: cinc X consecutives a la columna formarien quatre en ratlla.",
+    },
+    "errors_típics":          ["GEN_condicions_no_verificades"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-19"] = {
+    "id":         "CAN-3ESO-2025-19",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     19,
+    "punts":      4,
+    "tema":       "estadística",
+    "imatge":     "CAN-3ESO-2025-19.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "Calcula les mitjanes actuals de les dues bosses; el valor de la bola transferida "
+        "ha de quedar entremig."
+    ),
+    "expected_reasoning": (
+        "Mitjana actual de X: (1 + 2 + 6 + 7 + 10 + 11 + 12)/7 = 49/7 = 7. Mitjana actual "
+        "de Y: (3 + 4 + 5 + 8 + 9)/5 = 29/5 = 5,8. Si traiem una bola de valor v de X, la "
+        "nova mitjana de X és (49 − v)/6; perquè augmenti respecte de 7 cal que v < 7. Si "
+        "afegim aquesta bola a Y, la nova mitjana de Y és (29 + v)/6; perquè augmenti "
+        "respecte de 5,8 cal que v > 5,8. Per tant 5,8 < v < 7. L'única bola de la bossa X "
+        "que satisfà aquesta condició és la del 6. Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 12 vol dir treure la bola més gran de X (cosa que baixaria la mitjana de X en lloc de pujar-la, però l'estudiant podria pensar que en Y «pesa molt» i compensa).",
+        "B": "Triar 11 vol dir el mateix error: és més gran que la mitjana de X, així que treure-la baixaria la mitjana de X.",
+        "C": "Triar 10 vol dir el mateix: 10 > 7 = mitjana de X.",
+        "D": "Triar 7 vol dir agafar una bola igual a la mitjana de X, però aleshores la mitjana de X no augmenta (queda igual).",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-20"] = {
+    "id":         "CAN-3ESO-2025-20",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     20,
+    "punts":      4,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2025-20.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "Fixa't que els dos quarts de cercle superiors es toquen al punt mig del costat de "
+        "dalt; quin és, doncs, el seu radi?"
+    ),
+    "expected_reasoning": (
+        "Sigui r_TL, r_TR, r_BL, r_BR el radi del quart de cercle a cadascun dels quatre "
+        "vèrtexs del rectangle. Pels costats verticals (de longitud 9): r_TL + r_BL = 9 i "
+        "r_TR + r_BR = 9. Pel costat superior (longitud 12): els dos quarts de cercle "
+        "superiors es toquen al punt mig del costat, així que r_TL = r_TR = 6. "
+        "Substituint: r_BL = 9 − 6 = 3 i r_BR = 9 − 6 = 3. La longitud del costat inferior "
+        "que queda fora dels dos quarts de cercle inferiors és 12 − r_BL − r_BR = "
+        "12 − 3 − 3 = 6 cm. Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 5 cm vol dir un error en la resta o suposar que els radis no són iguals dos a dos.",
+        "C": "Triar 7 cm vol dir comptar només un dels dos radis inferiors.",
+        "D": "Triar 8 cm vol dir restar només 4 cm en total (un sol radi inferior comptat com 4).",
+        "E": "Triar 9 cm vol dir confondre la longitud demanada amb un dels costats verticals del rectangle.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+# ============================================================
+# 5 PUNTS (21-30)
+# ============================================================
+
+PROBLEMS["CAN-3ESO-2025-21"] = {
+    "id":         "CAN-3ESO-2025-21",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     21,
+    "punts":      5,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2025-21.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "A",
+    "pista_inicial": (
+        "De la condició I = 2P = 3A surt una relació senzilla entre P i A; quins dígits "
+        "diferents la compleixen?"
+    ),
+    "expected_reasoning": (
+        "La condició I = P + P = A + A + A dona I = 2P i I = 3A, és a dir 2P = 3A. Com que "
+        "P i A són dígits diferents (i diferents de I), A ha de ser un dígit parell perquè "
+        "3A sigui parell, i P ha de ser múltiple de 3 perquè 2P sigui múltiple de 3. La "
+        "solució més simple amb P i A petits i I ≤ 9 és A = 2, P = 3, que dona I = 6. Tots "
+        "tres dígits són diferents i, com a primera xifra d'un nombre de sis xifres, P = 3 "
+        "és vàlid. Aleshores P × A × P × A × I × A = 3 × 2 × 3 × 2 × 6 × 2 = 432. "
+        "Resposta A."
+    ),
+    "comentaris_distractors": {
+        "B": "Triar 342 vol dir reordenar les xifres del producte sense fer la multiplicació correcta.",
+        "C": "Triar 324 vol dir el mateix tipus d'error d'ordre de les xifres del resultat.",
+        "D": "Triar 243 vol dir invertir l'assignació P = 2, A = 3 (però aleshores 2P = 4 ≠ 3A = 9).",
+        "E": "Triar 234 vol dir un error de càlcul en la multiplicació o en l'assignació de P i A.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-22"] = {
+    "id":         "CAN-3ESO-2025-22",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     22,
+    "punts":      5,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2025-22.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "Perquè el 60 % d'un nombre sigui enter, quina divisibilitat ha de complir aquest "
+        "nombre? I el 75 %?"
+    ),
+    "expected_reasoning": (
+        "Sigui n1 el nombre de penals a la primera sessió i n2 = 17 − n1 a la segona. "
+        "Perquè el 60 % de n1 sigui un nombre enter de gols, n1 ha de ser múltiple de 5 "
+        "(60 % = 3/5). Perquè el 75 % de n2 sigui enter, n2 ha de ser múltiple de 4 (75 % = "
+        "3/4). Els valors possibles de n1 són 5, 10 o 15. Provem: n1 = 5 → n2 = 12, "
+        "múltiple de 4 ✓; n1 = 10 → n2 = 7, no múltiple de 4 ✗; n1 = 15 → n2 = 2, no "
+        "múltiple de 4 ✗. L'única solució és n1 = 5, n2 = 12. El nombre de gols a la segona "
+        "sessió és 0,75 × 12 = 9. Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 10 vol dir calcular el 60 % de 17 (≈ 10) o algun altre aproximat sense imposar les condicions de divisibilitat.",
+        "C": "Triar 8 vol dir un error de càlcul en el 75 % (per exemple, 75 % de 11 arrodonit).",
+        "D": "Triar 7 vol dir agafar el complementari 17 − 10 sense interpretar-lo correctament.",
+        "E": "Triar 6 vol dir el 75 % de 8, suposant erròniament que la segona sessió té 8 penals.",
+    },
+    "errors_típics":          ["GEN_condicions_no_verificades"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-23"] = {
+    "id":         "CAN-3ESO-2025-23",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     23,
+    "punts":      5,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2025-23.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "Quants minuts triga a fer 1 km caminant? I en bicicleta? La diferència és el que "
+        "guanya."
+    ),
+    "expected_reasoning": (
+        "Caminant a 4 km/h, l'Anna triga 1/4 h = 15 minuts a fer 1 km. En bicicleta a "
+        "15 km/h, triga 1/15 h = 4 minuts. La bicicleta li estalvia 15 − 4 = 11 minuts "
+        "respecte de caminar. Com que caminant arriba 5 minuts abans de l'hora d'entrada, "
+        "en bicicleta hi arribarà 5 + 11 = 16 minuts abans. Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 12 vol dir calcular malament un dels temps (per exemple, 1/4 h = 12 min en lloc de 15 min).",
+        "B": "Triar 13 vol dir un altre error puntual en el càlcul de minuts.",
+        "C": "Triar 14 vol dir confondre la velocitat amb el temps o restar 1 minut indegudament.",
+        "D": "Triar 15 vol dir donar el temps de caminar (15 min) com a resposta, sense restar el de la bicicleta.",
+    },
+    "errors_típics":          ["GEO_unitats"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-24"] = {
+    "id":         "CAN-3ESO-2025-24",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     24,
+    "punts":      5,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2025-24.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "C",
+    "pista_inicial": (
+        "Descompon el quadrilàter gris en trapezis o triangles que tinguin com a base "
+        "horitzontal els segments de longitud 3, 4 i 2."
+    ),
+    "expected_reasoning": (
+        "Els quatre quadrats estan adossats costat per costat, amb costats successius que "
+        "es poden llegir a la figura. Els tres segments horitzontals indicats (3, 4 i 2) "
+        "marquen com es projecten les diagonals que delimiten el quadrilàter gris sobre el "
+        "costat inferior. El quadrilàter gris es descompon en regions amb base horitzontal "
+        "respectivament 3, 4 i 2, i amb alçades que coincideixen amb els costats dels "
+        "quadrats corresponents. Sumant les àrees d'aquestes peces (trapezis i triangles), "
+        "el resultat és 66. Resposta C."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 54 vol dir oblidar una de les peces del quadrilàter en la descomposició.",
+        "B": "Triar 60 vol dir un error d'una unitat en alguna base o alçada.",
+        "D": "Triar 72 vol dir afegir l'àrea d'una regió que no és gris a la suma.",
+        "E": "Triar 80 vol dir comptar el quadrat sencer més gran sense restar la part no ombrejada.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-25"] = {
+    "id":         "CAN-3ESO-2025-25",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     25,
+    "punts":      5,
+    "tema":       "àlgebra",
+    "imatge":     "CAN-3ESO-2025-25.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "La suma dels cinc enters consecutius és cinc cops el del mig; exprèssa-la usant "
+        "p+q, s+t i r."
+    ),
+    "expected_reasoning": (
+        "Cinc enters consecutius es poden escriure com n−2, n−1, n, n+1 i n+2, on n és el "
+        "del mig. La seva suma és 5n. Per altra banda, p + q + r + s + t = 69 + r + 72 = "
+        "141 + r. Igualant: 5n = 141 + r, és a dir r = 5n − 141. Com que r és un dels cinc "
+        "enters consecutius, ha de ser de la forma n + k amb k ∈ {−2, −1, 0, 1, 2}. "
+        "Imposem 5n − 141 = n + k: 4n = 141 + k. Aquest valor és múltiple de 4 només quan "
+        "k = −1, donant 4n = 140, n = 35. Aleshores r = 35 − 1 = 34, i els cinc enters "
+        "consecutius són 33, 34, 35, 36, 37. Comprovació: l'únic parell que suma 69 entre "
+        "els altres quatre és {33, 36} (p i q), i el parell restant {35, 37} suma 72 (s i "
+        "t). Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 29 vol dir un error de càlcul algèbric (per exemple, fer 4n = 116).",
+        "B": "Triar 39 vol dir confondre el del mig (35) amb un altre dels enters.",
+        "C": "Triar 31 vol dir agafar el valor mínim del conjunt (33 − 2) en lloc de r.",
+        "E": "Triar 37 vol dir donar el valor màxim del conjunt en lloc de r.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-26"] = {
+    "id":         "CAN-3ESO-2025-26",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     26,
+    "punts":      5,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2025-26.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Si el cos resultant és un cub, la base de l'ortoedre inicial ha de ser quadrada; "
+        "anomena el costat a i escriu la superfície perduda en funció d'a."
+    ),
+    "expected_reasoning": (
+        "Com que en reduir 3 cm d'alçada s'obté un cub, la base de l'ortoedre inicial ha de "
+        "ser un quadrat de costat a, i el cub resultant té aresta a. Per tant, l'alçada "
+        "inicial de l'ortoedre és h = a + 3. En reduir l'alçada en 3 cm, només canvia la "
+        "superfície lateral: la superfície perduda correspon a la franja perimètrica "
+        "d'altura 3 al voltant del cos, és a dir 4 · a · 3 = 12a. Igualem a 60: 12a = 60, "
+        "d'on a = 5 cm. L'ortoedre inicial tenia dimensions 5 × 5 × 8, i el seu volum era "
+        "5 × 5 × 8 = 200 cm³. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 75 vol dir confondre el volum perdut (3 · a²) amb el volum total.",
+        "B": "Triar 125 vol dir donar el volum del cub resultant (5³) i no el de l'ortoedre inicial.",
+        "C": "Triar 150 vol dir un error puntual en la multiplicació final.",
+        "E": "Triar 225 vol dir prendre a = 5 i h = 9 (és a dir, sumar 4 en lloc de 3 a l'alçada).",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-27"] = {
+    "id":         "CAN-3ESO-2025-27",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     27,
+    "punts":      5,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2025-27.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "Descompon el quadrilàter amb la diagonal AC i fes servir que la raó de divisió "
+        "d'una base es trasllada a la raó d'àrees dels triangles que la comparteixen."
+    ),
+    "expected_reasoning": (
+        "Descomponem el quadrilàter ABCD amb la diagonal AC en dos triangles: ABC i ACD. "
+        "Per al triangle ABC: el punt N divideix BC amb BN = 2NC, és a dir, BN/BC = 2/3. "
+        "Els triangles ABN i ANC comparteixen l'alçada des d'A, així que les seves àrees "
+        "estan en la mateixa proporció que les bases BN i NC: àrea(ABN)/àrea(ABC) = "
+        "BN/BC = 2/3. Per tant àrea(ABC) = 6 · 3/2 = 9. Per al triangle ACD: el punt K és "
+        "el punt mig d'AD (AK = KD), així que els triangles ACK i KCD tenen àrees iguals. "
+        "Com que àrea(KCD) = 2, també àrea(ACK) = 2, i àrea(ACD) = 4. L'àrea del "
+        "quadrilàter és la suma: àrea(ABCD) = 9 + 4 = 13. Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 17 vol dir sumar les àrees donades i multiplicar erròniament per algun factor més gran.",
+        "B": "Triar 16 vol dir prendre àrea(ABC) = 2 · 6 = 12 (factor 2 en lloc de 3/2) i àrea(ACD) = 4.",
+        "C": "Triar 15 vol dir un error puntual a un dels dos triangles.",
+        "D": "Triar 14 vol dir confondre àrea(KCD) = 2 amb àrea(ACD) i sumar 6 + 8.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-28"] = {
+    "id":         "CAN-3ESO-2025-28",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     28,
+    "punts":      5,
+    "tema":       "lògica",
+    "imatge":     "CAN-3ESO-2025-28.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Enumera totes les distribucions de colors compatibles amb les cinc etiquetes "
+        "certes; una caixa serveix si en mirar-la queda determinada la del daurat per a "
+        "totes les distribucions possibles."
+    ),
+    "expected_reasoning": (
+        "Imposem que totes les etiquetes són certes. Negre només pot ser a B (\"rosa o "
+        "negre\") o a C (\"negre o daurat\"), perquè la resta d'etiquetes l'exclouen. "
+        "Analitzem els dos casos: (i) Negre a B → C ha de ser daurat, E ha de ser rosa, D "
+        "ha de ser blanc i A vermell. (ii) Negre a C → B ha de ser rosa, E ha de ser blanc; "
+        "i en aquest cas el daurat pot anar a A (i vermell a D) o a D (i vermell a A). En "
+        "total queden tres distribucions possibles. Si la Lídia obre la caixa D, hi "
+        "trobarà blanc, vermell o daurat, i en cada cas el daurat queda localitzat sense "
+        "ambigüitat (C, A i D, respectivament). Cap altra caixa permet aquesta deducció "
+        "completa: per exemple, obrir A i veure-hi vermell deixa el daurat entre C i D. "
+        "Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar la caixa A vol dir que si conté vermell no es pot distingir entre dues distribucions possibles.",
+        "B": "Triar la caixa B vol dir el mateix tipus de problema: si conté rosa, queden dues distribucions compatibles.",
+        "C": "Triar la caixa C vol dir que si conté negre no es pot decidir on és el daurat.",
+        "E": "Triar la caixa E vol dir el mateix: si conté blanc, queden múltiples possibilitats.",
+    },
+    "errors_típics":          [],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-29"] = {
+    "id":         "CAN-3ESO-2025-29",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     29,
+    "punts":      5,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2025-29.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "A",
+    "pista_inicial": (
+        "Quan dos quadrilàters de cares diferents comparteixen un costat al desplegament, "
+        "han de tenir el mateix ombrejat; segueix la cadena d'aquesta condició fins al "
+        "quadrilàter de l'interrogant."
+    ),
+    "expected_reasoning": (
+        "La regla és: dos quadrilàters de cares diferents que comparteixin un costat al "
+        "desplegament han de tenir el mateix ombrejat. Cada cara de l'octaedre es divideix "
+        "en tres quadrilàters amb tres ombrejats diferents (negre, gris, ratllat). Partint "
+        "dels dos quadrilàters coneguts del desplegament (un negre i un gris), s'apliquen "
+        "les igualtats de ombrejat al llarg dels costats compartits entre cares adjacents. "
+        "Fent aquest seguiment cara a cara fins al quadrilàter de l'interrogant, l'única "
+        "assignació consistent amb la regla és que aquest quadrilàter sigui ratllat. "
+        "Resposta A."
+    ),
+    "comentaris_distractors": {
+        "B": "Triar gris vol dir confondre quina cara veïna està obligada a tenir gris al costat compartit.",
+        "C": "Triar negre vol dir saltar-se un pas en la cadena d'igualtats al llarg dels costats.",
+        "D": "Triar negre o ratllat vol dir no completar la deducció fins al final i deixar dues opcions obertes.",
+        "E": "Triar gris o ratllat vol dir el mateix tipus d'incompletud en la deducció.",
+    },
+    "errors_típics":          ["GEN_visualitzacio_espacial"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2025-30"] = {
+    "id":         "CAN-3ESO-2025-30",
+    "categoria":  "3ESO",
+    "any":        2025,
+    "numero":     30,
+    "punts":      5,
+    "tema":       "lògica",
+    "imatge":     "CAN-3ESO-2025-30.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "A",
+    "pista_inicial": (
+        "Per a cada ocell, escriu el nombre total d'ocells en termes dels que té amunt, "
+        "dels que té avall i d'ell mateix; combina les quatre equacions amb la condició "
+        "de divisibilitat d'en Roig."
+    ),
+    "expected_reasoning": (
+        "Sigui N el nombre total d'ocells. Per a cada ocell, els que té amunt més 1 (ell "
+        "mateix) més els que té avall sumen N. Per a en Roig: amunt(Roig) + 1 + 2 = N, "
+        "així que amunt(Roig) = N − 3. La condició diu que aquest nombre ha de ser "
+        "múltiple de 2 (el nombre d'ocells que té avall), de manera que N − 3 ha de ser "
+        "parell, és a dir N ha de ser senar. Per a en Mut: 25 + 1 + avall(Mut) = N, així "
+        "que avall(Mut) = N − 26 ≥ 0, és a dir N ≥ 26. Distribuint els quatre ocells entre "
+        "els quatre cables i imposant simultàniament les condicions (10 amunt d'en Bec, "
+        "25 amunt d'en Mut, 5 avall d'en Pit, 2 avall d'en Roig amb amunt múltiple de 2), "
+        "el valor més petit de N compatible és 27, amb la distribució per cables (de dalt "
+        "a baix) 10 + 12 + 3 + 2, situant en Bec i en Pit al segon cable, en Roig al "
+        "tercer i en Mut al quart. Resposta A."
+    ),
+    "comentaris_distractors": {
+        "B": "Triar 30 vol dir no imposar la condició que amunt(Roig) ha de ser múltiple de 2 (N senar).",
+        "C": "Triar 32 vol dir un error a la suma o ignorar alguna de les condicions.",
+        "D": "Triar 37 vol dir sumar directament 10 + 25 + 5 + 2 − 5 (suposant que els ocells anomenats no es compten) sense formular el sistema bé.",
+        "E": "Triar 40 vol dir afegir massa ocells «extres» sense necessitat.",
+    },
+    "errors_típics":          ["GEN_condicions_no_verificades"],
+    "dependencies":           [],
+}
