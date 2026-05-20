@@ -641,6 +641,13 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
             selection_mode="single",
             default="1ESO",
         )
+        # Any: seleccio UNICA (mutuament excloent).
+        any_filter = st.pills(
+            "Any",
+            options=[2024, 2025, 2026],
+            selection_mode="single",
+            default=2026,
+        )
         # Punts: continua sent seleccio multiple.
         puntuacions_filter = st.pills(
             "Punts",
@@ -652,6 +659,7 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
             pid for pid in available
             if PB.PROBLEMS[pid].get("punts") in (puntuacions_filter or [])
             and PB.PROBLEMS[pid].get("categoria") == curs_filter
+            and PB.PROBLEMS[pid].get("any") == any_filter
         ]
 
         if not filtered:
