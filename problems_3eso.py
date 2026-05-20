@@ -1211,6 +1211,1046 @@ PROBLEMS["CAN-3ESO-2026-30"] = {
     "errors_típics":          [],
     "dependencies":           [],
 }
+# ============================================================
+# 2024 — 30 problemes
+# ============================================================
+
+# ============================================================
+# 3 PUNTS (1-10)
+# ============================================================
+
+PROBLEMS["CAN-3ESO-2024-01"] = {
+    "id":         "CAN-3ESO-2024-01",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     1,
+    "punts":      3,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2024-01.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Avalua primer el denominador respectant la prioritat de la multiplicació sobre "
+        "la suma."
+    ),
+    "expected_reasoning": (
+        "Aplicant la prioritat d'operacions, el numerador és 20·24 = 480 i el denominador "
+        "és 2·0 + 2·4 = 0 + 8 = 8. La fracció val, per tant, 480/8 = 60. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 12 vol dir cometre una errada grossa de càlcul, per exemple substituir tota l'expressió per 24/2.",
+        "B": "Triar 30 surt d'avaluar el denominador com 2·(0+2)·4 = 16, sumant 0 i 2 abans de multiplicar i obtenint 480/16 = 30.",
+        "C": "Triar 48 surt d'avaluar el denominador com 2+0+2·4 = 10 (sumant en comptes de multiplicar en el primer terme), donant 480/10 = 48.",
+        "E": "Triar 120 surt d'oblidar el sumand 2·0 i prendre el denominador com a 2·4 = 4 sense més, donant 480/4 = 120; o de calcular el numerador com a 240.",
+    },
+    "errors_típics":          ["ARI_ordre_operacions"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-02"] = {
+    "id":         "CAN-3ESO-2024-02",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     2,
+    "punts":      3,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2024-02.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "C",
+    "pista_inicial": (
+        "Aquí va més ràpid provar les cinc peces que no pas construir la peça correcta des "
+        "de zero."
+    ),
+    "expected_reasoning": (
+        "Els 8 pentàgons del voltant deixen, sobre les vores del forat central, un nombre "
+        "fix d'extrems de corba que cal aparellar. La peça que es posi al centre porta a "
+        "sobre dos segments propis i, en encaixar-la, els seus extrems s'uneixen amb els "
+        "exteriors. Provant les cinc opcions, només l'opció C distribueix els dos segments "
+        "interns de manera que les unions resultants tanquen exactament dues corbes (i no "
+        "una de sola o tres). Les altres opcions, o bé connecten tots els extrems en una "
+        "única línia tancada, o bé deixen extrems sense aparellar correctament. Resposta C."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar A vol dir agafar una peça els segments de la qual uneixen els extrems en una sola línia tancada, no en dues.",
+        "B": "Triar B vol dir triar una peça amb una sola U interior, que tanca una corba però en deixa l'altra oberta.",
+        "D": "Triar D vol dir triar una peça que connecta extrems d'una manera que dona una sola línia tancada llarga, no dues.",
+        "E": "Triar E vol dir triar una peça els segments de la qual encaixen amb un emparellament d'extrems incompatible amb el dibuix dels pentàgons exteriors.",
+    },
+    "errors_típics":          ["GEN_visualitzacio_espacial"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-03"] = {
+    "id":         "CAN-3ESO-2024-03",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     3,
+    "punts":      3,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2024-03.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "A",
+    "pista_inicial": (
+        "Posa noms a les diagonals del rombe (per exemple D i d) i expressa l'àrea del "
+        "rombe i la dels dos triangles que s'hi afegeixen amb els mateixos paràmetres."
+    ),
+    "expected_reasoning": (
+        "Anomenem D la diagonal vertical del rombe i d la diagonal horitzontal. L'àrea del "
+        "rombe és A_rombe = D·d/2. Els dos triangles rectangles que s'afegeixen a la part "
+        "inferior tenen, cadascun, catets iguals a d/2 (mitja diagonal horitzontal) i D/2 "
+        "(mitja diagonal vertical), de manera que la suma de les seves àrees és "
+        "2 · (1/2)·(d/2)·(D/2) = D·d/4. L'augment relatiu d'àrea respecte del rombe és "
+        "(D·d/4)/(D·d/2) = 1/2 = 50%. Resposta A."
+    ),
+    "comentaris_distractors": {
+        "B": "Triar 40% surt d'una estimació visual sense fer el càlcul; els triangles afegits no s'apropen pas a aquesta fracció exacta.",
+        "C": "Triar 30% prové d'estimar a ull, possiblement subestimant la mida dels triangles afegits.",
+        "D": "Triar 25% prové de pensar que cada triangle afegit és 1/8 del rombe (en lloc d'1/4), per exemple confonent base · alçada amb base · alçada / 2.",
+        "E": "Triar 20% és una sub-estimació visual sense un càlcul fonamentat.",
+    },
+    "errors_típics":          ["GEN_calcul"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-04"] = {
+    "id":         "CAN-3ESO-2024-04",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     4,
+    "punts":      3,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2024-04.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "Cada cop que talles un vèrtex del tetraedre, en quants vèrtexs nous el "
+        "substitueixes?"
+    ),
+    "expected_reasoning": (
+        "Un tetraedre regular té 4 vèrtexs. Cada vèrtex del tetraedre està format per la "
+        "trobada de 3 arestes; en escapçar-lo amb un tall pla a prop seu, el vèrtex "
+        "desapareix i es crea un triangle nou a la zona del tall, és a dir, 3 vèrtexs nous "
+        "(els tres punts on el tall talla les 3 arestes). Per tant, cada vèrtex original "
+        "es transforma en 3 vèrtexs nous. Aplicant això als 4 vèrtexs del tetraedre, el "
+        "poliedre resultant en té 4 · 3 = 12. Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 15 vol dir afegir, a més dels 12 vèrtexs nous, els 3 vèrtexs del darrer triangle de tall com si fossin extres, sense adonar-se que ja estaven comptats.",
+        "C": "Triar 11 surt de comptar bé els nous vèrtexs (12) però restar-ne un per error puntual.",
+        "D": "Triar 9 vol dir suposar que en escapçar només queden 2 vèrtexs nous per cada vèrtex original (en comptes de 3) i sumar-ne 1 més per algun motiu, o oblidar el vèrtex d'un dels tetraedres tallats.",
+        "E": "Triar 8 vol dir suposar que cada vèrtex tallat aporta 2 vèrtexs nous, donant 4·2 = 8, sense adonar-se que el tall produeix un triangle amb 3 vèrtexs, no un segment.",
+    },
+    "errors_típics":          ["GEN_visualitzacio_espacial"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-05"] = {
+    "id":         "CAN-3ESO-2024-05",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     5,
+    "punts":      3,
+    "tema":       "lògica",
+    "imatge":     "CAN-3ESO-2024-05.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "El que no pots canviar deformant una corda sense tallar-la és el nombre de "
+        "creuaments \"essencials\" (els nusos)."
+    ),
+    "expected_reasoning": (
+        "La corda de la dreta és un vuit que, en realitat, no està nuat: només té dos "
+        "creuaments aparents que es poden desfer estirant la corda, és a dir, és "
+        "topològicament equivalent a una corda sense nusos (cercle). Per tant, qualsevol "
+        "transformació admissible (sense tallar) ha de portar-la a una altra corba sense "
+        "nusos. Les opcions A, C, D i E són corbes que, encara que dibuixades amb llaços, "
+        "es poden veure com a cordes sense nusos genuïns (cercles deformats). En canvi, "
+        "l'opció B mostra una corda amb un nus genuí (un nus de trèvol o similar), que no "
+        "es pot deformar fins a la corda original sense tallar-la. Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar A vol dir confondre llaços visuals amb nusos: el dibuix de A es desfà estirant la corda fins a quedar un cercle senzill.",
+        "C": "Triar C vol dir donar per nuat un dibuix triangular amb llaços, però es pot demostrar que els seus creuaments són desfeibles.",
+        "D": "Triar D vol dir tractar com a nus genuí un dibuix de tres lòbuls, però aquests lòbuls es poden desfer sense tallar la corda.",
+        "E": "Triar E vol dir veure múltiples llaços apilats com a un nus, quan en realitat tots els creuaments són desfeibles.",
+    },
+    "errors_típics":          ["GEN_visualitzacio_espacial"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-06"] = {
+    "id":         "CAN-3ESO-2024-06",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     6,
+    "punts":      3,
+    "tema":       "combinatòria",
+    "imatge":     "CAN-3ESO-2024-06.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Llista les 6 ordenacions possibles de les tres peces i comprova quins nombres "
+        "diferents en resulten."
+    ),
+    "expected_reasoning": (
+        "Les tres peces són «3», «5» i «33» (un i dos dígits respectivament). Les "
+        "ordenacions possibles per col·locar-les una al costat de l'altra són 3! = 6: "
+        "(3,5,33) → 3533; (3,33,5) → 3335; (5,3,33) → 5333; (5,33,3) → 5333; (33,3,5) → "
+        "3335; (33,5,3) → 3353. Els nombres diferents que se'n formen són {3533, 3335, "
+        "5333, 3353}, és a dir, 4. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 7 vol dir comptar combinacions que no són possibles (per exemple 3335 dues vegades).",
+        "B": "Triar 6 surt de comptar les 6 ordenacions sense adonar-se que algunes produeixen el mateix nombre (com (5,3,33) i (5,33,3), totes dues donen 5333).",
+        "C": "Triar 5 vol dir comptar 6 ordenacions menys una repetició, però en realitat n'hi ha dues parelles d'ordenacions que coincideixen, no només una.",
+        "E": "Triar 3 vol dir, equivocadament, restringir les ordenacions a només una posició possible per a la peça «33», per exemple sempre al final.",
+    },
+    "errors_típics":          ["COMP_doble_recompte"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-07"] = {
+    "id":         "CAN-3ESO-2024-07",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     7,
+    "punts":      3,
+    "tema":       "lògica",
+    "imatge":     "CAN-3ESO-2024-07.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "Comença pel Pol: és l'únic a qui agrada una sola fruita."
+    ),
+    "expected_reasoning": (
+        "Al Pol només li agrada la poma, així que el Pol agafa la poma i la poma queda "
+        "ocupada. A la Pina li agraden la poma i el plàtan; com que la poma està agafada, "
+        "la Pina agafa el plàtan i el plàtan queda ocupat. A l'Eva només li agraden la "
+        "poma i la pera; com que la poma està agafada, l'Eva ha d'agafar la pera. Per "
+        "tant, és l'Eva qui agafa la pera (al Bruno i al Lluís els queden la taronja i el "
+        "kiwi, repartits entre ells). Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Al Pol només li agrada la poma, així que no pot agafar la pera; aquest distractor es tria si no s'aplica primer la restricció més forta.",
+        "B": "Al Bruno li agrada la pera, però també d'altres fruites, i la cadena de restriccions força que la pera l'agafi l'Eva, no el Bruno.",
+        "C": "Al Lluís també li agrada la pera, però amb la cadena forçada (poma→Pol, plàtan→Pina, pera→Eva) al Lluís li queda una de les fruites restants.",
+        "D": "A la Pina no li agrada la pera (només la poma i el plàtan), així que mai no pot agafar la pera.",
+    },
+    "errors_típics":          ["LOG_dada_ignorada"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-08"] = {
+    "id":         "CAN-3ESO-2024-08",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     8,
+    "punts":      3,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2024-08.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Esbrina primer quants infants pesen el mateix que un adult."
+    ),
+    "expected_reasoning": (
+        "Si 12 adults pesen el mateix que 18 infants, llavors 1 adult equival, en pes, a "
+        "18/12 = 3/2 infants. Vuit adults equivalen, doncs, a 8·(3/2) = 12 infants en pes. "
+        "Com que la càrrega màxima de l'ascensor expressada en infants és 18, encara hi "
+        "caben 18 − 12 = 6 infants. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 12 vol dir oblidar que el límit és 18 infants i confondre la mida equivalent dels 8 adults (12 infants) amb la resposta.",
+        "B": "Triar 8 surt de calcular 18−10 = 8 (suposant erròniament que 8 adults equivalen a 10 infants).",
+        "C": "Triar 7 surt d'una estimació o un arrodoniment incorrecte: per exemple, considerar 1 adult ≈ 1,4 infants.",
+        "E": "Triar 5 surt d'un càlcul defectuós, com restar el nombre d'adults (8) del de infants (no del límit equivalent).",
+    },
+    "errors_típics":          ["GEN_calcul"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-09"] = {
+    "id":         "CAN-3ESO-2024-09",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     9,
+    "punts":      3,
+    "tema":       "àlgebra",
+    "imatge":     "CAN-3ESO-2024-09.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "C",
+    "pista_inicial": (
+        "Esbrina primer quants centímetres afegeix cada carretó addicional quan s'encaixa "
+        "amb els anteriors."
+    ),
+    "expected_reasoning": (
+        "Anomenem L la longitud d'un carretó i d l'increment de longitud que afegeix cada "
+        "carretó addicional encaixat. Aleshores, 4 carretons fan L + 3d = 108 cm i 10 "
+        "carretons fan L + 9d = 168 cm. Restant les dues equacions: 6d = 60, d'on d = 10 "
+        "cm. Substituint: L + 30 = 108, per tant L = 78 cm. Resposta C."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 60 cm surt de dividir 108/4 + 168/10 = 27 + 16,8 (o similar) sense plantejar correctament el sistema.",
+        "B": "Triar 68 cm surt de calcular L com 78 − 10 = 68, és a dir, restar erròniament un increment al càlcul correcte.",
+        "D": "Triar 88 cm surt de fer L = 78 + 10 = 88, sumant un increment de més.",
+        "E": "Triar 90 cm surt de prendre 168/10 ≈ 16,8 com a increment i fer una estimació gruixuda d'L.",
+    },
+    "errors_típics":          ["GEN_calcul"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-10"] = {
+    "id":         "CAN-3ESO-2024-10",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     10,
+    "punts":      3,
+    "tema":       "lògica",
+    "imatge":     "CAN-3ESO-2024-10.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "Comença per la casella de la cantonada que pertany alhora a una fila i a una "
+        "columna amb productes coneguts: això la determina o redueix les seves "
+        "possibilitats."
+    ),
+    "expected_reasoning": (
+        "Anomenem la quadrícula amb les caselles a,b (fila de dalt) i c,d (fila de baix). "
+        "Sabem que a·b = 6, c·d = 8, a·c = 4 i b·d = 12, amb a, b, c, d enters positius "
+        "diferents. Provant a partir d'a: si a = 1, llavors b = 6 i c = 4, d'on d = 8/4 = "
+        "2; comprovem b·d = 6·2 = 12 ✓ i tots quatre nombres (1, 6, 4, 2) són diferents. "
+        "Cap altre valor d'a (2, 3 o 6) dona enters diferents (a = 2 fa c = 2 = a; a = 3 "
+        "fa c no enter; a = 6 fa c no enter). Per tant, els quatre nombres són 1, 2, 4, 6 "
+        "i la suma és 1 + 2 + 4 + 6 = 13. Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 14 surt d'admetre un repetit (per exemple 2, 2, 4, 6), però l'enunciat exigeix nombres diferents.",
+        "B": "Triar 10 surt d'un error de càlcul a la suma o de prendre algun valor incorrecte (per exemple 1, 3, 2, 4 que no compleix els productes).",
+        "C": "Triar 12 surt de proposar 1, 2, 3, 6 (suma 12), que falla perquè 3·2 ≠ 8 i no satisfà els productes de la imatge.",
+        "D": "Triar 11 surt d'un càlcul defectuós o de proposar uns nombres que no satisfan tots els productes alhora.",
+    },
+    "errors_típics":          ["GEN_condicions_no_verificades"],
+    "dependencies":           [],
+}
+
+
+# ============================================================
+# 4 PUNTS (11-20)
+# ============================================================
+
+PROBLEMS["CAN-3ESO-2024-11"] = {
+    "id":         "CAN-3ESO-2024-11",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     11,
+    "punts":      4,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2024-11.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "Cada dia, el total de peixos que reben les dues cries és 12. Esbrina primer quants "
+        "dies ha durat el període."
+    ),
+    "expected_reasoning": (
+        "Cada dia el pingüí porta 12 peixos i els reparteix entre les dues cries: 7 a la "
+        "primera que troba i 5 a l'altra. En n dies, cada cria pot rebre entre 5n (si "
+        "sempre li toquen els 5) i 7n (si sempre li toquen els 7), i la diferència entre "
+        "casos consecutius és sempre múltiple de 2 (canvi de 5 a 7 = +2). Per tant, el "
+        "total que rep una cria val 5n + 2b amb 0 ≤ b ≤ n, expressió que té la mateixa "
+        "paritat que n. Si una cria n'ha rebut 44 (parell), n és parell. A més, 5n ≤ 44 "
+        "≤ 7n dona n entre 6,28 i 8,8, així que n = 8. El total de peixos portats en "
+        "aquests 8 dies és 12·8 = 96 i, per tant, l'altra cria n'ha rebut 96 − 44 = 52. "
+        "Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 58 surt de plantejar correctament 12n − 44 però amb n = 8,5 (no enter) i arrodonir a la baixa.",
+        "C": "Triar 46 surt de pensar que el total diari es reparteix com 7+5 = 12 i deduir 44 + 2 = 46 sense plantejar el sistema.",
+        "D": "Triar 40 surt de fer 44 − 5n amb n = 8/2, és a dir, un càlcul erroni sobre la diferència entre cries.",
+        "E": "Triar 34 surt de pensar que en cada dia la diferència entre cries és sempre 2 i acumular-la en sentit contrari (44 − 2·5 = 34).",
+    },
+    "errors_típics":          ["GEN_calcul"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-12"] = {
+    "id":         "CAN-3ESO-2024-12",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     12,
+    "punts":      4,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2024-12.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "Comença per esbrinar quant valia l'angle d'un tros original (quan n'hi havia "
+        "deu)."
+    ),
+    "expected_reasoning": (
+        "Els deu trossos iguals ocupaven 360°, així que cada tros tenia un angle de 36°. "
+        "Després de menjar-se'n un, queden 9 trossos que sumen 9·36° = 324° d'angle "
+        "ocupat. La diferència 360° − 324° = 36° s'ha de repartir per igual entre els 9 "
+        "espais entre trossos consecutius, així que cada espai és de 36°/9 = 4°. Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 5° surt de repartir 36° entre 7,2 (o un nombre erroni de gaps), per exemple comptant 8 espais en lloc de 9.",
+        "C": "Triar 3° surt de comptar 12 espais o repartir l'angle del tros que falta entre un nombre erroni d'espais.",
+        "D": "Triar 2° surt de pensar que l'angle a repartir és 18° (la meitat) i no 36°, o repartir 36° entre 18 espais.",
+        "E": "Triar 1° surt d'una estimació molt petita, possiblement creient que els espais són gairebé inexistents.",
+    },
+    "errors_típics":          ["COMP_fencepost"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-13"] = {
+    "id":         "CAN-3ESO-2024-13",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     13,
+    "punts":      4,
+    "tema":       "lògica",
+    "imatge":     "CAN-3ESO-2024-13.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "A",
+    "pista_inicial": (
+        "Suma els valors de les tres peces que ja té en Pep. La suma total de la "
+        "quadrícula ha de ser divisible per 4 (perquè les quatre files —i les quatre "
+        "columnes— sumin el mateix)."
+    ),
+    "expected_reasoning": (
+        "Si totes les files (i columnes) d'una quadrícula 4×4 sumen el mateix valor S, "
+        "aleshores la suma total dels 16 nombres és 4S i, en particular, ha de ser "
+        "divisible per 4. Sumem els valors de les tres peces ja col·locades: la primera "
+        "peça (en L) suma 2+2+1+2 = 7; la segona peça suma 2+1+3+1+1 = 8; la tercera "
+        "suma 2+3+1+2 = 8. Total parcial: 7+8+8 = 23. La quarta peça ha de fer que el "
+        "total sigui múltiple de 4. Provem cada opció: A) 1+1+3 = 5 → total 28 = 4·7 ✓; "
+        "B) 2+1+0 = 3 → total 26, no divisible per 4; C) 1+2+1 = 4 → total 27, no "
+        "divisible per 4; D) 2+2+2 = 6 → total 29, no divisible per 4; E) 2+2+3 = 7 → "
+        "total 30, no divisible per 4. Només A passa la condició aritmètica i és, doncs, "
+        "la peça que cal afegir. Resposta A."
+    ),
+    "comentaris_distractors": {
+        "B": "Triar B vol dir oblidar la condició de divisibilitat per 4 i triar una peça per inspecció visual de la quadrícula.",
+        "C": "Triar C vol dir comptar un dels valors malament al sumar les peces existents, donant una suma parcial que faria que C semblés correcte.",
+        "D": "Triar D surt de pensar que tots els nombres han de ser iguals per simetria, sense aplicar el criteri de divisibilitat per 4.",
+        "E": "Triar E vol dir no verificar que la suma total sigui múltiple de 4 i acceptar una peça per intuïció visual.",
+    },
+    "errors_típics":          ["GEN_condicions_no_verificades"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-14"] = {
+    "id":         "CAN-3ESO-2024-14",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     14,
+    "punts":      4,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2024-14.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "A",
+    "pista_inicial": (
+        "Busca si la figura té algun eix de simetria que aparelli les zones grises."
+    ),
+    "expected_reasoning": (
+        "La figura mostra un quadrat amb tres segments traçats des dels vèrtexs cap a un "
+        "punt interior, formant cinc regions, dues de les quals (les triangulars laterals) "
+        "són les regions grises etiquetades M i N. La construcció és simètrica respecte de "
+        "l'eix vertical del quadrat: en reflectir la figura per aquest eix, la zona M es "
+        "transforma en la zona N i viceversa. Per tant, M i N tenen la mateixa àrea i "
+        "M − N = 0 m². Resposta A."
+    ),
+    "comentaris_distractors": {
+        "B": "Triar 1 m² vol dir suposar que les dues regions tenen àrees lleugerament diferents sense aprofitar la simetria.",
+        "C": "Triar 2 m² surt d'un càlcul d'àrees fet sense tenir en compte la simetria de la construcció.",
+        "D": "Triar 5 m² surt de fer cas a l'aspecte visual sense calcular o sense usar la simetria.",
+        "E": "Triar 10 m² (l'àrea d'un dels triangles) vol dir interpretar la pregunta com l'àrea d'una de les regions, no la diferència entre les dues.",
+    },
+    "errors_típics":          ["LOG_dada_ignorada"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-15"] = {
+    "id":         "CAN-3ESO-2024-15",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     15,
+    "punts":      4,
+    "tema":       "àlgebra",
+    "imatge":     "CAN-3ESO-2024-15.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Si la pista té longitud L, expressa el nombre de salts de pujada i el de baixada "
+        "en funció d'L."
+    ),
+    "expected_reasoning": (
+        "Anomenem L la longitud de la pista. A la pujada el cangur fa salts d'1 m, així "
+        "que en fa L salts; a la baixada fa salts de 3 m, així que en fa L/3 salts. La "
+        "suma és L + L/3 = 4L/3 i ha de ser 2024. D'aquí surt L = 2024·3/4 = 1518 m. La "
+        "longitud total del recorregut (pujada + baixada) és 2L = 3036 m. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 506 m vol dir fer 2024/4 = 506 sense entendre el factor 4/3 ni multiplicar per 2.",
+        "B": "Triar 1012 m vol dir donar la longitud d'una sola pujada (calculada amb un error) o fer 2024/2.",
+        "C": "Triar 2024 m vol dir confondre el nombre total de salts amb la longitud total recorreguda, donant 1 m per salt de mitjana.",
+        "E": "Triar 4048 m vol dir multiplicar 2024 per 2, com si cada salt fes 1 m i el recorregut fos d'anada i tornada.",
+    },
+    "errors_típics":          ["GEN_calcul"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-16"] = {
+    "id":         "CAN-3ESO-2024-16",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     16,
+    "punts":      4,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2024-16.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "A",
+    "pista_inicial": (
+        "Classifica les noves posicions en dos tipus: les que toquen UNA cara visible de "
+        "la figura 2 i les que en toquen DUES."
+    ),
+    "expected_reasoning": (
+        "La figura 2 té 1 cub central i 6 cubs enganxats, un a cada cara del central. "
+        "Cadascun dels 6 cubs exteriors té 5 cares visibles (totes excepte la que toca "
+        "el central), per tant hi ha 6·5 = 30 cares a amagar. Les noves posicions on "
+        "podem encaixar cubs es classifiquen en dos tipus: les posicions \"punta\" "
+        "(situades a continuació de cada cub exterior, com (±2,0,0), (0,±2,0), "
+        "(0,0,±2)) en són 6 i cadascuna amaga 1 cara; les posicions \"aresta\" "
+        "(diagonals entre dos cubs exteriors veïns, com (±1,±1,0), etc.) en són 12 i "
+        "cadascuna amaga 2 cares perquè toca dos cubs exteriors alhora. Si fem servir "
+        "totes 12 posicions d'aresta, amaguem 24 cares i ens en queden 6 per amagar: "
+        "les cobrim amb els 6 cubs de punta. Total mínim: 12 + 6 = 18 cubs. Resposta A."
+    ),
+    "comentaris_distractors": {
+        "B": "Triar 16 vol dir comptar 4 cubs de punta i 12 d'aresta, oblidant 2 punts (per exemple, els del vèrtex superior i inferior).",
+        "C": "Triar 14 vol dir suposar que algunes posicions d'aresta amaguen 3 cares en lloc de 2, sobreestimant l'eficiència i comptant menys cubs.",
+        "D": "Triar 12 surt d'usar només les 12 posicions d'aresta i oblidar que també calen els 6 cubs de punta.",
+        "E": "Triar 10 surt d'una estimació molt baixa que ignora algunes de les cares per amagar.",
+    },
+    "errors_típics":          ["GEN_visualitzacio_espacial"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-17"] = {
+    "id":         "CAN-3ESO-2024-17",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     17,
+    "punts":      4,
+    "tema":       "àlgebra",
+    "imatge":     "CAN-3ESO-2024-17.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Anomena x, W−x les amplades de les dues columnes i y, H−y les altures de les "
+        "dues files, i escriu cada perímetre amb aquestes variables."
+    ),
+    "expected_reasoning": (
+        "Anomenem les amplades de les dues columnes x i W−x, i les altures de les dues "
+        "files y i H−y. Els quatre rectangles tenen perímetres 2(x+y), 2((W−x)+y), "
+        "2(x+(H−y)) i 2((W−x)+(H−y)). Sumant les dues parelles oposades en diagonal: "
+        "P(dalt-esquerra) + P(baix-dreta) = 2(W+H) = P(dalt-dreta) + P(baix-esquerra). "
+        "Per la figura, P(dalt-dreta) = 16, P(baix-esquerra) = 18 i P(baix-dreta) = 24. "
+        "Per tant, P(dalt-esquerra) = 16 + 18 − 24 = 10. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 16 vol dir copiar el perímetre conegut més proper sense aplicar la relació de parelles oposades.",
+        "B": "Triar 14 surt de sumar 16+18+24 i dividir entre alguna cosa, sense aplicar la igualtat diagonal correctament.",
+        "C": "Triar 12 surt d'un error de càlcul en la mateixa relació diagonal o de prendre el rectangle equivocat.",
+        "E": "Triar 8 surt de fer 24 − 16 = 8 (només una de les diagonals), oblidant el tercer terme de la relació.",
+    },
+    "errors_típics":          ["GEO_costats_oblidats"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-18"] = {
+    "id":         "CAN-3ESO-2024-18",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     18,
+    "punts":      4,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2024-18.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "El que NO és aigua (la matèria seca) no es perd en assecar-se. Pensa quina "
+        "fracció del bolet acabat de collir i del bolet assecat és aquesta matèria seca."
+    ),
+    "expected_reasoning": (
+        "Sigui M el pes del bolet acabat de collir. Aleshores la matèria seca (no aigua) "
+        "n'és el 12%, és a dir, 0,12·M. En assecar-se, aquesta matèria seca no canvia, "
+        "però el bolet assecat només té un 20% d'aigua, és a dir, un 80% de matèria seca. "
+        "Si M' és el pes del bolet assecat, llavors 0,80·M' = 0,12·M, d'on M' = 0,12·M / "
+        "0,80 = 0,15·M. La disminució relativa de pes és (M − M')/M = (1 − 0,15) = 0,85, "
+        "és a dir, un 85%. Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 68% surt de fer simplement 88% − 20% = 68%, restant els percentatges d'aigua sense considerar que la matèria seca és invariant.",
+        "B": "Triar 76% surt d'un càlcul aproximat sense plantejar el model d'invariança de la matèria seca.",
+        "C": "Triar 80% surt de pensar que el 80% del pes era aigua i que aquesta s'ha evaporat completament (en realitat encara queda aigua al bolet assecat).",
+        "D": "Triar 82,4% surt d'un càlcul fet amb l'aproximació 0,12/0,68 o similar, en lloc de 0,12/0,80.",
+    },
+    "errors_típics":          ["LOG_dada_ignorada"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-19"] = {
+    "id":         "CAN-3ESO-2024-19",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     19,
+    "punts":      4,
+    "tema":       "combinatòria",
+    "imatge":     "CAN-3ESO-2024-19.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "Per cada hexàgon, mira quants triangles del patró el toquen i pensa entre quants "
+        "hexàgons es comparteix cada triangle."
+    ),
+    "expected_reasoning": (
+        "En el patró del mosaic, cada hexàgon està envoltat per 6 triangles (un al voltant "
+        "de cada costat), i, simètricament, cada triangle del patró toca 3 hexàgons (un "
+        "per cadascun dels seus tres costats). Aplicant un recompte doble: nombre de "
+        "(triangle, hexàgon) adjacents = 6·H = 3·T, d'on T = 2·H. Amb H = 3000 hexàgons, "
+        "fan falta T = 6000 triangles. Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 9000 surt de comptar 3 triangles per hexàgon sense compartir, o suposar que cada hexàgon en \"toca\" 3 propis.",
+        "C": "Triar 3000 surt de pensar que la ràtio és 1:1 entre hexàgons i triangles, ignorant que cada hexàgon en té diversos al voltant.",
+        "D": "Triar 1500 surt de pensar que cada triangle es comparteix entre 6 hexàgons, no entre 3.",
+        "E": "Triar 1000 vol dir suposar una ràtio molt baixa de triangles per hexàgon sense fer el recompte doble.",
+    },
+    "errors_típics":          ["COMP_doble_recompte"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-20"] = {
+    "id":         "CAN-3ESO-2024-20",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     20,
+    "punts":      4,
+    "tema":       "lògica",
+    "imatge":     "CAN-3ESO-2024-20.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "C",
+    "pista_inicial": (
+        "Comença suposant que el primer pirata (en Tom) és el que diu la veritat i "
+        "comprova si això és compatible amb la resta."
+    ),
+    "expected_reasoning": (
+        "Hi ha 30 monedes en total i cada pirata té dues xifres visibles i una que el "
+        "paper estripat amaga. Provem que cada pirata sigui l'únic que diu la veritat: "
+        "Tom: si diu la veritat, Or + 9 + 11 = 30 ⇒ (Or, Plata, Bronze) = (10, 9, 11). "
+        "Però aleshores la dada \"Or = 10\" del Pit també seria certa, contradicció. "
+        "Al: si diu la veritat, 7 + Plata + 12 = 30 ⇒ (7, 11, 12). Es comprova que cap "
+        "de les xifres visibles dels altres tres pirates coincideix amb aquests valors "
+        "(Tom: 9 ≠ 11, 11 ≠ 12; Pit: 10 ≠ 7, 10 ≠ 12; Jim: 9 ≠ 7, 10 ≠ 11), de manera que "
+        "tots ells menteixen en tot. Pit: si diu la veritat, (10, 10, 10). Però aleshores "
+        "la \"Plata = 10\" del Jim també seria certa, contradicció. Jim: si diu la "
+        "veritat, (9, 10, 11). Però aleshores la \"Bronze = 11\" del Tom també seria "
+        "certa, contradicció. L'únic cas coherent és el de l'Al. Resposta C."
+    ),
+    "comentaris_distractors": {
+        "A": "Suposar que Jim diu la veritat dona (9, 10, 11), però aleshores Tom també diu la veritat sobre el bronze, contradient l'enunciat.",
+        "B": "Suposar que Pit diu la veritat dona (10, 10, 10), però aleshores Jim també diu la veritat sobre la plata.",
+        "D": "Suposar que Tom diu la veritat dona (10, 9, 11), però aleshores Pit també diu la veritat sobre l'or.",
+        "E": "Hi ha exactament una solució coherent (Al diu la veritat), per tant la situació SÍ que es pot determinar.",
+    },
+    "errors_típics":          ["GEN_condicions_no_verificades"],
+    "dependencies":           [],
+}
+
+
+# ============================================================
+# 5 PUNTS (21-30)
+# ============================================================
+
+PROBLEMS["CAN-3ESO-2024-21"] = {
+    "id":         "CAN-3ESO-2024-21",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     21,
+    "punts":      5,
+    "tema":       "combinatòria",
+    "imatge":     "CAN-3ESO-2024-21.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "Fes una taula amb el nombre de segments horitzontals i verticals de cada dígit, "
+        "de 0 a 9."
+    ),
+    "expected_reasoning": (
+        "Comptem els segments horitzontals (H) i verticals (V) de cada dígit de 0 a 9 en "
+        "la tipografia de set segments: 0 (H=2, V=4), 1 (H=0, V=2), 2 (H=3, V=2), 3 (H=3, "
+        "V=2), 4 (H=1, V=3), 5 (H=3, V=2), 6 (H=3, V=3), 7 (H=1, V=2), 8 (H=3, V=4), 9 "
+        "(H=3, V=3). Es busquen tres dígits diferents amb suma de H igual a 5 i de V igual "
+        "a 10. Per V = 10 amb tres dígits cal partir 10 en tres parts del conjunt "
+        "{2,3,4}: les úniques particions són 4+4+2 i 4+3+3. Amb 4+3+3 cal triar el 0 o el "
+        "8 (V=4) i dos dels {4,6,9} (V=3); cap combinació suma H = 5 (totes donen 6 o "
+        "més). Amb 4+4+2 cal triar 0 i 8 (els dos amb V=4) i un dígit amb V=2 (entre 1, "
+        "2, 3, 5, 7); els seus H són 2, 3, 3, 3, 1 i, sumant H amb els de 0 i 8 (2+3 = "
+        "5), cal H = 0 del tercer dígit, és a dir, l'1. Els tres dígits són 0, 1 i 8, amb "
+        "suma 0 + 1 + 8 = 9. Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 19 vol dir agafar dígits com 2, 8 i 9 (suma 19), però la suma de segments no és la demanada.",
+        "B": "Triar 18 vol dir agafar dígits com 1, 8 i 9 (suma 18), que també tenen V = 9, no 10.",
+        "C": "Triar 14 surt d'agafar dígits com 0, 6 i 8 (suma 14), que tenen V = 11, no 10.",
+        "D": "Triar 10 surt d'agafar dígits com 0, 2 i 8 (suma 10), que tenen H = 8, no 5.",
+    },
+    "errors_típics":          ["GEN_condicions_no_verificades"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-22"] = {
+    "id":         "CAN-3ESO-2024-22",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     22,
+    "punts":      5,
+    "tema":       "lògica",
+    "imatge":     "CAN-3ESO-2024-22.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "A",
+    "pista_inicial": (
+        "Llista totes les parelles compatibles amb la frase de cada noi i creua les "
+        "restriccions: les parelles han de ser disjuntes."
+    ),
+    "expected_reasoning": (
+        "Llistem les parelles possibles per a cadascun: Alèxia (suma 6): {1,5} o {2,4}; "
+        "Bru (diferència 5): {1,6}, {2,7}, {3,8} o {4,9}; Clara (producte 18): {2,9} o "
+        "{3,6}; Diana (un doble de l'altre): {1,2}, {2,4}, {3,6} o {4,8}. Les quatre "
+        "parelles han de ser disjuntes i deixar una sola carta. Provem Alèxia = {1,5}: "
+        "amb Clara = {3,6} queden disponibles {2,4,7,8,9}; Bru = {2,7} (encaixa); Diana "
+        "= {4,8} (encaixa, perquè 8 = 2·4). Sobra la carta 9. La resta de combinacions "
+        "topen: amb Clara = {2,9} no hi ha una Diana compatible amb les restes; amb "
+        "Alèxia = {2,4} Diana ja no pot usar el 4 i la resta no encaixa amb Bru o Clara. "
+        "Per tant, la carta que ha quedat sobre la taula és el 9. Resposta A."
+    ),
+    "comentaris_distractors": {
+        "B": "Triar 8 vol dir construir una partició que deixi el 8 fora, però aleshores Diana no té parella vàlida amb les cartes restants.",
+        "C": "Triar 6 vol dir deixar fora el 6, però amb Clara forçada a {3,6} o {2,9} i els altres condicionants no s'aconsegueix una partició coherent.",
+        "D": "Triar 5 vol dir deixar fora el 5, però Alèxia necessita el 5 (amb {1,5}) o el 4 (amb {2,4}), i triar Alèxia = {2,4} no porta a una solució vàlida.",
+        "E": "Triar 3 vol dir deixar fora el 3, però Clara necessita el 3 (amb {3,6}) o el 2,9; cap combinació coherent deixa el 3 sense fer servir.",
+    },
+    "errors_típics":          ["GEN_condicions_no_verificades"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-23"] = {
+    "id":         "CAN-3ESO-2024-23",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     23,
+    "punts":      5,
+    "tema":       "combinatòria",
+    "imatge":     "CAN-3ESO-2024-23.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "Considera per separat cadascun dels eixos de simetria possibles d'una quadrícula "
+        "4×4."
+    ),
+    "expected_reasoning": (
+        "Anomenem A i B les dues caselles ja pintades de negre, situades sobre una "
+        "diagonal de la quadrícula. Una quadrícula 4×4 té 4 eixos de simetria: el "
+        "vertical mig, l'horitzontal mig i les dues diagonals. Per a cada eix, comptem "
+        "configuracions vàlides (afegir-hi dos quadrats fent que sigui un eix de "
+        "simetria de la figura resultant, i comprovar que no n'hi ha cap altre). "
+        "Eix vertical i eix horitzontal: en cap dels dos hi ha caselles inicials sobre "
+        "l'eix; reflectir A i B ens dona dues caselles noves forçades i no queda llibertat. "
+        "Dona 1 configuració per eix, és a dir, 2 en total. Diagonal que conté B: A no "
+        "hi és, però B sí; reflectir A dona una casella forçada, i el segon quadrat "
+        "lliure ha d'estar sobre l'eix per preservar-ne la simetria. Sobre l'eix hi ha "
+        "4 caselles, però B ja n'ocupa una, així que 3 lliures, és a dir, 3 "
+        "configuracions. Diagonal que no conté B: cap casella inicial sobre l'eix; "
+        "reflectir A i B dona dues caselles forçades, sense llibertat, és a dir, 1 "
+        "configuració. Es comprova que cap configuració té un segon eix de simetria. "
+        "Total: 2 + 3 + 1 = 6. Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 2 vol dir només considerar els dos eixos ortogonals (horitzontal i vertical) i oblidar les diagonals.",
+        "B": "Triar 3 vol dir considerar els tres eixos (horitzontal, vertical i una diagonal) sense l'antidiagonal o sense les seves variants.",
+        "C": "Triar 4 vol dir comptar un cas per cada eix sense adonar-se que l'antidiagonal admet 3 configuracions diferents.",
+        "D": "Triar 5 vol dir comptar els 4 eixos amb un per cadascun + 1 extra, o trobar 3 a l'antidiagonal però només 2 als ortogonals.",
+    },
+    "errors_típics":          ["COMP_doble_recompte"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-24"] = {
+    "id":         "CAN-3ESO-2024-24",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     24,
+    "punts":      5,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2024-24.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Anomena H l'alçada del rectangle i escriu el radi de cada semicercle en funció "
+        "d'H i de les dues distàncies (5 i 7)."
+    ),
+    "expected_reasoning": (
+        "Anomenem H l'alçada del rectangle (costat curt). El semicercle gran és tangent "
+        "al costat llarg de dalt, per tant el seu radi és R₁ = H. El semicercle del mig "
+        "té el seu punt més alt a 5 cm del costat de dalt, per tant R₂ = H − 5. El de la "
+        "dreta, anàlogament, R₃ = H − 7. Tots tres semicercles seuen sobre el costat "
+        "llarg de baix i són tangents entre ells, i el de la dreta és tangent al costat "
+        "curt de la dreta; el gran és tangent al de l'esquerra. Llavors el llarg total "
+        "del rectangle (36 cm) és la suma dels diàmetres dels tres semicercles: 2R₁ + 2R₂ "
+        "+ 2R₃ = 36, és a dir, R₁ + R₂ + R₃ = 18. Substituint: H + (H−5) + (H−7) = 18 ⇒ "
+        "3H = 30 ⇒ H = 10. El perímetre és 2(36 + 10) = 92 cm. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 120 surt de prendre H = 24 (per exemple, sumant alçada del rectangle a la mida sense restringir tangències) i fer 2(36+24).",
+        "B": "Triar 108 surt de prendre H = 18 (confonent radi i diàmetre) i fer 2(36+18).",
+        "C": "Triar 96 surt de prendre H = 12 i fer 2(36+12); l'error és en una de les tangències del semicercle gran.",
+        "E": "Triar 82 surt de prendre H = 5 (la distància visible al semicercle del mig, oblidant que el gran ha de tocar el costat llarg de dalt).",
+    },
+    "errors_típics":          ["GEN_condicions_no_verificades"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-25"] = {
+    "id":         "CAN-3ESO-2024-25",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     25,
+    "punts":      5,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2024-25.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "D",
+    "pista_inicial": (
+        "Anomena n la casella del mig de la fila de baix i expressa la casella superior "
+        "en funció d'n i de les caselles dels costats."
+    ),
+    "expected_reasoning": (
+        "Sigui la fila de baix (a, n, c) amb a, n, c enters positius. La fila del mig és "
+        "(a·n, n·c) i la casella superior val (a·n)·(n·c) = n²·a·c = 720. Per tant n² ha "
+        "de dividir 720 = 2⁴·3²·5. Si n = 2^x · 3^y · 5^z amb x, y, z ≥ 0 enters, "
+        "aleshores 2x ≤ 4, 2y ≤ 2 i 2z ≤ 1, és a dir, x ∈ {0,1,2}, y ∈ {0,1} i z = 0. "
+        "Així hi ha 3·2·1 = 6 valors possibles per a n: {1, 2, 3, 4, 6, 12}. Resposta D."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 1 vol dir suposar que n queda determinat per les condicions, però l'enunciat només fixa el producte 720 i n pot prendre múltiples valors.",
+        "B": "Triar 4 vol dir trobar només alguns dels valors (per exemple, els que tenen factor 3 limitat) sense considerar totes les combinacions de divisors quadràtics.",
+        "C": "Triar 5 vol dir comptar 5 valors per oblit d'un cas (per exemple, oblidar n = 1 o n = 12).",
+        "E": "Triar 8 surt de comptar tots els divisors de 720 fins a 12, sense imposar la condició que n² divideix 720.",
+    },
+    "errors_típics":          ["GEN_condicions_no_verificades"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-26"] = {
+    "id":         "CAN-3ESO-2024-26",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     26,
+    "punts":      5,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2024-26.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "B",
+    "pista_inicial": (
+        "Saltant de sis en sis dins un cercle de 50 estudiants, no es passa per tots: "
+        "esbrina quants estudiants pertanyen al cicle que segueix la pilota."
+    ),
+    "expected_reasoning": (
+        "Numerem els estudiants de 0 a 49. La pilota va sumant +6 mòdul 50 a la posició a "
+        "cada passada. El subconjunt visitat és el subgrup que genera 6 dins de Z/50Z, "
+        "que té mida 50/mcd(50,6) = 50/2 = 25. Per tant exactament 25 estudiants (els del "
+        "cicle que comença amb el primer que rep la pilota) la rebran un nombre arbitrari "
+        "de vegades, i la Frida n'és un perquè l'ha rebuda 100 cops. Els 50 − 25 = 25 "
+        "estudiants restants no la rebran mai. Resposta B."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 40 vol dir suposar que només queden fora 50/5 = 10 (o un càlcul similar) i restar-lo de 50.",
+        "C": "Triar 10 vol dir donar directament 50/5 = 10 sense considerar el càlcul de mcd(50,6).",
+        "D": "Triar 8 surt d'un càlcul defectuós relacionat amb les divisions de 50.",
+        "E": "Triar 0 vol dir suposar que la pilota acaba arribant a tothom, sense adonar-se que mcd(50,6) = 2 ≠ 1.",
+    },
+    "errors_típics":          ["LOG_dada_ignorada"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-27"] = {
+    "id":         "CAN-3ESO-2024-27",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     27,
+    "punts":      5,
+    "tema":       "aritmètica",
+    "imatge":     "CAN-3ESO-2024-27.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "A",
+    "pista_inicial": (
+        "Pensa quin criteri de divisibilitat ha de complir el total d'ous que queden "
+        "després de la venda."
+    ),
+    "expected_reasoning": (
+        "La suma total d'ous és 4+6+12+13+22+29 = 86. Si gallina = 2·ànec, el total que "
+        "queda es pot escriure com a 3·ànec, és a dir, ha de ser múltiple de 3. Per tant, "
+        "86 − k ≡ 0 (mod 3), on k és la mida de la cistella venuda. Com que 86 ≡ 2 (mod "
+        "3), cal k ≡ 2 (mod 3). Calculem els residus mod 3 de les cistelles: 4→1, 6→0, "
+        "12→0, 13→1, 22→1, 29→2. L'únic valor de k amb residu 2 és k = 29. Per tant, el "
+        "client ha comprat 29 ous. Resposta A."
+    ),
+    "comentaris_distractors": {
+        "B": "Triar 22 surt de no aplicar el criteri de divisibilitat per 3 i triar a ull una cistella prou gran.",
+        "C": "Triar 13 vol dir aplicar malament el criteri (per exemple, fer 86 − k múltiple de 2 en lloc de 3).",
+        "D": "Triar 12 vol dir triar una cistella amb residu 0 mod 3, que justament és la que NO compleix la condició.",
+        "E": "Triar 4 vol dir triar una cistella amb residu 1 mod 3, que tampoc compleix la condició.",
+    },
+    "errors_típics":          ["LOG_dada_ignorada"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-28"] = {
+    "id":         "CAN-3ESO-2024-28",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     28,
+    "punts":      5,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2024-28.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "C",
+    "pista_inicial": (
+        "Llegeix la pendent de cadascun dels tres angles sobre la quadrícula: són tres "
+        "fraccions senzilles."
+    ),
+    "expected_reasoning": (
+        "Llegint les pendents sobre la quadrícula, els tres angles són α = arctg 1, "
+        "β = arctg(1/2) i γ = arctg(1/3) (o una permutació d'aquests valors). Usant la "
+        "fórmula de la suma d'arctangents: tg(β + γ) = (1/2 + 1/3)/(1 − 1/2·1/3) = "
+        "(5/6)/(5/6) = 1, per tant β + γ = arctg 1 = 45°. Així α + β + γ = 45° + 45° = "
+        "90°. Resposta C."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 120° surt d'una estimació visual sense aplicar la fórmula de la suma d'arctangents.",
+        "B": "Triar 75° surt d'un càlcul incorrecte de la suma, per exemple barrejant graus i radians o estimant a ull cada angle.",
+        "D": "Triar 60° surt d'estimar cada angle com a 20° sense el càlcul exacte.",
+        "E": "Triar 70° surt d'estimacions imprecises sense l'aplicació de la suma d'arctangents.",
+    },
+    "errors_típics":          ["GEN_calcul"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-29"] = {
+    "id":         "CAN-3ESO-2024-29",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     29,
+    "punts":      5,
+    "tema":       "àlgebra",
+    "imatge":     "CAN-3ESO-2024-29.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "C",
+    "pista_inicial": (
+        "Posa la velocitat del Baldiri com a v i la de l'Ariadna com a 3v, i mira on són "
+        "tots dos en cada moment de la primera trobada."
+    ),
+    "expected_reasoning": (
+        "Anomenem L la distància entre A i B, v la velocitat del Baldiri i 3v la de "
+        "l'Ariadna. A la primera trobada (instant t = 15 min), s'aproximen amb velocitat "
+        "relativa 4v, així que 4v·15 = L i, per tant, L = 60v (en unitats coherents). "
+        "L'Ariadna tarda L/(3v) = 20 min en arribar a B; allà gira i torna cap a A. El "
+        "Baldiri tarda L/v = 60 min en arribar a A. A l'instant t = 15, l'Ariadna està a "
+        "3v·15 = 45 (a 15 unitats de B) i el Baldiri a L − v·15 = 45 (anant cap a A). "
+        "Després, l'Ariadna continua cap a B i hi arriba a t = 20 (posició 60); el "
+        "Baldiri segueix cap a A. A partir de t = 20, l'Ariadna torna cap a A: la seva "
+        "posició és 60 − 3v(t − 20). El Baldiri és a 60 − vt. Iguala'm-les: 60 − 3(t−20) "
+        "= 60 − t ⇒ 60 − 3t + 60 = 60 − t ⇒ 2t = 60 ⇒ t = 30. La segona trobada és, "
+        "doncs, 30 min després de començar. Resposta C."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 20 vol dir confondre la segona trobada amb el moment en què l'Ariadna arriba a B (t = 20).",
+        "B": "Triar 25 surt d'un càlcul intermedi defectuós sobre la posició de tots dos després de t = 20.",
+        "D": "Triar 35 surt de calcular la segona trobada a partir de la velocitat relativa sense tenir en compte que l'Ariadna ja ha girat.",
+        "E": "Triar 45 surt de plantejar que la segona trobada és quan el Baldiri arriba a la posició mitjana, sense plantejar les equacions del moviment.",
+    },
+    "errors_típics":          ["GEN_calcul"],
+    "dependencies":           [],
+}
+
+PROBLEMS["CAN-3ESO-2024-30"] = {
+    "id":         "CAN-3ESO-2024-30",
+    "categoria":  "3ESO",
+    "any":        2024,
+    "numero":     30,
+    "punts":      5,
+    "tema":       "geometria",
+    "imatge":     "CAN-3ESO-2024-30.jpg",
+    "enunciat":   None,
+    "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
+    "resposta_correcta":      "E",
+    "pista_inicial": (
+        "Posa AB = 5 (cada divisió fa amplada 1) i expressa l'àrea de cada franja "
+        "vertical en funció de l'alçada AE = h i de l'alçada del vèrtex D sobre AB."
+    ),
+    "expected_reasoning": (
+        "Posem coordenades A = (0,0), B = (5,0), E = (0,h), C = (5,h) i D = (5/2, H), on "
+        "h = AE = BC i H és l'alçada de D. Les quatre divisions sobre AB tallen el "
+        "pentàgon en cinc franges d'amplada 1. Per simetria respecte de la vertical "
+        "x = 5/2, la franja k-èsima (per la dreta) i la (6−k)-èsima tenen la mateixa "
+        "àrea. Calculem les àrees de la franja 2 (zona grisa) i la franja 3 (zona negra) "
+        "afegint el rectangle inferior d'alçada h i la zona triangular sobre. La franja "
+        "2 (x ∈ [1,2]) té àrea h + 3(H−h)/5; la franja 3 (x ∈ [2,3]) té àrea h + "
+        "9(H−h)/10. Imposem h + 3(H−h)/5 = 10 i h + 9(H−h)/10 = 13. Restant: 3(H−h)/10 = "
+        "3, d'on H − h = 10. Substituint: h + 6 = 10, h = 4 i H = 14. L'àrea del "
+        "pentàgon és l'àrea del rectangle ABCE (5·4 = 20) més la del triangle ECD (base "
+        "5, alçada H − h = 10, àrea 25), és a dir, 20 + 25 = 45 cm². Resposta E."
+    ),
+    "comentaris_distractors": {
+        "A": "Triar 60 surt de calcular el pentàgon com a producte directe d'amplada i alçada total, sense restar la part triangular superior fora del pentàgon.",
+        "B": "Triar 58 surt d'una combinació errònia d'àrees, possiblement comptant dues vegades una part del triangle ECD.",
+        "C": "Triar 49 surt d'un càlcul d'h o H amb un error d'una unitat, donant un pentàgon de 49 cm².",
+        "D": "Triar 47 surt d'un error puntual de càlcul en la suma final de l'àrea del rectangle i del triangle.",
+    },
+    "errors_típics":          ["GEN_calcul"],
+    "dependencies":           [],
+}
 
 # ============================================================
 # 3 PUNTS (1-10)
