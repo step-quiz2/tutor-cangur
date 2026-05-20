@@ -1885,7 +1885,6 @@ PROBLEMS["CAN-1ESO-2025-15"] = {
                 "Triar 6 surt de respondre amb e (= 6, peres → pomes), valor correcte per a una altra de les "
                 "variables del sistema, però no per a la que demana l'enunciat."
             ),
-        "E": "",
     },
     "errors_típics":          ["LOG_pregunta_inversa"],
     "dependencies":           [],
