@@ -1937,7 +1937,6 @@ PROBLEMS["CAN-1ESO-2025-16"] = {
                 "a 6 unitats d'àrea a l'esquerra perquè la columna superior només contribueix amb un triangle "
                 "massa petit."
             ),
-        "E": "",
     },
     "errors_típics":          ["GEN_calcul"],
     "dependencies":           [],
