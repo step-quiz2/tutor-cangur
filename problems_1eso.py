@@ -23,8 +23,7 @@ PROBLEMS["CAN-1ESO-2026-01"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "Fixa't en les dues files del terra que es veuen a la foto i busca quina seqüència de cinc "
-        "rajoles les conté totes dues com a tros consecutiu (llegint-la de manera cíclica)."
+        "Pensa una resposta que no pugui ser, perquè no es compleix el patró. Ves descartant opcions."
     ),
     "expected_reasoning": (
         "La foto mostra un tros de terra de 3 columnes i 3 files: la fila de dalt i la de baix "
@@ -56,8 +55,7 @@ PROBLEMS["CAN-1ESO-2026-02"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "E",
     "pista_inicial": (
-        "Separa el vaixell en parts: el cos rectangular, les dues proes inclinades i la torreta. "
-        "Compta quantes peces de cada tipus necessites per a cadascuna d'aquestes parts."
+        "Separa el vaixell en 4 parts: esquerra, dreta, central i la torre de dalt."
     ),
     "expected_reasoning": (
         "El vaixell es pot dividir en tres zones. Les dues proes inclinades (esquerra i dreta) "
@@ -89,8 +87,7 @@ PROBLEMS["CAN-1ESO-2026-03"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Posa un nom al nombre d'habitacions de 4 persones i escriu una equació que relacioni el "
-        "nombre total de persones amb el nombre d'habitacions de cada tipus."
+        "Exemple: C) 3 habitacions no pot ser, perquè serien 12 persones en total, i les 8 persones que queden no poden repartir-se de 3 en 3."
     ),
     "expected_reasoning": (
         "Hi ha 6 habitacions en total. Si x habitacions allotgen 4 persones i (6 − x) allotgen 3 "
@@ -125,9 +122,7 @@ PROBLEMS["CAN-1ESO-2026-04"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "Comprova una a una les dues condicions: que hi hagi exactament dos cercles seguits i que "
-        "no hi hagi dos quadrats adjacents. Elimina les opcions que incompleixin almenys una "
-        "d'elles."
+        "Pots descartar les opcions que no compleixen alguna d’aquestes condicions: \n- que hi hagi exactament dos cercles seguits\n- que no hi hagi dos quadrats junts."
     ),
     "expected_reasoning": (
         "Les dues condicions són: (1) hi ha dos cercles rodons seguits i (2) no hi ha dos quadrats "
@@ -159,8 +154,7 @@ PROBLEMS["CAN-1ESO-2026-05"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "A",
     "pista_inicial": (
-        "Pensa quant sumen totes les sis cares del dau i quant sumen les tres cares que no veus. "
-        "Recorda que les cares oposades sempre sumen 7."
+        "Recorda que cada cara del dau i la seva oposada sumen 7."
     ),
     "expected_reasoning": (
         "Les sis cares del dau sumen 1 + 2 + 3 + 4 + 5 + 6 = 21. Les tres cares visibles al voltant "
@@ -197,8 +191,7 @@ PROBLEMS["CAN-1ESO-2026-06"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "Per a cada figura, intenta traçar totes les línies que la divideixen en dues meitats "
-        "idèntiques. Quina figura permet traçar-ne més?"
+        "Dibuixa els eixos de simetria de cada figura i compta’ls."
     ),
     "expected_reasoning": (
         "Un eix de simetria és una línia que divideix la figura en dues meitats que es corresponen "
@@ -239,8 +232,7 @@ PROBLEMS["CAN-1ESO-2026-07"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "E",
     "pista_inicial": (
-        "Compta quants panells verticals té la figura 3D i fixa't on han d'estar els talls (línia "
-        "gruixuda) i els plecs (línia de punts) al full pla per crear exactament aquells panells."
+        "Compta quants trossos verticals té la figura i descarta els esquemes que no en faran tants."
     ),
     "expected_reasoning": (
         "La figura 3D mostra 4 panells rectangulars verticals units per la seva base. Per obtenir "
@@ -279,9 +271,7 @@ PROBLEMS["CAN-1ESO-2026-08"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "Pensa quantes posicions té la flor en total i quantes posicions cobreix cada peça. "
-        "Reflexiona si cal cobrir cada posició exactament una vegada o si la superposició és "
-        "possible."
+        "Segur que amb 6 peces es podria fer la flor, però recorda que et pregunta el nombre MÍNIM."
     ),
     "expected_reasoning": (
         "La flor té 7 posicions: 1 astre central i 6 cercles al voltant. Cada peça consisteix en un "
@@ -314,8 +304,7 @@ PROBLEMS["CAN-1ESO-2026-09"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Calcula primer quantes porcions menja en Max, i amb el que queda calcula quantes en menja "
-        "la Gràcia. El que resta és el que els queda al final."
+        "Comença calculant quants trossos menja en Max."
     ),
     "expected_reasoning": (
         "La pizza té 8 porcions. En Max menja una quarta part: 8 / 4 = 2 porcions. Queden 8 − 2 = 6 "
@@ -351,8 +340,7 @@ PROBLEMS["CAN-1ESO-2026-10"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "Segueix el recorregut del dibuix pel hexàgon pas a pas: a quin triangle arriba després de "
-        "cada simetria i com queda orientada la imatge cada vegada?"
+        "Mira on va a parar el cangur després de la primera simetria i cap a on mira; fes el mateix amb la segona simetria. El mateix amb la tercera i, finalment, amb la quarta."
     ),
     "expected_reasoning": (
         "L'hexàgon es divideix en 6 triangles numerats de l'1 al 6. El cap del cangur comença al "
@@ -387,8 +375,7 @@ PROBLEMS["CAN-1ESO-2026-11"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "Quantes vagonetes calen per a 30 alumnes si cada una porta 3 persones? Pensa quan surt la "
-        "darrera vagoneta i quant tarda a acabar el recorregut."
+        "Quantes vagonetes calen perquè hi pugin els 30 alumnes de 3 en 3?"
     ),
     "expected_reasoning": (
         "30 alumnes repartits en vagonetes de 3 places necessiten exactament 10 vagonetes. La "
@@ -419,8 +406,7 @@ PROBLEMS["CAN-1ESO-2026-12"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Intenta localitzar un punt o un eix respecte al qual la figura sembli equilibrada. Recorda "
-        "que la línia de tall no cal que sigui horitzontal ni vertical."
+        "Descarta les opcions on les dues parts no tenen la mateixa àrea."
     ),
     "expected_reasoning": (
         "La figura, dibuixada sobre una quadrícula de punts, té una forma irregular amb dues puntes "
@@ -456,9 +442,7 @@ PROBLEMS["CAN-1ESO-2026-13"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "A",
     "pista_inicial": (
-        "El rellotge intercanvia sempre les mateixes dues posicions de dígits. Mira quina hora real "
-        "correspondria al que el rellotge mostra ara, i pensa quina hora real serà d'aquí a un "
-        "minut."
+        "15:69 no és una hora possible: quines dues posicions s’han d’intercanviar perquè ho sigui?"
     ),
     "expected_reasoning": (
         "El rellotge mostra 15:69. L'anomalia consisteix a intercanviar sempre el segon dígit de "
@@ -488,9 +472,7 @@ PROBLEMS["CAN-1ESO-2026-14"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "Per a cada figura, intenta comptar quants quadrets de la quadrícula ocupa la zona "
-        "ombrejada, tenint en compte que els triangles formats per les diagonals valen mig quadret "
-        "cadascun."
+        "Recorda que l’àrea d’un triangle és la meitat de la base · altura."
     ),
     "expected_reasoning": (
         "Cada figura es troba sobre una quadrícula i l'àrea s'expressa en unitats quadrades "
@@ -525,9 +507,7 @@ PROBLEMS["CAN-1ESO-2026-15"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Fes el seguiment de quins nombres queden apilats exactament a la posició del número 1 "
-        "després de cada plegada. En cada plegada, la meitat dreta es dobla per sota de la meitat "
-        "esquerra."
+        "Després de plegar-ho tot, mira quins nombres queden apilats just sobre l’1."
     ),
     "expected_reasoning": (
         "Partim de la tira 1, 2, 3, ..., 16. Primera plegada (dreta sota esquerra): cada posició "
@@ -559,8 +539,7 @@ PROBLEMS["CAN-1ESO-2026-16"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "A",
     "pista_inicial": (
-        "Calcula quant ha de sumar cadascú i pensa quines targetes pot tenir la Victòria si els "
-        "altres dos han agafat parelles que sumen la mateixa quantitat."
+        "Has de fer la suma 0+1+2+3+4+5+6. I recorda que cadascun dels grups de nombres suma el mateix: quant sumarà cada grup?"
     ),
     "expected_reasoning": (
         "La suma de totes les targetes (0 al 6) és 0 + 1 + 2 + 3 + 4 + 5 + 6 = 21. Com que en David "
@@ -592,9 +571,7 @@ PROBLEMS["CAN-1ESO-2026-17"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "Pensa quants costats de cada trapezi queden a l'interior del molinet i quants queden al "
-        "perímetre exterior. La diferència entre la suma dels quatre perímetres i el perímetre del "
-        "molinet t'indica quant mesuren els costats interiors."
+        "Si sumes els perímetres dels 4 trapezis, obtens 4·22 = 88 cm. Però el molinet només fa 56 cm perquè alguns costats queden a l’interior. Amb això, pots trobar la mesura de AB."
     ),
     "expected_reasoning": (
         "Cada trapezi té un perímetre de 22 cm. Si afegim els quatre trapezis sense superposar-los, "
@@ -626,8 +603,7 @@ PROBLEMS["CAN-1ESO-2026-18"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "E",
     "pista_inicial": (
-        "Anota quants retoladors agafa cadascú en cada torn i porta la compte acumulada fins que la "
-        "Fàtima tingui prop de 25. Potser l'últim torn no és complet."
+        "La Fàtima va agafant 2, després 5, després 8... Ves sumant aquests nombres fins que just et passis de 25."
     ),
     "expected_reasoning": (
         "L'ordre és: Dídac agafa 1, Fàtima 2, Oriol 3, Dídac 4, Fàtima 5, Oriol 6, Dídac 7, Fàtima "
@@ -659,8 +635,7 @@ PROBLEMS["CAN-1ESO-2026-19"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "Quants dígits senars existeixen? Pensa quantes maneres hi ha d'escollir-ne quatre i en "
-        "quants ordres es poden col·locar (creixent o decreixent)."
+        "Hi ha cinc dígits senars: 1, 3, 5, 7, 9. De quantes maneres en pots triar quatre de diferents? I de manera ordenada, és clar, perquè ho diu l’enunciat."
     ),
     "expected_reasoning": (
         "Els dígits senars possibles són: 1, 3, 5, 7, 9 (cinc en total). El PIN té quatre dígits "
@@ -693,8 +668,7 @@ PROBLEMS["CAN-1ESO-2026-20"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Per a cada pista, comprova quantes ciutats de la ruta real coincideixen amb la posició "
-        "(origen, via o destí) que apareix en aquella frase. Ha de ser exactament una."
+        "Per a cada ruta possible, comprova que cada frase tingui exactament una ciutat ben col·locada."
     ),
     "expected_reasoning": (
         "La ruta real és Tarragona (origen) → Vic (via) → Lleida (destí). Comprovem que cada pista "
@@ -726,9 +700,7 @@ PROBLEMS["CAN-1ESO-2026-21"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "Posa un nom a cada cercle i escriu una igualtat per a cada fila i cada columna. Després "
-        "mira si combinant dues d'aquestes igualtats pots descobrir alguna relació entre els dos "
-        "cercles grisos."
+        "Les dues igualtats “=10” et fan veure que a cada cercle gris hi ha el mateix nombre. Per tant, ves provant. Si la resposta fos A) 14, vol dir que en el cercle gris hi hauria un 7. Ja veuràs que no funciona. Ves provant altres opcions."
     ),
     "expected_reasoning": (
         "Anomenem g el cercle gris de dalt, b el blanc de dalt, c el blanc de baix i d el gris de "
@@ -759,8 +731,7 @@ PROBLEMS["CAN-1ESO-2026-22"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Posa un nom al nombre d'amics i un altre al nombre de maduixes. La frase de les 80 "
-        "maduixes de més et permet trobar primer quants amics hi ha; comença per aquí."
+        "La pista de les 80 maduixes de més (i toquen 4 més a cadascú) et diu quants amics hi ha; comença per aquí."
     ),
     "expected_reasoning": (
         "Diguem n el nombre d'amics i M el nombre de maduixes. Si hi hagués 80 maduixes més, "
@@ -791,8 +762,7 @@ PROBLEMS["CAN-1ESO-2026-23"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "E",
     "pista_inicial": (
-        "Recorda que els cinc nombres són 1, 2, 3, 4 i 5 i pensa quins valors pot tenir el triple "
-        "del nombre de la Zoe, perquè ha de coincidir amb la suma de dos d'aquests nombres."
+        "El triple del nombre de la Zoe ha de ser suma de dos nombres diferents de l’1 al 5. Això vol dir que la Zoe no pot tenir el 5, perquè el triple és 15 i mai podríem arribar-hi sumant els nombres de Jaume i Frederic."
     ),
     "expected_reasoning": (
         "Els cinc nombres són 1, 2, 3, 4 i 5, tots diferents. La suma dels nombres d'en Jaume i en "
@@ -826,8 +796,7 @@ PROBLEMS["CAN-1ESO-2026-24"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "Recorda que cada plec fa que la tira tombi i canviï la cara que es veu. Compta quants girs "
-        "fa la figura de la dreta i fixa't si hi ha cap tros recte sense plec."
+        "Compta quants girs fa la tira plegada i mira si hi ha algun tram recte sense plec."
     ),
     "expected_reasoning": (
         "Cada cop que es plega la tira per un segment diagonal, la part que queda més enllà del "
@@ -863,9 +832,7 @@ PROBLEMS["CAN-1ESO-2026-25"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Pensa quant pesen totes nou pilotes juntes i recorda que, si la balança està equilibrada, "
-        "els dos plats pesen el mateix. Fixa't també en quant pot pesar com a màxim el plat que "
-        "només té dues pilotes."
+        "Pensa quant pesen, en total, les 7 pilotes que veus a la balança i recorda que els dos plats han de pesar igual. Ah!, recorda que et pregunten el pes MÍNIM de les 2 pilotes que no són a la balança."
     ),
     "expected_reasoning": (
         "Les nou pilotes pesen 1, 2, 3, ..., fins a 9 quilos, i entre totes sumen 45 quilos. La "
@@ -898,9 +865,7 @@ PROBLEMS["CAN-1ESO-2026-26"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "Mira que els rectangles formen molinets encaixats i comença per dins, pel quadrat negre i "
-        "els rectangles blancs. Busca com es relacionen el costat llarg i el costat curt d'un "
-        "rectangle amb el quadrat que tanca a dins."
+        "Comença per dins: quina relació hi ha entre el costat del quadrat negre i els costats dels rectangles?."
     ),
     "expected_reasoning": (
         "Els quatre rectangles grisos estan col·locats fent un molinet al voltant del centre, i el "
@@ -935,9 +900,7 @@ PROBLEMS["CAN-1ESO-2026-27"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Per a cada fila i cada columna, calcula quant li sobra respecte de 6: això et diu quant "
-        "has de treure en total d'aquella fila o columna. Comença per les files o columnes on només "
-        "hi ha una manera possible de treure aquesta quantitat."
+        "Per a cada fila o cada columna, mira de quant ens passem de 6, quan sumem. Comença per les més fàcils."
     ),
     "expected_reasoning": (
         "Cada fila i cada columna ha de sumar 6 després d'eliminar nombres, així que mirem quant li "
@@ -975,9 +938,7 @@ PROBLEMS["CAN-1ESO-2026-28"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Classifica primer les tasses per mida i per color de nansa. Pensa què vol dir que l'Ona i "
-        "la Paula tinguin mides diferents però el mateix color de nansa, i mira quines parelles ho "
-        "compleixen."
+        "Classifica les tasses, en primer lloc, segons la mida i segons la nansa; després, aplica les pistes una a una. La nansa és per on s’agafen les tasses."
     ),
     "expected_reasoning": (
         "Les cinc tasses tenen tres mides grans (les altes A, C i E) i dues de petites (B i D); les "
@@ -1012,9 +973,7 @@ PROBLEMS["CAN-1ESO-2026-29"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "Fixa't que totes les caselles amb lletra són dins d'una mateixa regió, de manera que només "
-        "hi anirà un gronxador. Comença per la regió més petita i pensa a quina fila pot anar el "
-        "seu gronxador."
+        "Pensa-ho com si fos un SUDOKU. Ves provant, una per una, totes les possibilitats: recorda que només una d’elles és possible."
     ),
     "expected_reasoning": (
         "Tots cinc quadrats amb lletra (A, B, C, D, E) pertanyen a la mateixa regió, així que el "
@@ -1053,9 +1012,7 @@ PROBLEMS["CAN-1ESO-2026-30"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "Pensa que el grup 2026 pot sortir de dues maneres: sencer dins d'un nombre, o partit entre "
-        "el final d'un nombre i el principi del següent. Mira quines maneres de partir 2026 entre "
-        "dos nombres són realment possibles."
+        "El bloc 2026 surt una vegada quan diem el nombre, però surt més vegades, per exemple aquí “...2620,2621…” si t’hi fixes, ha sortit el “20,26”."
     ),
     "expected_reasoning": (
         "Hem de comptar quantes vegades apareix el grup de quatre xifres 2026 dins la cadena "
