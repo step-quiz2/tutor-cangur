@@ -1,0 +1,1616 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editor de pistes — Tutor Cangur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ────────────────────────────────────────────────────────────
+   Editor de pistes — Tutor Cangur
+   Aesthetic: scholarly paper / notebook
+   ──────────────────────────────────────────────────────────── */
+:root {
+  --paper: #faf6ed;
+  --paper-deep: #f3ecdd;
+  --surface: #fffdf6;
+  --rule: #e0d6c2;
+  --rule-soft: #ece3d1;
+  --ink: #1d1d1c;
+  --ink-soft: #4e4940;
+  --ink-faded: #8c8473;
+  --accent: #1f4e3d;        /* deep pine for primary actions */
+  --accent-deep: #163a2c;
+  --modified: #a8500d;      /* warm amber */
+  --validated: #5b7d4a;     /* muted sage */
+  --pending: #b3a98e;       /* paper-warm grey */
+  --danger: #983b27;
+
+  --shadow-1: 0 1px 0 rgba(48, 40, 22, 0.05),
+              0 1px 3px rgba(48, 40, 22, 0.08);
+  --shadow-2: 0 1px 0 rgba(48, 40, 22, 0.04),
+              0 4px 14px rgba(48, 40, 22, 0.10);
+
+  --font-display: 'Fraunces', 'Iowan Old Style', 'Charter', Georgia, serif;
+  --font-body:    'Lora', 'Iowan Old Style', Georgia, serif;
+  --font-ui:      'Fraunces', system-ui, -apple-system, sans-serif;
+  --font-mono:    'IBM Plex Mono', 'JetBrains Mono', 'SFMono-Regular', monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* very subtle paper grain */
+  background-image: radial-gradient(rgba(120, 95, 50, 0.04) 1px, transparent 1px);
+  background-size: 3px 3px;
+  opacity: 0.6;
+  mix-blend-mode: multiply;
+}
+
+#app { position: relative; z-index: 1; }
+
+/* ─── Header bar ─── */
+header.topbar {
+  border-bottom: 1px solid var(--rule);
+  background: linear-gradient(to bottom, var(--surface), var(--paper));
+  padding: 18px 32px 14px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 24px;
+}
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.brand-mark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+  font-variation-settings: "opsz" 80;
+  color: var(--ink);
+}
+.brand-sub {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--ink-faded);
+  font-variation-settings: "opsz" 14;
+}
+.actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ─── Buttons ─── */
+.btn {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  padding: 9px 18px;
+  border-radius: 4px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 120ms ease;
+  font-variation-settings: "opsz" 14;
+}
+.btn:hover { background: var(--paper-deep); border-color: var(--ink-faded); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+.btn--primary {
+  background: var(--accent);
+  color: var(--surface);
+  border-color: var(--accent);
+}
+.btn--primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+.btn--ghost { border-color: transparent; background: transparent; }
+.btn--ghost:hover { background: var(--paper-deep); border-color: var(--rule); }
+.btn--small { padding: 6px 12px; font-size: 13px; }
+
+/* ─── Selectors row ─── */
+.selectors {
+  padding: 18px 32px;
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.sel-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sel-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-faded);
+}
+.sel-input {
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding: 6px 14px 6px 10px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  min-width: 120px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.sel-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(31, 78, 61, 0.12);
+}
+
+/* Question position counter / nav */
+.qnav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.qnav-count {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 18px;
+  font-variation-settings: "opsz" 28;
+  color: var(--ink);
+}
+.qnav-count em {
+  font-style: italic;
+  color: var(--ink-faded);
+  font-weight: 400;
+}
+.qnav-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+}
+
+/* ─── Main grid ─── */
+main.workspace {
+  display: grid;
+  grid-template-columns: minmax(380px, 1fr) minmax(520px, 1.3fr);
+  gap: 0;
+  min-height: calc(100vh - 220px);
+}
+
+/* Image panel (left) */
+.image-panel {
+  border-right: 1px solid var(--rule);
+  padding: 32px;
+  background:
+    linear-gradient(to bottom right, var(--paper) 0%, var(--paper-deep) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  position: relative;
+}
+.image-panel::before {
+  content: "";
+  position: absolute;
+  top: 28px;
+  left: 32px;
+  right: 32px;
+  height: 1px;
+  background: var(--rule-soft);
+}
+.image-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faded);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  align-self: flex-start;
+  margin-top: 4px;
+}
+.image-frame {
+  background: white;
+  border: 1px solid var(--rule);
+  padding: 16px;
+  box-shadow: var(--shadow-2);
+  max-width: 100%;
+  position: relative;
+}
+.image-frame img {
+  max-width: 100%;
+  max-height: 70vh;
+  display: block;
+  object-fit: contain;
+}
+.image-frame.broken {
+  padding: 40px;
+  text-align: center;
+  color: var(--ink-faded);
+  font-style: italic;
+  background: var(--paper);
+}
+
+/* Edit panel (right) */
+.edit-panel {
+  padding: 28px 36px 36px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.problem-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.problem-id {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.tag {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: var(--paper-deep);
+  color: var(--ink-soft);
+  border: 1px solid var(--rule-soft);
+}
+.tag--punts { background: rgba(31, 78, 61, 0.08); color: var(--accent); border-color: rgba(31, 78, 61, 0.18); }
+.tag--state { margin-left: auto; }
+.tag--state.is-modified { background: rgba(168, 80, 13, 0.10); color: var(--modified); border-color: rgba(168, 80, 13, 0.22); }
+.tag--state.is-validated { background: rgba(91, 125, 74, 0.10); color: var(--validated); border-color: rgba(91, 125, 74, 0.22); }
+.tag--state.is-pending { background: var(--paper-deep); color: var(--ink-faded); border-color: var(--rule-soft); }
+
+/* The pista comparison table */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+}
+.col + .col { border-left: 1px solid var(--rule); }
+.col-head {
+  background: var(--paper-deep);
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.col-head em {
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--ink-faded);
+}
+.col-body {
+  padding: 16px 18px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+  flex: 1;
+}
+.col-current {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background: var(--paper);
+}
+.col-current.empty {
+  color: var(--ink-faded);
+  font-style: italic;
+}
+.col-new textarea {
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+  resize: none;
+  padding: 0;
+}
+.col-new textarea::placeholder {
+  color: var(--ink-faded);
+  font-style: italic;
+}
+
+/* Nav row */
+.nav-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: space-between;
+}
+.nav-row .hint {
+  font-style: italic;
+  color: var(--ink-faded);
+  font-size: 13px;
+  flex: 1;
+  text-align: center;
+}
+
+/* ─── Minimap (bottom strip) ─── */
+.minimap {
+  background: var(--paper-deep);
+  border-top: 1px solid var(--rule);
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.minimap-stats {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-variation-settings: "opsz" 14;
+}
+.minimap-stats b {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--ink);
+}
+.minimap-stats .dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 99px;
+  vertical-align: 1px;
+  margin-right: 4px;
+}
+.minimap-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-left: auto;
+}
+.qcell {
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  transition: all 120ms ease;
+  padding: 0;
+}
+.qcell:hover { border-color: var(--ink-soft); }
+.qcell.is-current {
+  background: var(--ink);
+  color: var(--surface);
+  border-color: var(--ink);
+}
+.qcell.is-modified { background: rgba(168, 80, 13, 0.15); border-color: rgba(168, 80, 13, 0.5); color: var(--modified); }
+.qcell.is-validated { background: rgba(91, 125, 74, 0.13); border-color: rgba(91, 125, 74, 0.5); color: var(--validated); }
+.qcell.is-current.is-modified, .qcell.is-current.is-validated {
+  background: var(--ink); color: var(--surface);
+}
+.qcell.is-current.is-modified { box-shadow: inset 0 0 0 2px var(--modified); }
+.qcell.is-current.is-validated { box-shadow: inset 0 0 0 2px var(--validated); }
+
+/* ─── Empty state ─── */
+.empty-state {
+  padding: 80px 40px;
+  text-align: center;
+  color: var(--ink-faded);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 18px;
+  font-variation-settings: "opsz" 32;
+  grid-column: 1 / -1;
+}
+
+/* ─── Error banner ─── */
+.banner {
+  margin: 0 32px;
+  padding: 14px 18px;
+  border-radius: 4px;
+  font-size: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.banner--error {
+  background: rgba(152, 59, 39, 0.08);
+  color: var(--danger);
+  border: 1px solid rgba(152, 59, 39, 0.25);
+}
+.banner--info {
+  background: var(--paper-deep);
+  color: var(--ink-soft);
+  border: 1px solid var(--rule);
+}
+
+/* ─── Modal dialog (Desar summary) ─── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 18, 12, 0.4);
+  display: none;
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  backdrop-filter: blur(2px);
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-2);
+  border-radius: 6px;
+  max-width: 720px;
+  width: 100%;
+  max-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+}
+.modal-head {
+  padding: 22px 28px 16px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.modal-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 22px;
+  font-variation-settings: "opsz" 28;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.modal-head p {
+  margin: 6px 0 0;
+  color: var(--ink-faded);
+  font-style: italic;
+  font-size: 14px;
+}
+.modal-body {
+  padding: 18px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+.summary-counts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.summary-count {
+  padding: 14px 16px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 4px;
+  background: var(--paper);
+}
+.summary-count .n {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 500;
+  font-variation-settings: "opsz" 48;
+  line-height: 1;
+  color: var(--ink);
+}
+.summary-count .label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-faded);
+  margin-top: 6px;
+}
+.summary-count.is-modified .n { color: var(--modified); }
+.summary-count.is-validated .n { color: var(--validated); }
+.summary-count.is-pending .n { color: var(--ink-faded); }
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--rule-soft);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.summary-list-head {
+  padding: 8px 14px;
+  background: var(--paper-deep);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.summary-item {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 13px;
+}
+.summary-item:last-child { border-bottom: none; }
+.summary-item code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  background: var(--paper);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--rule-soft);
+}
+.summary-item .diff {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.summary-item .diff .before {
+  color: var(--ink-faded);
+  text-decoration: line-through;
+  text-decoration-color: rgba(140, 132, 115, 0.4);
+}
+.summary-item .diff .after {
+  background: rgba(168, 80, 13, 0.07);
+  padding: 6px 10px;
+  border-left: 2px solid var(--modified);
+  display: block;
+  margin-top: 4px;
+}
+
+.modal-foot {
+  padding: 18px 28px;
+  border-top: 1px solid var(--rule-soft);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--paper);
+}
+
+/* ─── Toast ─── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--surface);
+  padding: 12px 22px;
+  border-radius: 4px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  box-shadow: var(--shadow-2);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 220ms ease;
+  z-index: 200;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.toast.toast--error { background: var(--danger); }
+
+/* ─── Subtle reveal on mount ─── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-in {
+  animation: fadeIn 240ms ease both;
+}
+
+/* small screens fallback */
+@media (max-width: 900px) {
+  main.workspace {
+    grid-template-columns: 1fr;
+  }
+  .image-panel { border-right: none; border-bottom: 1px solid var(--rule); }
+  .compare { grid-template-columns: 1fr; }
+  .col + .col { border-left: none; border-top: 1px solid var(--rule); }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">Editor de pistes</div>
+      <div class="brand-sub">— Tutor Cangur</div>
+    </div>
+    <div class="actions">
+      <button class="btn btn--ghost btn--small" id="btn-reload" title="Tornar a carregar el fitxer .py des de disc (descarta canvis no desats)">Recarregar</button>
+      <button class="btn btn--primary" id="btn-save">Desar</button>
+    </div>
+  </header>
+
+  <section class="selectors">
+    <div class="sel-group">
+      <label class="sel-label" for="sel-year">Any</label>
+      <select class="sel-input" id="sel-year">
+        <option value="2026">2026</option>
+        <option value="2025">2025</option>
+      </select>
+    </div>
+    <div class="sel-group">
+      <label class="sel-label" for="sel-level">Curs</label>
+      <select class="sel-input" id="sel-level">
+        <option value="1ESO">1r ESO</option>
+        <option value="2ESO">2n ESO</option>
+        <option value="3ESO">3r ESO</option>
+        <option value="4ESO">4t ESO</option>
+      </select>
+    </div>
+
+    <div class="qnav">
+      <button class="btn qnav-btn" id="btn-prev" title="Anterior (←)">‹</button>
+      <span class="qnav-count" id="qnav-count">— <em>/ —</em></span>
+      <button class="btn qnav-btn" id="btn-next" title="Següent (→)">›</button>
+    </div>
+  </section>
+
+  <div id="banner-slot"></div>
+
+  <main class="workspace" id="workspace">
+    <div class="empty-state">Carregant catàleg…</div>
+  </main>
+
+  <footer class="minimap" id="minimap" style="display:none">
+    <div class="minimap-stats" id="minimap-stats"></div>
+    <div class="minimap-grid" id="minimap-grid"></div>
+  </footer>
+</div>
+
+<!-- Save dialog -->
+<div class="modal-backdrop" id="save-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Resum de la revisió</h2>
+      <p id="save-modal-sub">Revisa els canvis abans de desar.</p>
+    </div>
+    <div class="modal-body" id="save-modal-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn--ghost" id="btn-cancel-save">Cancel·lar</button>
+      <button class="btn btn--primary" id="btn-confirm-save">Confirmar i desar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   Editor de pistes — Tutor Cangur
+   Vanilla JS, no build step, no framework.
+
+   Architecture:
+     1. parseProblemsPy(text, year)  → [{id, numero, punts, tema, imatge,
+                                         pista, blockStart, blockEnd,
+                                         pistaStart, pistaEnd, pistaRaw}]
+     2. State machine: keeps user edits per problem id in memory + localStorage.
+     3. On Desar: patch the .py source string in-memory (replacing each
+        pista_inicial block), then write back either via the File System
+        Access API (Chromium) or via download. Always also emit an audit
+        log JSON describing the review session.
+   ════════════════════════════════════════════════════════════ */
+
+/* ─────────────── Constants ─────────────── */
+const LEVELS = ['1ESO', '2ESO', '3ESO', '4ESO'];
+const YEARS  = [2026, 2025];
+const LS_KEY = 'pistes_editor_v1';
+
+/* ─────────────── Parser ─────────────── */
+
+/**
+ * Parse a `problems_<level>eso.py` source string, returning all problem
+ * entries for the requested year, in order of `numero`.
+ *
+ * Each entry is annotated with the exact byte range of:
+ *   - the whole `PROBLEMS["id"] = { ... }` block
+ *   - the `"pista_inicial": ( ... )` sub-block
+ * so that we can rewrite the pista in-place without touching anything else.
+ */
+function parseProblemsPy(text, year) {
+  const problems = [];
+
+  // Find every PROBLEMS["…"] = {  opener position.
+  const headerRe = /PROBLEMS\["(CAN-[1-4]ESO-\d{4}-\d{2})"\]\s*=\s*\{/g;
+  const headers = [];
+  let m;
+  while ((m = headerRe.exec(text)) !== null) {
+    headers.push({ id: m[1], headerStart: m.index, bodyStart: m.index + m[0].length });
+  }
+
+  // For each header, find the matching closing brace by walking forward
+  // with a depth counter that respects Python string literals.
+  for (let i = 0; i < headers.length; i++) {
+    const h = headers[i];
+    const yearInId = parseInt(h.id.split('-')[2], 10);
+    if (yearInId !== year) continue;
+
+    const blockEnd = findMatchingBrace(text, h.bodyStart - 1);  // position of closing }
+    if (blockEnd < 0) continue;
+
+    const blockBody = text.slice(h.bodyStart, blockEnd);
+    const fields = extractFields(blockBody, h.bodyStart);
+
+    if (!fields.pista) continue; // pista_inicial missing → skip (unexpected)
+
+    problems.push({
+      id: h.id,
+      numero: fields.numero,
+      punts: fields.punts,
+      tema: fields.tema,
+      imatge: fields.imatge,
+      pista: fields.pista.value,
+      pistaStart: fields.pista.start, // absolute offset in `text`
+      pistaEnd: fields.pista.end,     // absolute offset in `text`
+      blockStart: h.headerStart,
+      blockEnd: blockEnd + 1,
+    });
+  }
+
+  problems.sort((a, b) => a.numero - b.numero);
+  return problems;
+}
+
+/**
+ * Given the position of an opening '{' in `text`, return the position of
+ * the matching closing '}'. Skips braces inside Python string literals
+ * (single-quoted, double-quoted, or triple-quoted) and comments.
+ *
+ * Returns -1 if no match.
+ */
+function findMatchingBrace(text, openPos) {
+  let depth = 0;
+  let i = openPos;
+  const n = text.length;
+  while (i < n) {
+    const c = text[i];
+
+    // Skip comments to end of line
+    if (c === '#') {
+      while (i < n && text[i] !== '\n') i++;
+      continue;
+    }
+    // Skip strings: triple-quoted variants first, then single-line
+    if (c === '"' || c === "'") {
+      const triple = text.substr(i, 3);
+      if (triple === '"""' || triple === "'''") {
+        const quote = triple;
+        i += 3;
+        while (i < n && text.substr(i, 3) !== quote) {
+          if (text[i] === '\\') i += 2; else i++;
+        }
+        i += 3;
+        continue;
+      } else {
+        const quote = c;
+        i++;
+        while (i < n && text[i] !== quote && text[i] !== '\n') {
+          if (text[i] === '\\') i += 2; else i++;
+        }
+        i++; // consume closing quote
+        continue;
+      }
+    }
+    if (c === '{') depth++;
+    else if (c === '}') {
+      depth--;
+      if (depth === 0) return i;
+    }
+    i++;
+  }
+  return -1;
+}
+
+/**
+ * Inside a problem body, locate the values of the fields we need.
+ * `bodyStart` is the absolute offset of `body[0]` in the original text,
+ * used to convert the local `pista` indices back to absolute.
+ */
+function extractFields(body, bodyStart) {
+  const out = {};
+
+  out.numero = extractInt(body, 'numero');
+  out.punts = extractInt(body, 'punts');
+  out.tema = extractString(body, 'tema');
+  out.imatge = extractString(body, 'imatge');
+
+  // pista_inicial: ( "..." "..." )   — concatenated string literals.
+  // Capture the whole "pista_inicial": ( … ) so we can replace it later.
+  const re = /"pista_inicial"\s*:\s*\(\s*((?:"(?:[^"\\]|\\.)*"\s*)+)\)/m;
+  const m = re.exec(body);
+  if (m) {
+    const strBlock = m[1];
+    // Extract all "…" substrings and concatenate them.
+    const partRe = /"((?:[^"\\]|\\.)*)"/g;
+    let parts = [];
+    let p;
+    while ((p = partRe.exec(strBlock)) !== null) {
+      parts.push(unescapePyString(p[1]));
+    }
+    out.pista = {
+      value: parts.join(''),
+      start: bodyStart + m.index,                  // includes the leading "pista_inicial"
+      end:   bodyStart + m.index + m[0].length,    // exclusive: just after the closing )
+    };
+  }
+  return out;
+}
+
+function extractInt(body, key) {
+  const re = new RegExp('"' + key + '"\\s*:\\s*(\\d+)', 'm');
+  const m = re.exec(body);
+  return m ? parseInt(m[1], 10) : null;
+}
+function extractString(body, key) {
+  // Match either "…" or None
+  const re = new RegExp('"' + key + '"\\s*:\\s*(?:"((?:[^"\\\\]|\\\\.)*)"|None)', 'm');
+  const m = re.exec(body);
+  if (!m) return null;
+  if (m[1] === undefined) return null; // None
+  return unescapePyString(m[1]);
+}
+
+/** Reverse the minimal Python escape conventions used in the catalogue. */
+function unescapePyString(s) {
+  return s
+    .replace(/\\\\/g, '\u0000')   // temporarily replace \\
+    .replace(/\\"/g, '"')
+    .replace(/\\'/g, "'")
+    .replace(/\\n/g, '\n')
+    .replace(/\\t/g, '\t')
+    .replace(/\u0000/g, '\\');
+}
+
+/* ─────────────── Re-emit a pista_inicial block ─────────────── */
+
+/**
+ * Convert a free-form Catalan pista text into the project's canonical
+ * `"pista_inicial": ( "…" "…" )` form, indented with 4 spaces for the
+ * key and 8 spaces for each string line. Mirrors the existing style:
+ * trailing space inside continued strings so concatenation reads naturally.
+ *
+ * `wrap` is the soft target for each inner line (before the leading 8
+ * spaces and the surrounding quotes). The original catalogue typically
+ * uses ~96 chars per line; we target 92 to keep room for the indent.
+ */
+function emitPistaBlock(text, opts = {}) {
+  const wrap = opts.wrap || 92;
+  const indent = '    ';
+  const inner = '        ';
+
+  // Normalize whitespace inside the string: collapse runs of spaces/newlines
+  // to single spaces (we don't preserve newlines inside a pista, which is the
+  // existing convention).
+  const flat = text.replace(/\s+/g, ' ').trim();
+  if (!flat) return `${indent}"pista_inicial": (\n${inner}""\n${indent})`;
+
+  const escaped = flat
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"');
+
+  // Word-wrap on whitespace boundaries.
+  const words = escaped.split(' ');
+  const lines = [];
+  let cur = '';
+  for (const w of words) {
+    if (!cur) { cur = w; continue; }
+    if ((cur + ' ' + w).length > wrap) {
+      lines.push(cur);
+      cur = w;
+    } else {
+      cur += ' ' + w;
+    }
+  }
+  if (cur) lines.push(cur);
+
+  // Wrap each line in quotes. All but the last get a trailing space
+  // INSIDE the quote so Python's implicit concatenation produces
+  // natural prose.
+  const quoted = lines.map((l, i) => {
+    const trail = i < lines.length - 1 ? ' ' : '';
+    return `${inner}"${l}${trail}"`;
+  }).join('\n');
+
+  return `${indent}"pista_inicial": (\n${quoted}\n${indent})`;
+}
+
+/* ─────────────── App State ─────────────── */
+
+const State = {
+  year: 2026,
+  level: '1ESO',
+
+  // Loaded catalogue
+  pySource: null,            // raw text of problems_<level>eso.py
+  problems: [],              // parsed problems for the chosen year (sorted by numero)
+  idx: 0,                    // current problem index
+
+  // User edits, keyed by problem id
+  edits: {},                 // id → new pista text (only when non-empty)
+  visited: {},               // id → true if user has navigated to this problem
+
+  // Per-question textarea draft (so partial typing is preserved when
+  // navigating away even if the user later deletes it back to empty)
+  drafts: {},                // id → textarea raw content (may be empty)
+
+  // FSA: directory handle if user has granted it for in-place writes
+  dirHandle: null,
+};
+
+function saveLS() {
+  try {
+    const snapshot = {
+      year: State.year,
+      level: State.level,
+      idx: State.idx,
+      edits: State.edits,
+      visited: State.visited,
+      drafts: State.drafts,
+    };
+    localStorage.setItem(LS_KEY, JSON.stringify(snapshot));
+  } catch (e) { /* quota / private mode */ }
+}
+function loadLS() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) { return null; }
+}
+function clearLSForCurrent() {
+  // Reset only edits/visited/drafts (selectors and idx are kept).
+  State.edits = {};
+  State.visited = {};
+  State.drafts = {};
+  saveLS();
+}
+
+/* ─────────────── Loading ─────────────── */
+
+async function loadCatalogue() {
+  const fname = `problems_${State.level.toLowerCase()}.py`;
+  setWorkspaceMessage(`Carregant ${fname}…`);
+
+  let text;
+  try {
+    const resp = await fetch(fname, { cache: 'no-store' });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    text = await resp.text();
+  } catch (err) {
+    showBanner(
+      `No s'ha pogut carregar <code>${fname}</code> (${err.message}). ` +
+      `Has d'obrir aquest editor servint el directori del projecte amb ` +
+      `<code>python -m http.server</code> a l'arrel del repo.`,
+      'error'
+    );
+    State.problems = [];
+    render();
+    return;
+  }
+
+  State.pySource = text;
+  State.problems = parseProblemsPy(text, State.year);
+
+  if (State.problems.length === 0) {
+    showBanner(
+      `No s'ha trobat cap problema de l'any <b>${State.year}</b> al fitxer ` +
+      `<code>${fname}</code>.`,
+      'info'
+    );
+  } else {
+    clearBanner();
+  }
+
+  // Restore idx if it's still in range; else reset to first.
+  if (State.idx >= State.problems.length) State.idx = 0;
+
+  render();
+}
+
+/* ─────────────── Rendering ─────────────── */
+
+function setWorkspaceMessage(msg) {
+  const ws = document.getElementById('workspace');
+  ws.innerHTML = `<div class="empty-state">${msg}</div>`;
+  document.getElementById('minimap').style.display = 'none';
+  document.getElementById('qnav-count').innerHTML = '— <em>/ —</em>';
+}
+
+function clearBanner() {
+  document.getElementById('banner-slot').innerHTML = '';
+}
+function showBanner(html, kind = 'info') {
+  document.getElementById('banner-slot').innerHTML =
+    `<div class="banner banner--${kind}">${html}</div>`;
+}
+
+function render() {
+  if (State.problems.length === 0) {
+    setWorkspaceMessage('No hi ha problemes per a aquesta selecció.');
+    return;
+  }
+
+  const p = State.problems[State.idx];
+  State.visited[p.id] = true;
+  saveLS();
+
+  // Update top question count
+  document.getElementById('qnav-count').innerHTML =
+    `${p.numero} <em>/ ${State.problems.length}</em>`;
+
+  // Re-build workspace
+  const ws = document.getElementById('workspace');
+  ws.innerHTML = '';
+  ws.classList.remove('fade-in'); void ws.offsetWidth; ws.classList.add('fade-in');
+
+  // — Image panel —
+  const imgPanel = document.createElement('aside');
+  imgPanel.className = 'image-panel';
+  const meta = document.createElement('div');
+  meta.className = 'image-meta';
+  meta.textContent = `enunciat · ${p.imatge || '(sense imatge)'}`;
+  imgPanel.appendChild(meta);
+
+  const frame = document.createElement('div');
+  frame.className = 'image-frame';
+  if (p.imatge) {
+    const img = document.createElement('img');
+    img.alt = `Enunciat de ${p.id}`;
+    img.src = `data/${p.imatge}`;
+    img.onerror = () => {
+      frame.classList.add('broken');
+      frame.innerHTML =
+        `<div>No s'ha trobat <code style="font-family:var(--font-mono)">data/${p.imatge}</code>.<br>` +
+        `Comprova que la imatge existeix al directori <code style="font-family:var(--font-mono)">data/</code>.</div>`;
+    };
+    frame.appendChild(img);
+  } else {
+    frame.classList.add('broken');
+    frame.textContent = 'Aquest problema no té imatge associada.';
+  }
+  imgPanel.appendChild(frame);
+  ws.appendChild(imgPanel);
+
+  // — Edit panel —
+  const editPanel = document.createElement('section');
+  editPanel.className = 'edit-panel';
+
+  // Header
+  const head = document.createElement('div');
+  head.className = 'problem-header';
+  head.innerHTML = `
+    <span class="problem-id">${p.id}</span>
+    <span class="tag tag--punts">${p.punts} punts</span>
+    <span class="tag">${p.tema || 'sense tema'}</span>
+    <span class="tag tag--state" id="state-tag"></span>
+  `;
+  editPanel.appendChild(head);
+
+  // Compare table
+  const compare = document.createElement('div');
+  compare.className = 'compare';
+
+  // Left column: current pista (read-only)
+  const colL = document.createElement('div'); colL.className = 'col';
+  colL.innerHTML = `
+    <div class="col-head">Pista actual <em>al catàleg</em></div>
+    <div class="col-body col-current${p.pista ? '' : ' empty'}"></div>
+  `;
+  colL.querySelector('.col-current').textContent = p.pista || '(sense pista pre-escrita)';
+  compare.appendChild(colL);
+
+  // Right column: new pista
+  const colR = document.createElement('div'); colR.className = 'col';
+  colR.innerHTML = `
+    <div class="col-head">
+      Pista nova
+      <em>buida = validar · text = substituir</em>
+    </div>
+    <div class="col-body col-new">
+      <textarea id="pista-edit" placeholder="Escriu aquí una pista nova per substituir l'actual. Deixa-ho buit per validar la pista existent."></textarea>
+    </div>
+  `;
+  compare.appendChild(colR);
+  editPanel.appendChild(compare);
+
+  // Nav row
+  const navRow = document.createElement('div');
+  navRow.className = 'nav-row';
+  navRow.innerHTML = `
+    <button class="btn" id="btn-prev-q" ${State.idx === 0 ? 'disabled' : ''}>‹ Anterior</button>
+    <div class="hint" id="nav-hint"></div>
+    <button class="btn btn--primary" id="btn-next-q">${State.idx === State.problems.length - 1 ? 'Final →' : 'Següent ›'}</button>
+  `;
+  editPanel.appendChild(navRow);
+
+  ws.appendChild(editPanel);
+
+  // Wire up textarea behaviour
+  const ta = document.getElementById('pista-edit');
+  const draft = State.drafts[p.id];
+  if (draft !== undefined) ta.value = draft;
+  ta.focus();
+
+  ta.addEventListener('input', () => {
+    State.drafts[p.id] = ta.value;
+    const trimmed = ta.value.trim();
+    if (trimmed) State.edits[p.id] = trimmed;
+    else delete State.edits[p.id];
+    saveLS();
+    updateStateTag(p);
+    updateMinimap();
+    updateNavHint();
+  });
+
+  // Per-question state tag and nav hint
+  updateStateTag(p);
+  updateNavHint();
+
+  // Nav buttons
+  document.getElementById('btn-prev-q').addEventListener('click', goPrev);
+  document.getElementById('btn-next-q').addEventListener('click', goNext);
+
+  renderMinimap();
+}
+
+function updateStateTag(p) {
+  const el = document.getElementById('state-tag');
+  if (!el) return;
+  const hasEdit = !!State.edits[p.id];
+  const visited = !!State.visited[p.id];
+  if (hasEdit) {
+    el.textContent = 'Modificada';
+    el.className = 'tag tag--state is-modified';
+  } else if (visited) {
+    el.textContent = 'Validada';
+    el.className = 'tag tag--state is-validated';
+  } else {
+    el.textContent = 'Pendent';
+    el.className = 'tag tag--state is-pending';
+  }
+}
+
+function updateNavHint() {
+  const el = document.getElementById('nav-hint');
+  if (!el) return;
+  if (State.idx === State.problems.length - 1) {
+    el.textContent = 'Has arribat al final. Clica «Desar» quan vulguis.';
+  } else {
+    el.textContent = '';
+  }
+}
+
+/* ─────────────── Minimap ─────────────── */
+
+function renderMinimap() {
+  const mm = document.getElementById('minimap');
+  mm.style.display = 'flex';
+  updateMinimap();
+}
+
+function updateMinimap() {
+  const grid = document.getElementById('minimap-grid');
+  const stats = document.getElementById('minimap-stats');
+  if (!grid || !stats) return;
+
+  grid.innerHTML = '';
+  let nMod = 0, nVal = 0, nPen = 0;
+  State.problems.forEach((p, i) => {
+    const cell = document.createElement('button');
+    cell.className = 'qcell';
+    cell.textContent = p.numero;
+    cell.title = p.id;
+    if (i === State.idx) cell.classList.add('is-current');
+    if (State.edits[p.id]) { cell.classList.add('is-modified'); nMod++; }
+    else if (State.visited[p.id]) { cell.classList.add('is-validated'); nVal++; }
+    else { nPen++; }
+    cell.addEventListener('click', () => { State.idx = i; render(); });
+    grid.appendChild(cell);
+  });
+
+  stats.innerHTML = `
+    <span class="dot" style="background:${cssVar('--modified')}"></span><b>${nMod}</b> modificades  
+    &nbsp;·&nbsp;
+    <span class="dot" style="background:${cssVar('--validated')}"></span><b>${nVal}</b> validades  
+    &nbsp;·&nbsp;
+    <span class="dot" style="background:${cssVar('--pending')}"></span><b>${nPen}</b> pendents
+  `;
+}
+function cssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+/* ─────────────── Navigation ─────────────── */
+
+function goPrev() {
+  if (State.idx === 0) return;
+  State.idx--;
+  saveLS();
+  render();
+}
+function goNext() {
+  if (State.idx >= State.problems.length - 1) {
+    toast('Has arribat al final de la prova.', 1600);
+    return;
+  }
+  State.idx++;
+  saveLS();
+  render();
+}
+
+/* ─────────────── Save flow ─────────────── */
+
+function openSaveModal() {
+  if (State.problems.length === 0) {
+    toast('No hi ha res a desar.', 1800);
+    return;
+  }
+
+  const body = document.getElementById('save-modal-body');
+  const sub  = document.getElementById('save-modal-sub');
+
+  // Categorize
+  const modified = [], validated = [], pending = [];
+  for (const p of State.problems) {
+    if (State.edits[p.id]) modified.push(p);
+    else if (State.visited[p.id]) validated.push(p);
+    else pending.push(p);
+  }
+
+  sub.innerHTML = modified.length
+    ? `Es modificarà <code style="font-family:var(--font-mono)">problems_${State.level.toLowerCase()}.py</code> ` +
+      `amb <b>${modified.length}</b> pista${modified.length === 1 ? '' : 's'} nova${modified.length === 1 ? '' : 's'} ` +
+      `i s'escriurà un fitxer de log de la revisió.`
+    : `Sense modificacions. Es desarà només el log de la revisió.`;
+
+  let html = `
+    <div class="summary-counts">
+      <div class="summary-count is-modified">
+        <div class="n">${modified.length}</div>
+        <div class="label">Modificades</div>
+      </div>
+      <div class="summary-count is-validated">
+        <div class="n">${validated.length}</div>
+        <div class="label">Validades</div>
+      </div>
+      <div class="summary-count is-pending">
+        <div class="n">${pending.length}</div>
+        <div class="label">Pendents</div>
+      </div>
+    </div>
+  `;
+
+  if (modified.length) {
+    html += `<div class="summary-list">
+      <div class="summary-list-head">Detall de les modificacions</div>
+    `;
+    for (const p of modified) {
+      const before = p.pista || '(sense pista)';
+      const after = State.edits[p.id];
+      html += `
+        <div class="summary-item">
+          <div><code>${p.id}</code> · pregunta ${p.numero} (${p.tema || 'sense tema'})</div>
+          <div class="diff">
+            <span class="before">${escapeHTML(before)}</span>
+            <span class="after">${escapeHTML(after)}</span>
+          </div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+
+  if (pending.length) {
+    html += `
+      <p style="margin-top:18px; font-size:13px; color:var(--ink-faded); font-style:italic;">
+        Hi ha ${pending.length} pregunta${pending.length === 1 ? '' : 's'} no
+        revisada${pending.length === 1 ? '' : 'es'}. No se'n modificarà cap.
+        Pots tancar aquest diàleg i continuar la revisió si ho prefereixes.
+      </p>
+    `;
+  }
+
+  body.innerHTML = html;
+  document.getElementById('save-modal').classList.add('open');
+}
+
+function closeSaveModal() {
+  document.getElementById('save-modal').classList.remove('open');
+}
+
+async function performSave() {
+  closeSaveModal();
+
+  const modifiedIds = Object.keys(State.edits);
+  const fname = `problems_${State.level.toLowerCase()}.py`;
+
+  // 1. Patch the source: rewrite each pista_inicial block (from highest
+  //    offset to lowest, so earlier offsets remain valid).
+  let newSource = State.pySource;
+  const modifiedProblems = State.problems
+    .filter(p => State.edits[p.id])
+    .sort((a, b) => b.pistaStart - a.pistaStart); // descending
+
+  for (const p of modifiedProblems) {
+    // emitPistaBlock returns the block prefixed with 4 spaces for the
+    // first line (the key's normal Python indent). The span we replace
+    // in `pySource` starts AT `"pista_inicial"` (after those 4 spaces
+    // were already emitted by the surrounding line), so we strip the
+    // leading indent of the first line here.
+    const newBlock = emitPistaBlock(State.edits[p.id]).replace(/^    /, '');
+    newSource = newSource.slice(0, p.pistaStart)
+              + newBlock
+              + newSource.slice(p.pistaEnd);
+  }
+
+  // 2. Build the audit log
+  const now = new Date();
+  const isoDate = now.toISOString();
+  const safeDate = isoDate.replace(/[:.]/g, '-').replace(/T/, '_').slice(0, 19);
+
+  const log = {
+    schema: 'pistes_review_log/v1',
+    review_session: isoDate,
+    catalog_file: fname,
+    level: State.level,
+    year: State.year,
+    summary: {
+      total_problems: State.problems.length,
+      modified: modifiedIds.length,
+      validated: State.problems.filter(p => !State.edits[p.id] && State.visited[p.id]).length,
+      pending: State.problems.filter(p => !State.visited[p.id]).length,
+    },
+    actions: State.problems.map(p => {
+      if (State.edits[p.id]) {
+        return {
+          problem_id: p.id,
+          numero: p.numero,
+          action: 'modified',
+          pista_before: p.pista || null,
+          pista_after: State.edits[p.id],
+        };
+      }
+      if (State.visited[p.id]) {
+        return {
+          problem_id: p.id,
+          numero: p.numero,
+          action: 'validated',
+          pista: p.pista || null,
+        };
+      }
+      return {
+        problem_id: p.id,
+        numero: p.numero,
+        action: 'not_reviewed',
+      };
+    }),
+  };
+  const logName = `pistes_review_${State.level}_${State.year}_${safeDate}.json`;
+
+  // 3. Persist (FSA API if available; otherwise downloads)
+  const fsaAvailable = 'showSaveFilePicker' in window;
+  let mode = 'download';
+  try {
+    if (fsaAvailable && modifiedIds.length > 0) {
+      // Ask user to overwrite the .py file in the project root.
+      const pyHandle = await window.showSaveFilePicker({
+        suggestedName: fname,
+        types: [{ description: 'Python source', accept: { 'text/x-python': ['.py'] } }],
+      });
+      const w = await pyHandle.createWritable();
+      await w.write(newSource);
+      await w.close();
+      mode = 'fsa';
+    } else if (modifiedIds.length > 0) {
+      downloadFile(fname, newSource, 'text/x-python');
+    }
+  } catch (err) {
+    if (err && err.name === 'AbortError') {
+      toast('Desament cancel·lat.', 1800);
+      return;
+    }
+    // FSA failed for some other reason → fall back to download
+    if (modifiedIds.length > 0) downloadFile(fname, newSource, 'text/x-python');
+    mode = 'download';
+  }
+
+  // The log is always downloaded (small file, simpler than another picker)
+  downloadFile(logName, JSON.stringify(log, null, 2), 'application/json');
+
+  if (modifiedIds.length === 0) {
+    toast(`Sense canvis al catàleg. Log de revisió: ${logName}`, 3600);
+  } else if (mode === 'fsa') {
+    toast(`Catàleg ${fname} reescrit. Log: ${logName}`, 3600);
+  } else {
+    toast(`Descarregat ${fname} actualitzat i el log. Substitueix el .py al projecte.`, 4200);
+  }
+
+  // 4. Refresh in-memory state: clear edits and reload the source so
+  //    State.pista values now reflect the saved version.
+  clearLSForCurrent();
+  // Refresh visited/etc resets, but keep selection
+  await loadCatalogue();
+}
+
+function downloadFile(filename, content, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+/* ─────────────── Toast ─────────────── */
+
+let toastTimer = null;
+function toast(msg, ms = 2400, kind = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('toast--error');
+  if (kind === 'error') t.classList.add('toast--error');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+/* ─────────────── Helpers ─────────────── */
+
+function escapeHTML(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/* ─────────────── Wire-up ─────────────── */
+
+function init() {
+  // Restore selectors from LS if present
+  const snap = loadLS();
+  if (snap) {
+    if (snap.year)    State.year  = snap.year;
+    if (snap.level)   State.level = snap.level;
+    if (snap.idx != null) State.idx = snap.idx;
+    State.edits   = snap.edits   || {};
+    State.visited = snap.visited || {};
+    State.drafts  = snap.drafts  || {};
+  }
+  document.getElementById('sel-year').value  = String(State.year);
+  document.getElementById('sel-level').value = State.level;
+
+  document.getElementById('sel-year').addEventListener('change', e => {
+    State.year = parseInt(e.target.value, 10);
+    State.idx = 0;
+    saveLS();
+    loadCatalogue();
+  });
+  document.getElementById('sel-level').addEventListener('change', e => {
+    State.level = e.target.value;
+    State.idx = 0;
+    // Clear edits when switching level, since they apply to a different file
+    if (confirmIfDirty()) {
+      clearLSForCurrent();
+      saveLS();
+      loadCatalogue();
+    } else {
+      // user cancelled → revert selector
+      document.getElementById('sel-level').value = State.level;
+    }
+  });
+
+  document.getElementById('btn-prev').addEventListener('click', goPrev);
+  document.getElementById('btn-next').addEventListener('click', goNext);
+
+  document.getElementById('btn-reload').addEventListener('click', () => {
+    if (confirmIfDirty('Hi ha canvis no desats. Vols recarregar igualment i perdre\'ls?')) {
+      clearLSForCurrent();
+      loadCatalogue();
+    }
+  });
+
+  document.getElementById('btn-save').addEventListener('click', openSaveModal);
+  document.getElementById('btn-cancel-save').addEventListener('click', closeSaveModal);
+  document.getElementById('btn-confirm-save').addEventListener('click', performSave);
+  document.getElementById('save-modal').addEventListener('click', e => {
+    if (e.target.id === 'save-modal') closeSaveModal();
+  });
+
+  // Keyboard shortcuts: arrows for nav (when not typing in textarea)
+  document.addEventListener('keydown', e => {
+    const inField = document.activeElement && (
+      document.activeElement.tagName === 'TEXTAREA' ||
+      document.activeElement.tagName === 'INPUT' ||
+      document.activeElement.tagName === 'SELECT'
+    );
+    if (inField) return;
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); goPrev(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); goNext(); }
+    if (e.key === 's' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSaveModal();
+    }
+  });
+
+  // First load
+  loadCatalogue();
+}
+
+function confirmIfDirty(msg) {
+  const dirty = Object.keys(State.edits).length > 0;
+  if (!dirty) return true;
+  return confirm(msg || 'Hi ha canvis no desats. Continuar igualment perdrà les modificacions. Vols continuar?');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
