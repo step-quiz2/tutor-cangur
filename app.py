@@ -684,7 +684,7 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
     if _is_debug_mode():
         st.divider()
         st.caption("**Mode debug actiu**")
-        st.caption(f"Model: `{L.MODEL}`")
+        st.caption(f"Motor: `{L.PROVIDER}` / `{L.MODEL}`")
         sid = L.get_session_id()
         cost = api_logger.summarize_session(sid)
         _col_cost, _col_calls = st.columns(2)
@@ -709,6 +709,57 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
                       None: "— (encara cap torn)"}[_mode_now]
             st.caption(f"**Mode actual:** {_label}")
             st.caption(f"Torns S/D acumulats: {_n_s} / {_n_d}")
+
+        # ---- Selector de motor IA ----
+        st.divider()
+        with st.expander("⚙️ Motor IA", expanded=True):
+            _PROVIDERS = ["gemini", "claude"]
+            _GEMINI_MODELS = [
+                "gemini-2.5-flash",
+                "gemini-2.5-pro",
+                "gemini-2.0-flash",
+                "gemini-1.5-flash",
+            ]
+            _CLAUDE_MODELS = [
+                "claude-sonnet-4-5",
+                "claude-opus-4-5",
+                "claude-haiku-4-5",
+            ]
+            _prov_now = L.PROVIDER
+            _prov_sel = st.selectbox(
+                "Proveïdor",
+                _PROVIDERS,
+                index=_PROVIDERS.index(_prov_now) if _prov_now in _PROVIDERS else 0,
+                key="dbg_provider",
+            )
+            _model_list = _CLAUDE_MODELS if _prov_sel == "claude" else _GEMINI_MODELS
+            _model_now = L.MODEL if L.MODEL in _model_list else _model_list[0]
+            _model_sel = st.selectbox(
+                "Model",
+                _model_list,
+                index=_model_list.index(_model_now),
+                key="dbg_model",
+            )
+            with st.expander("🔑 Claus API (opcional)", expanded=False):
+                _gemini_key_in = st.text_input(
+                    "GEMINI_API_KEY", type="password",
+                    placeholder="deixa buit per usar la del secret",
+                    key="dbg_gemini_key",
+                )
+                _claude_key_in = st.text_input(
+                    "ANTHROPIC_API_KEY", type="password",
+                    placeholder="deixa buit per usar la del secret",
+                    key="dbg_claude_key",
+                )
+            if st.button("Aplicar motor", key="dbg_apply_engine"):
+                L.set_debug_config(
+                    provider=_prov_sel,
+                    model=_model_sel,
+                    gemini_key=_gemini_key_in or None,
+                    claude_key=_claude_key_in or None,
+                )
+                st.success(f"Motor canviat → {_prov_sel} / {_model_sel}")
+                st.rerun()
 
 
 # ============================================================

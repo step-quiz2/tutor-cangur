@@ -79,6 +79,56 @@ MAX_TOKENS = 400
 IS_THINKING_MODEL = "pro" in MODEL.lower()
 TOKEN_MULTIPLIER = 10 if IS_THINKING_MODEL else 1
 
+# ============================================================
+# Configuració dinàmica del proveïdor (per al mode debug)
+# ============================================================
+# PROVIDER pot ser "gemini" o "claude".
+PROVIDER = "gemini"
+
+# Client Claude (lazy, anàleg a _client per a Gemini)
+_claude_client = None
+
+try:
+    import anthropic as _anthropic_sdk
+except ImportError:
+    _anthropic_sdk = None
+
+
+def set_debug_config(provider: str, model: str,
+                     gemini_key: str | None = None,
+                     claude_key: str | None = None):
+    """
+    Canvia dinàmicament el proveïdor i el model. Crida NOMÉS des del
+    mode debug de l'UI. Invalida els clients lazy perquè la propera
+    crida els torni a crear amb la nova configuració.
+
+    Paràmetres:
+    - provider:   "gemini" o "claude"
+    - model:      string del model (e.g. "gemini-2.5-pro", "claude-sonnet-4-5")
+    - gemini_key: si no és None, sobreescriu GEMINI_API_KEY a l'entorn
+    - claude_key: si no és None, sobreescriu ANTHROPIC_API_KEY a l'entorn
+    """
+    global PROVIDER, MODEL, IS_THINKING_MODEL, TOKEN_MULTIPLIER
+    global _client, _claude_client
+
+    PROVIDER = provider.lower().strip()
+    MODEL = model.strip()
+
+    # Recalcular els derivats (el model pro de Gemini té thinking tokens)
+    IS_THINKING_MODEL = ("pro" in MODEL.lower() and PROVIDER == "gemini")
+    TOKEN_MULTIPLIER = 10 if IS_THINKING_MODEL else 1
+
+    # Invalidar clients perquè es tornin a crear amb la nova config
+    _client = None
+    _claude_client = None
+
+    # Sobreescriure keys a l'entorn si se n'han passat
+    if gemini_key:
+        os.environ["GEMINI_API_KEY"] = gemini_key
+    if claude_key:
+        os.environ["ANTHROPIC_API_KEY"] = claude_key
+
+
 # Retry config per a errors transitoris de l'API.
 MAX_ATTEMPTS = 3
 BACKOFF_BASE_S = 1.5
@@ -179,6 +229,20 @@ def _get_client():
     if _client is None:
         _client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
     return _client
+
+
+def _get_claude_client():
+    global _claude_client
+    if _anthropic_sdk is None:
+        raise RuntimeError(
+            "La llibreria 'anthropic' no està instal·lada. "
+            "Afegeix-la a requirements.txt i torna a arrencar."
+        )
+    if _claude_client is None:
+        _claude_client = _anthropic_sdk.Anthropic(
+            api_key=os.environ.get("ANTHROPIC_API_KEY")
+        )
+    return _claude_client
 
 
 # ============================================================
@@ -296,9 +360,122 @@ def _build_contents(image_path, conversation: list, new_user_text):
 
 
 # ============================================================
-# Crida amb retry + logging
+# Construcció dels missatges per a Claude (Anthropic)
 # ============================================================
-def _build_config(system: str, max_tokens: int, temperature: float):
+def _build_claude_messages(image_path, conversation: list,
+                            new_user_text) -> list:
+    """
+    Construeix la llista `messages` per a l'API d'Anthropic.
+    Format: [{"role": "user"|"assistant", "content": [...parts]}]
+
+    La imatge (si existeix) va al primer torn user, igual que a Gemini.
+    """
+    import base64
+
+    image_b64 = None
+    image_mime = None
+    if image_path:
+        try:
+            raw = _load_image_bytes(image_path)
+            image_b64 = base64.standard_b64encode(raw).decode()
+            image_mime = _detect_mime(image_path)
+        except FileNotFoundError:
+            _notify(f"Imatge no trobada: {image_path}. Procedim sense imatge.")
+
+    messages = []
+    image_consumed = False
+
+    for turn in conversation:
+        role = turn.get("role", "user")
+        # Anthropic usa "user" i "assistant" directament (no "model")
+        claude_role = "assistant" if role == "assistant" else "user"
+        kind = turn.get("kind", "message")
+        content = turn.get("content", "")
+
+        if kind == "hint":
+            content_text = f"[PISTA] {content}"
+        elif kind == "system_event":
+            content_text = f"[Sistema] {content}"
+        else:
+            content_text = content
+
+        if (claude_role == "assistant"
+                and kind == "message"
+                and turn.get("mode") in ("S", "D")):
+            content_text = f"{content_text}\n[MODE:{turn['mode']}]"
+
+        parts = []
+        if image_b64 and not image_consumed and claude_role == "user":
+            parts.append({
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": image_mime,
+                    "data": image_b64,
+                },
+            })
+            image_consumed = True
+        parts.append({"type": "text", "text": content_text})
+        messages.append({"role": claude_role, "content": parts})
+
+    if new_user_text is not None:
+        parts = []
+        if image_b64 and not image_consumed:
+            parts.append({
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": image_mime,
+                    "data": image_b64,
+                },
+            })
+            image_consumed = True
+        parts.append({"type": "text", "text": new_user_text})
+        messages.append({"role": "user", "content": parts})
+
+    return messages
+
+
+def _do_call_claude(system: str, messages: list,
+                    max_tokens: int, temperature: float):
+    """Crida a l'API d'Anthropic i retorna (text, tokens_dict)."""
+    client = _get_claude_client()
+    response = client.messages.create(
+        model=MODEL,
+        max_tokens=max_tokens,
+        system=system,
+        messages=messages,
+        temperature=temperature,
+    )
+    text = ""
+    for block in response.content:
+        if hasattr(block, "text"):
+            text += block.text
+    if not text.strip():
+        raise RuntimeError(
+            f"Resposta buida del model Claude {MODEL} "
+            f"(stop_reason={response.stop_reason})."
+        )
+    usage = response.usage
+    tokens = {
+        "input":    usage.input_tokens,
+        "output":   usage.output_tokens,
+        "thoughts": 0,
+        "total":    usage.input_tokens + usage.output_tokens,
+    }
+    return text, tokens
+
+
+def _build_messages(image_path, conversation: list, new_user_text):
+    """Delega a la funció de construcció correcta segons PROVIDER."""
+    if PROVIDER == "claude":
+        return _build_claude_messages(image_path, conversation, new_user_text)
+    return _build_contents(image_path, conversation, new_user_text)
+
+
+# ============================================================
+# Crida amb retry + logging (config Gemini)
+# ============================================================
     types = _genai_types
     cfg = {
         "system_instruction": system,
@@ -311,6 +488,9 @@ def _build_config(system: str, max_tokens: int, temperature: float):
 
 
 def _do_call(system: str, contents: list, max_tokens: int, temperature: float):
+    if PROVIDER == "claude":
+        return _do_call_claude(system, contents, max_tokens, temperature)
+    # Gemini (per defecte)
     client = _get_client()
     config = _build_config(system, max_tokens, temperature)
     response = client.models.generate_content(
@@ -647,7 +827,7 @@ def discuss(problem: dict, image_path, conversation: list,
             sys_with_answer += "\nComentaris sobre per què algú podria triar cada distractor:\n" + "\n".join(comm_lines)
 
     conv_truncated = truncate_conversation(conversation)
-    contents = _build_contents(image_path, conv_truncated, student_text)
+    contents = _build_messages(image_path, conv_truncated, student_text)
 
     input_data = {
         "system_preview": sys_with_answer[:200],
@@ -691,7 +871,7 @@ def generate_hint(problem: dict, image_path, conversation: list) -> str:
     # premut un botó. Per evitar que Gemini truqui amb un torn user que
     # no acaba en demanda explícita, afegim un torn user sintètic.
     conv_truncated = truncate_conversation(conversation)
-    contents = _build_contents(
+    contents = _build_messages(
         image_path, conv_truncated,
         new_user_text=(
             "L'alumne acaba de prémer el botó 'Demanar pista'. "
