@@ -476,6 +476,7 @@ def _build_messages(image_path, conversation: list, new_user_text):
 # ============================================================
 # Crida amb retry + logging (config Gemini)
 # ============================================================
+def _build_config(system: str, max_tokens: int, temperature: float):
     types = _genai_types
     cfg = {
         "system_instruction": system,
