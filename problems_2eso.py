@@ -23,8 +23,8 @@ PROBLEMS["CAN-2ESO-2026-01"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "Comprova una per una les dues condicions a cada opció. Recorda que la polsera és "
-        "circular: el primer i l'últim complement també són veïns."
+        "Troba la resposta que compleix les dues condicions. Recorda que la polsera és circular: el "
+        "primer i l'últim complement també són veïns."
     ),
     "expected_reasoning": (
         "Cada polsera té sis complements distribuïts en cercle, de tres formes diferents: "
