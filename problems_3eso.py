@@ -23,10 +23,9 @@ PROBLEMS["CAN-3ESO-2026-01"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "E",
     "pista_inicial": (
-        "Pren els quadrats de costat 2 (de manera que el radi r dels arcs val 1) i calcula "
-        "l'àrea ombrejada de cada diagrama en funció de r. Si en surt sempre el mateix valor, "
-        "totes són iguals."
-    ),
+        "Per exemple, B) i C) tenen la mateixa àrea, perquè una té un cercle i l'altra té dos "
+        "semicercles."
+    ),  # same as CAN-2ESO-2026-02
     "expected_reasoning": (
         "Considerem un quadrat de costat 2 (radi r = 1) en tots els diagrames. Al diagrama B "
         "la zona grisa és el cercle inscrit, amb àrea π·r² = π. Al diagrama A hi ha quatre "
@@ -62,10 +61,9 @@ PROBLEMS["CAN-3ESO-2026-02"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Les xifres parelles disponibles són 0, 2, 4, 6 i 8. Els dos primers dígits de l'any "
-        "ja són 2 i 0; quines dues xifres parelles diferents (i diferents de 2 i 0) hi pots "
-        "afegir per formar el primer any superior a 2026?"
-    ),
+        "2002 no serveix, perquè és anterior a 2026. 2086 seria una opció, però abans hi ha altres "
+        "opcions."
+    ),  # same as CAN-2ESO-2026-03
     "expected_reasoning": (
         "Les xifres parelles són 0, 2, 4, 6 i 8. Un any del segle XXI s'escriu 20XY, així "
         "que les xifres 2 i 0 ja hi són. Perquè tot l'any tingui les quatre xifres parelles "
@@ -105,9 +103,8 @@ PROBLEMS["CAN-3ESO-2026-03"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Mira la pila des del costat dret (on apunta la fletxa). Per a cada columna que "
-        "veuràs en aquesta vista, registra l'alçada de la caixa més alta visible. La "
-        "silueta resultant és la vista lateral; compara-la amb les cinc opcions."
+        "Per a cada columna que veuràs des de la dreta, fixa't en l'alçada de la caixa més alta "
+        "visible."
     ),
     "expected_reasoning": (
         "Quan mirem la pila des del costat dret, per a cada fila de la profunditat veiem la "
@@ -140,10 +137,8 @@ PROBLEMS["CAN-3ESO-2026-04"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "Prova d'escriure cada nombre com a suma de dos o més enters positius consecutius. "
-        "Hi ha un d'aquests nombres que és una potència de 2, i pels nombres d'aquesta forma "
-        "passa una cosa especial."
-    ),
+        "Ves provant opcions. Per exemple, A) 9 no pot ser, perquè 9 = 4+5"
+    ),  # same as CAN-2ESO-2026-04
     "expected_reasoning": (
         "Cal trobar el nombre de la llista que no es pot escriure com a suma de dos o més "
         "enters positius consecutius. Per al 5: 2 + 3 = 5 ✓. Per al 6: 1 + 2 + 3 = 6 ✓. Per "
@@ -176,9 +171,8 @@ PROBLEMS["CAN-3ESO-2026-05"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "E",
     "pista_inicial": (
-        "Calcula primer totes les rutes possibles per tornar de C a A passant per B. "
-        "Després, com que l'Alba vol evitar fer servir exactament el camí d'anada al revés, "
-        "treu de la llista la combinació prohibida."
+        "Calcula primer totes les rutes possibles per tornar, de C a A, passant per B. Després, pensa "
+        "que li hauràs de restar el camí que es repeteix."
     ),
     "expected_reasoning": (
         "Hi ha 3 camins entre A i B i 5 camins entre B i C. A la tornada, l'Alba ha "
@@ -216,9 +210,7 @@ PROBLEMS["CAN-3ESO-2026-06"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "A",
     "pista_inicial": (
-        "Pensa quins dígits dels que veu un rellotge de 7 segments donen, en reflectir-se "
-        "horitzontalment, un altre dígit reconeixible. Després té en compte que el mirall "
-        "també inverteix l'ordre, i busca l'opció que en reflectir-se dona una hora vàlida."
+        "Pistsa: - El \"2\" es reflecteix com un \"5\". - El \"8\" es reflecteix en un \"8\"."
     ),
     "expected_reasoning": (
         "Quan un rellotge digital de 7 segments es veu reflectit en un mirall, passen dues "
@@ -253,10 +245,9 @@ PROBLEMS["CAN-3ESO-2026-07"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "Per obtenir una fracció positiva tan petita com es pugui, vols numerador petit i "
-        "denominador gran. Prova primer els numeradors mínims possibles i comprova quins "
-        "denominadors positius hi pots aconseguir amb els nombres que sobrin."
-    ),
+        "Volem que el numerador sigui petit i el denominador sigui gran. Com pots aconseguir "
+        "numeradors petits?"
+    ),  # same as CAN-2ESO-2026-09
     "expected_reasoning": (
         "Els quatre nombres a col·locar són 0, 2, 2 i 6 (el 2 surt dues vegades). La fracció "
         "té la forma (a + b)/(c − d) i s'ha de minimitzar mantenint-la positiva, és a dir, "
@@ -294,10 +285,9 @@ PROBLEMS["CAN-3ESO-2026-08"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "E",
     "pista_inicial": (
-        "Una illa és una regió fosca tancada, envoltada per blanc. Per cada peça, imagina-la "
-        "encaixada al forat i compta quantes regions fosques separades queden al "
-        "trencaclosques sencer, tenint en compte si les taques de la peça toquen les del marc."
-    ),
+        "Completa mentalment el trencaclosques en l'opció A). Veuràs que només aconsegueixes 2 illes. "
+        "Pots aconseguir més illes?"
+    ),  # same as CAN-2ESO-2026-10
     "expected_reasoning": (
         "El marc del trencaclosques té diverses zones fosques al voltant del forat "
         "pentagonal on s'encaixa la peça. En completar el trencaclosques amb cadascuna de "
@@ -332,11 +322,9 @@ PROBLEMS["CAN-3ESO-2026-09"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "El Bernat és just a la dreta de l'Anna, així que ocupen dos seients consecutius. "
-        "Tenint en compte que l'Anna no pot ser al seient 1, només queden dues posicions "
-        "possibles per a la parella; descarta la que sigui incompatible amb les condicions "
-        "sobre la Dúnia i la Carla."
-    ),
+        "El Bernat és just a la dreta de l'Anna, així que ocupen dos seients consecutius. I l'Anna no "
+        "pot ser al seient 1."
+    ),  # same as CAN-2ESO-2026-12
     "expected_reasoning": (
         "El Bernat és just a la dreta de l'Anna, de manera que (Anna, Bernat) ocupa una "
         "parella de seients consecutius: (1,2), (2,3) o (3,4). Com que l'Anna no pot ser al "
@@ -375,11 +363,8 @@ PROBLEMS["CAN-3ESO-2026-10"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "Localitza al full pla on han d'anar els talls per separar les parts que s'aixecaran "
-        "i on han d'anar els plecs perquè aquestes parts puguin doblegar-se com a panells "
-        "verticals. Compara la posició i el nombre de panells de cada esquema amb els de la "
-        "figura final."
-    ),
+        "Localitza al full pla on han d'anar els talls per separar les parts que s'aixecaran."
+    ),  # same as CAN-2ESO-2026-05
     "expected_reasoning": (
         "La figura final s'aixeca a partir del full pla mitjançant els segments gruixuts, "
         "que es tallen, i els segments de punts, que es dobleguen. Cada panell vertical de "
@@ -418,10 +403,8 @@ PROBLEMS["CAN-3ESO-2026-11"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "Recorda que no es pot girar a l'esquerra. Per anar 'cap a l'esquerra' sense "
-        "girar-hi, cal fer tres girs a la dreta consecutius (que equival a un gir de 270°). "
-        "Traça el camí d'A a B i mira de minimitzar el nombre de girs a la dreta tenint en "
-        "compte la disposició dels carrers de Vilacangur."
+        "Ves fent el recorregut, sempre girant a la dreta, fins que arribis a B. Serà un camí una "
+        "mica llarg, perquè no pots girar mai a l'esquerra."
     ),
     "expected_reasoning": (
         "A és l'entrada inferior dreta del mapa i B és l'entrada inferior esquerra. Com que "
@@ -461,11 +444,8 @@ PROBLEMS["CAN-3ESO-2026-12"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "A",
     "pista_inicial": (
-        "Intenta reconstruir quins dígits són veïns al gerro a partir de les vistes "
-        "correctes. Si en dues imatges vàlides veus, per exemple, que el 9 és veí del 7 "
-        "i que el 5 és veí del 9, podràs detectar quina vista mostra un veïnatge "
-        "incompatible."
-    ),
+        "Intenta reconstruir quins dígits són veïns al gerro, sabent que 4 imatges són correctes."
+    ),  # same as CAN-2ESO-2026-14
     "expected_reasoning": (
         "El gerro té 9 cares laterals amb els dígits de l'1 al 9 disposats en un ordre "
         "circular fix. A cada vista en perspectiva les cares visibles són cares consecutives "
@@ -499,10 +479,8 @@ PROBLEMS["CAN-3ESO-2026-13"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "Escriu dues equacions amb les tres incògnites (M, R i E, en euros). Mira si pots "
-        "substituir-ne una a l'altra per eliminar dues incògnites alhora i obtenir "
-        "directament el valor de l'Emma."
-    ),
+        "Una de les equacions és: M=R+E-13 Pensa quina és l'altra equació."
+    ),  # same as CAN-2ESO-2026-16
     "expected_reasoning": (
         "Diguem M, R i E els euros de la Mariam, la Ria i l'Emma. La primera condició diu "
         "que la Mariam té 13 € menys que el total de la Ria i l'Emma: M = R + E − 13. La "
@@ -532,9 +510,8 @@ PROBLEMS["CAN-3ESO-2026-14"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "E",
     "pista_inicial": (
-        "Calcula primer el total de cubs petits que sumen les tres peces (1 + 8 + 27). "
-        "Després calcula quants cubs s'ha menjat de cada peça aplicant el percentatge "
-        "corresponent, suma les quantitats menjades i divideix pel total."
+        "El total de cubs petits és (1 + 8 + 27). Calcula quants cubs s'ha menjat de cada peça, "
+        "aplicant el percentatge corresponent."
     ),
     "expected_reasoning": (
         "Les tres peces tenen 1, 8 i 27 cubs petits respectivament (cubs 1×1×1, 2×2×2 i "
@@ -565,9 +542,8 @@ PROBLEMS["CAN-3ESO-2026-15"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Sigui S les cireres que menja l'elf sènior. Calcula la suma total de cireres dels "
-        "cinc elfs i la mitjana, i planteja l'equació que diu que S és igual a aquesta "
-        "mitjana més 8."
+        "S = cireres que menja l'elf sènior. Calcula la suma total de cireres dels cinc elfs. Calcula "
+        "la mitjana (M) que menja cadascun. Sabem que S = M+8."
     ),
     "expected_reasoning": (
         "Sigui S el nombre de cireres que menja l'elf sènior. Els quatre elfs júniors "
@@ -604,10 +580,8 @@ PROBLEMS["CAN-3ESO-2026-16"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "Identifica triangles dins la figura i aplica que la suma dels angles interiors de "
-        "cada triangle és 180°. Combina les sumes que s'obtenen mirant els diferents "
-        "triangles que es formen perquè els angles que es repeteixen acabin cancel·lant-se "
-        "i en quedi només la suma dels cinc angles ombrejats."
+        "Recorda aquestes propietats: 1) En un triangle, els angles sumen 180º. 2) En un quadrilàter, "
+        "sumen 360º. 3) Dos angles oposats pel vèrtex mesuren el mateix."
     ),
     "expected_reasoning": (
         "La figura es pot descompondre en dos triangles que comparteixen part de la "
@@ -640,10 +614,8 @@ PROBLEMS["CAN-3ESO-2026-17"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "B",
     "pista_inicial": (
-        "Defineix tres grups: els que NOMÉS els agraden les matemàtiques (m), els que "
-        "NOMÉS els agrada el francès (f) i els que els agraden les dues (mf). Escriu les "
-        "dues condicions com a equacions i busca quin múltiple del nombre resultant cau "
-        "entre 23 i 29."
+        "Hi ha 3 grups (m): els que NOMÉS els agraden les matemàtiques (f): els que NOMÉS els agrada "
+        "el francès (d): els que els agraden les dues. Escriu dues equacions..."
     ),
     "expected_reasoning": (
         "Diguem m els alumnes a qui NOMÉS els agraden les matemàtiques, f els que NOMÉS "
@@ -665,6 +637,7 @@ PROBLEMS["CAN-3ESO-2026-17"] = {
     "dependencies":           [],
 }
 
+# TODO: CAN-3ESO-2026-18.jpg not found on disk (reported by pister_editor). Cal afegir la imatge.
 PROBLEMS["CAN-3ESO-2026-18"] = {
     "id":         "CAN-3ESO-2026-18",
     "categoria":  "3ESO",
