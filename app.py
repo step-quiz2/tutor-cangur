@@ -467,6 +467,27 @@ def _format_md(text: str) -> str:
     return html
 
 
+def _render_hints_only(state):
+    """Pinta NOMÉS les pistes del conversation_history (sense estat buit).
+
+    Útil quan AI està desactivada: la columna de diàleg desapareix, però
+    si l'alumne ha demanat la pista inicial del catàleg, encara cal
+    mostrar-la-li en algun lloc. No es renderitza res si no hi ha pistes.
+    """
+    history = state.get("conversation_history", [])
+    hints = [t for t in history if t.get("kind") == "hint"]
+    if not hints:
+        return
+    for turn in hints:
+        content = _format_md(turn.get("content", ""))
+        source = turn.get("source", "ia")
+        badge = "📘" if source == "catalog" else "💡"
+        st.markdown(
+            f'<div class="chat-hint"><strong>{badge}</strong><br/>{content}</div>',
+            unsafe_allow_html=True,
+        )
+
+
 def _render_conversation(state):
     """Pinta el fil de xat amb tots els torns del conversation_history."""
     history = state.get("conversation_history", [])
@@ -819,12 +840,20 @@ if state is not None:
     _verdict = state.get("verdict_final")
 
     # ========================================================
-    # LAYOUT en dues columnes: panell del problema (sticky) +
-    # panell del dialeg (scroll natural). El CSS al damunt fa
-    # que la columna del problema es quedi enganxada al top
-    # quan l'usuari fa scroll al dialeg.
+    # LAYOUT: si la IA està activa, dues columnes (problema sticky +
+    # diàleg amb scroll). Si la IA està desactivada, una sola columna
+    # a tota l'amplada (no hi ha res a dialogar, no té sentit la
+    # columna dreta).
     # ========================================================
-    col_problem, col_dialeg = st.columns([7, 3], gap="medium")
+    _ai_on = L.is_ai_enabled()
+    if _ai_on:
+        col_problem, col_dialeg = st.columns([7, 3], gap="medium")
+    else:
+        # Contenidor full-width. El CSS sticky de `.st-key-problem_panel`
+        # només s'activa quan està dins d'un `stColumn`; aquí no s'aplica,
+        # cosa coherent (en single-column no té sentit fer res sticky).
+        col_problem = st.container()
+        col_dialeg = None
 
     # --------------------------------------------------------
     # Panell ESQUERRE: enunciat + opcions A-E + botons d'accio
@@ -953,42 +982,42 @@ if state is not None:
                             st.error(f"Error iniciant: {e}")
 
     # --------------------------------------------------------
-    # Panell DRET: dialeg + missatges flash + input
+    # Panell DRET (només si AI activa): dialeg + missatges flash + input
     # --------------------------------------------------------
-    with col_dialeg:
-        with st.container(key="dialogue_panel"):
-            # Fil de xat
-            st.markdown('<h4 class="dialeg-title">Di\u00e0leg</h4>',
-                        unsafe_allow_html=True)
-            _render_conversation(state)
+    if col_dialeg is not None:
+        with col_dialeg:
+            with st.container(key="dialogue_panel"):
+                # Fil de xat
+                st.markdown('<h4 class="dialeg-title">Di\u00e0leg</h4>',
+                            unsafe_allow_html=True)
+                _render_conversation(state)
 
-            # Missatges flash (errors API, commits fallits, etc.).
-            # NOTA: el `commit_ok` es renderitza específicament a
-            # col_problem (just abans del botó "Inicia el problema
-            # següent"), de manera que aquí l'excloem per evitar
-            # duplicar-lo a les dues columnes.
-            _render_flash_messages(state, exclude_kind="commit_ok")
+                # Missatges flash (errors API, commits fallits, etc.).
+                # NOTA: el `commit_ok` es renderitza específicament a
+                # col_problem (just abans del botó "Inicia el problema
+                # següent"), de manera que aquí l'excloem per evitar
+                # duplicar-lo a les dues columnes.
+                _render_flash_messages(state, exclude_kind="commit_ok")
 
-            # Si la sessio ha acabat, mostrar resum final i amagar inputs.
-            if _verdict is not None:
-                st.divider()
-                with st.expander("📄 Veure el rastre JSON de la sessió"):
-                    trace = T.build_trace(state)
-                    st.json(trace)
-                    st.download_button(
-                        "⬇ Descarregar rastre JSON",
-                        data=T.serialize_trace(state),
-                        file_name=f"trace_{state['session_id']}.json",
-                        mime="application/json",
-                    )
-            elif _mode == "reasoning":
-                # Sessio en curs mode dialeg: text area + boto enviar.
-                # Fem servir un st.form perque Ctrl+Enter dins el camp de
-                # text faci el mateix que clicar "Enviar missatge".
-                # `clear_on_submit` buida el camp despres d'enviar (abans
-                # ho feiem amb una `key` dinamica i `input_counter`).
-                st.divider()
-                if L.is_ai_enabled():
+                # Si la sessio ha acabat, mostrar resum final i amagar inputs.
+                if _verdict is not None:
+                    st.divider()
+                    with st.expander("📄 Veure el rastre JSON de la sessió"):
+                        trace = T.build_trace(state)
+                        st.json(trace)
+                        st.download_button(
+                            "⬇ Descarregar rastre JSON",
+                            data=T.serialize_trace(state),
+                            file_name=f"trace_{state['session_id']}.json",
+                            mime="application/json",
+                        )
+                elif _mode == "reasoning":
+                    # Sessio en curs mode dialeg: text area + boto enviar.
+                    # Fem servir un st.form perque Ctrl+Enter dins el camp de
+                    # text faci el mateix que clicar "Enviar missatge".
+                    # `clear_on_submit` buida el camp despres d'enviar (abans
+                    # ho feiem amb una `key` dinamica i `input_counter`).
+                    st.divider()
                     with st.form("message_form", clear_on_submit=True,
                                  border=False):
                         student_text = st.text_area(
@@ -1005,16 +1034,29 @@ if state is not None:
                             st.session_state.tutor_state = T.process_message(
                                 state, student_text)
                         st.rerun()
-                else:
-                    # ENABLE_AI=0: cap diàleg amb la IA. L'alumne encara
-                    # pot llegir el problema, consumir la pista inicial
-                    # del catàleg (si en té), i prémer "Ja tinc la
-                    # resposta" per registrar el seu intent.
-                    st.info(
-                        "💬 El diàleg amb la IA està desactivat en aquest "
-                        "desplegament. Pots fer servir **Ja tinc la "
-                        "resposta** per registrar la teva tria."
-                    )
+    else:
+        # AI OFF: la columna de diàleg desapareix totalment (sense títol
+        # "Diàleg", sense missatge d'estat buit, sense info banner). Però
+        # cal mantenir tres coses funcionals, que aquí renderitzem just
+        # sota el panell del problema, a tota l'amplada:
+        #   1) La pista inicial del catàleg si l'alumne l'ha demanada.
+        #   2) Els missatges flash transitoris (p.ex. commit_fail). El
+        #      `commit_ok` s'amaga perquè ja es pinta dins col_problem.
+        #   3) En acabar la sessió, l'expander amb el rastre JSON
+        #      descarregable.
+        _render_hints_only(state)
+        _render_flash_messages(state, exclude_kind="commit_ok")
+        if _verdict is not None:
+            st.divider()
+            with st.expander("📄 Veure el rastre JSON de la sessió"):
+                trace = T.build_trace(state)
+                st.json(trace)
+                st.download_button(
+                    "⬇ Descarregar rastre JSON",
+                    data=T.serialize_trace(state),
+                    file_name=f"trace_{state['session_id']}.json",
+                    mime="application/json",
+                )
 
     # --------------------------------------------------------
     # Rastre cronologic + estat intern (fora de les columnes,
