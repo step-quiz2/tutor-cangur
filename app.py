@@ -441,6 +441,26 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+# ============================================================
+# CSS condicional segons ENABLE_AI
+# ============================================================
+# Quan AI=off, no hi ha columna de diàleg, només una columna única amb
+# l'enunciat + botons. Amb `layout="wide"` aquesta columna ocuparia el
+# 100% del viewport, que en pantalles grans és innecessàriament ample.
+# Limitem el contenidor principal a 80% del viewport, centrat. Quan
+# AI=on no toquem res perquè la distribució 7/3 ja omple bé l'amplada.
+if not L.is_ai_enabled():
+    st.markdown("""
+<style>
+  .block-container {
+      max-width: 80% !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+  }
+</style>
+""", unsafe_allow_html=True)
+
+
 _init_state()
 
 
