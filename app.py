@@ -453,7 +453,7 @@ if not L.is_ai_enabled():
     st.markdown("""
 <style>
   .block-container {
-      max-width: 80% !important;
+      max-width: 70% !important;
       margin-left: auto !important;
       margin-right: auto !important;
   }
