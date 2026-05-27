@@ -74,6 +74,41 @@ except ImportError:
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 MAX_TOKENS = 400
 
+
+# ============================================================
+# Gate global: ENABLE_AI
+# ============================================================
+# Per defecte TOTES les crides API a la IA estan DESACTIVADES, per evitar
+# despeses no intencionades en desplegaments públics. Per activar-les cal
+# definir explícitament `ENABLE_AI = "1"` (o `ENABLE-AI = "1"`) als secrets
+# de Streamlit Cloud, o exportar la variable d'entorn equivalent en local.
+#
+# `app.py` propaga aquest secret cap a `os.environ` a l'arrencada, de manera
+# que aquest mòdul (que no depèn de Streamlit) només mira l'entorn.
+class AIDisabledError(RuntimeError):
+    """Es llança quan es prova de cridar la IA amb ENABLE_AI != "1"."""
+    pass
+
+
+def is_ai_enabled() -> bool:
+    """Comprova si les crides API a la IA estan habilitades.
+
+    Retorna True només si la variable d'entorn `ENABLE_AI` (o
+    `ENABLE-AI`, per compatibilitat amb la notació amb guió) val
+    exactament `"1"`. Qualsevol altre valor — inclòs no estar definida
+    — es considera desactivat.
+    """
+    for name in ("ENABLE_AI", "ENABLE-AI"):
+        if os.environ.get(name, "").strip() == "1":
+            return True
+    return False
+
+
+_AI_DISABLED_MSG = (
+    "Les crides a la IA estan desactivades en aquest desplegament. "
+    "Per activar-les, defineix el secret `ENABLE_AI = \"1\"` a Streamlit Cloud."
+)
+
 # Detectem el thinking model per nom (el SDK no exposa una propietat
 # `is_thinking`).
 IS_THINKING_MODEL = "pro" in MODEL.lower()
@@ -811,6 +846,9 @@ def discuss(problem: dict, image_path, conversation: list,
     Si la IA creu que l'alumne pot ja comprometre's, ho dirà DINS el
     text mateix (cap metadada estructurada).
     """
+    if not is_ai_enabled():
+        raise AIDisabledError(_AI_DISABLED_MSG)
+
     sys_with_answer = (
         _SYSTEM_DISCUSS
         + f"\n\nResposta correcta del problema: {problem.get('resposta_correcta', '?')}"
@@ -860,6 +898,9 @@ def generate_hint(problem: dict, image_path, conversation: list) -> str:
 
     Retorna text pla, 1-2 frases, sense revelar la lletra correcta.
     """
+    if not is_ai_enabled():
+        raise AIDisabledError(_AI_DISABLED_MSG)
+
     sys_with_answer = (
         _SYSTEM_HINT
         + f"\n\nResposta correcta del problema: {problem.get('resposta_correcta', '?')}"

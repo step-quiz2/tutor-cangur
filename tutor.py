@@ -295,6 +295,12 @@ def process_message(state: dict, student_text: str) -> dict:
     try:
         ai_text, ai_mode = L.discuss(problem, image_path,
                                      prior_conversation, s)
+    except L.AIDisabledError as e:
+        # Treure el torn afegit perquè no s'embruti la history amb un
+        # missatge sense resposta.
+        state["conversation_history"].pop()
+        _push_msg(state, "info", str(e))
+        return state
     except Exception as e:
         # Treure el torn afegit perquè no s'embruti la history amb un
         # missatge sense resposta.
@@ -363,6 +369,9 @@ def request_hint(state: dict) -> dict:
             hint_text = L.generate_hint(
                 problem, image_path, state["conversation_history"],
             )
+        except L.AIDisabledError as e:
+            _push_msg(state, "info", str(e))
+            return state
         except Exception as e:
             _push_msg(state, "warning", f"Error en generar pista: {e}")
             return state

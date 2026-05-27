@@ -35,6 +35,35 @@ import api_logger
 
 
 # ============================================================
+# ENABLE_AI: gate global per a TOTES les crides API a la IA
+# ============================================================
+# Per defecte les crides a la IA estan DESACTIVADES, per evitar despeses
+# no intencionades en desplegaments públics. Per activar-les cal definir
+# el secret `ENABLE_AI = "1"` (o `ENABLE-AI = "1"`) als secrets de
+# Streamlit Cloud (o exportar la variable d'entorn en local).
+#
+# Aquí copiem el valor de `st.secrets` a `os.environ` perquè `llm.py`
+# (que no importa Streamlit) pugui llegir-lo amb un simple `os.environ`.
+# Streamlit Cloud ja propaga alguns secrets a env vars automàticament,
+# però fer-ho explícitament aquí ens dona un comportament uniforme
+# (local + cloud) i no és destructiu si la variable ja està definida.
+def _propagate_enable_ai_to_env():
+    try:
+        secrets = st.secrets
+    except Exception:
+        return
+    for name in ("ENABLE_AI", "ENABLE-AI"):
+        try:
+            if name in secrets:
+                os.environ[name] = str(secrets[name]).strip()
+        except Exception:
+            continue
+
+
+_propagate_enable_ai_to_env()
+
+
+# ============================================================
 # Helpers UI
 # ============================================================
 def _is_debug_mode() -> bool:
@@ -209,6 +238,7 @@ st.markdown("""
 
   /* Missatges flash (errors tècnics, commits) */
   .msg-warning      { border-left: 4px solid #ef4444; padding: 0.4rem 0.8rem; background: #fef2f2; margin: 0.3rem 0; }
+  .msg-info         { border-left: 4px solid #3b82f6; padding: 0.4rem 0.8rem; background: #eff6ff; margin: 0.3rem 0; }
   .msg-commit_ok    { border-left: 4px solid #22c55e; padding: 0.6rem 0.9rem; background: #f0fdf4; margin: 0.5rem 0; font-size: 1.1rem; }
   .msg-commit_fail  { border-left: 4px solid #f97316; padding: 0.5rem 0.9rem; background: #fff7ed; margin: 0.3rem 0; }
 
@@ -692,6 +722,9 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
     if _is_debug_mode():
         st.divider()
         st.caption("**Mode debug actiu**")
+        _ai_on = L.is_ai_enabled()
+        _ai_badge = "🟢 ENABLE_AI=1" if _ai_on else "🔴 ENABLE_AI=0 (default)"
+        st.caption(f"Estat IA: {_ai_badge}")
         st.caption(f"Motor: `{L.PROVIDER}` / `{L.MODEL}`")
         sid = L.get_session_id()
         cost = api_logger.summarize_session(sid)
@@ -840,19 +873,26 @@ if state is not None:
 
             # Botons d'accio segons el mode
             if _verdict is None and _mode == "reasoning":
+                # Determina si la propera pista requeriria una crida IA
+                # (només la 1a pista pot venir del catàleg). Si la IA
+                # està desactivada i la propera pista necessitaria IA,
+                # amaguem el botó.
+                _pistes_count = state.get("pistes_count", 0)
+                _has_initial_hint = bool(state["problem"].get("pista_inicial"))
+                _next_hint_uses_ai = not (_pistes_count == 0 and _has_initial_hint)
+                _can_request_hint = L.is_ai_enabled() or not _next_hint_uses_ai
+
                 _col_hint, _col_commit = st.columns(2)
                 with _col_hint:
-                    if st.button("Vull una pista", key="request_hint",
-                                 use_container_width=True):
-                        pistes_count = state.get("pistes_count", 0)
-                        has_initial = bool(state["problem"].get("pista_inicial"))
-                        uses_catalog = (pistes_count == 0 and has_initial)
-                        if uses_catalog:
-                            st.session_state.tutor_state = T.request_hint(state)
-                        else:
-                            with st.spinner("S'està generant una pista..."):
+                    if _can_request_hint:
+                        if st.button("Vull una pista", key="request_hint",
+                                     use_container_width=True):
+                            if not _next_hint_uses_ai:
                                 st.session_state.tutor_state = T.request_hint(state)
-                        st.rerun()
+                            else:
+                                with st.spinner("S'està generant una pista..."):
+                                    st.session_state.tutor_state = T.request_hint(state)
+                            st.rerun()
                 with _col_commit:
                     if st.button("Ja tinc la resposta", key="enter_commit",
                                  use_container_width=True):
@@ -948,22 +988,33 @@ if state is not None:
                 # `clear_on_submit` buida el camp despres d'enviar (abans
                 # ho feiem amb una `key` dinamica i `input_counter`).
                 st.divider()
-                with st.form("message_form", clear_on_submit=True,
-                             border=False):
-                    student_text = st.text_area(
-                        "El teu missatge",
-                        key="message_input",
-                        height=110,
-                        label_visibility="hidden",
-                        placeholder="Escriu aquí la teva frase",
+                if L.is_ai_enabled():
+                    with st.form("message_form", clear_on_submit=True,
+                                 border=False):
+                        student_text = st.text_area(
+                            "El teu missatge",
+                            key="message_input",
+                            height=110,
+                            label_visibility="hidden",
+                            placeholder="Escriu aquí la teva frase",
+                        )
+                        _submitted = st.form_submit_button(
+                            "Enviar missatge", use_container_width=True)
+                    if _submitted:
+                        with st.spinner("Un moment, si us plau..."):
+                            st.session_state.tutor_state = T.process_message(
+                                state, student_text)
+                        st.rerun()
+                else:
+                    # ENABLE_AI=0: cap diàleg amb la IA. L'alumne encara
+                    # pot llegir el problema, consumir la pista inicial
+                    # del catàleg (si en té), i prémer "Ja tinc la
+                    # resposta" per registrar el seu intent.
+                    st.info(
+                        "💬 El diàleg amb la IA està desactivat en aquest "
+                        "desplegament. Pots fer servir **Ja tinc la "
+                        "resposta** per registrar la teva tria."
                     )
-                    _submitted = st.form_submit_button(
-                        "Enviar missatge", use_container_width=True)
-                if _submitted:
-                    with st.spinner("Un moment, si us plau..."):
-                        st.session_state.tutor_state = T.process_message(
-                            state, student_text)
-                    st.rerun()
 
     # --------------------------------------------------------
     # Rastre cronologic + estat intern (fora de les columnes,
