@@ -23,8 +23,8 @@ PROBLEMS["CAN-2ESO-2026-01"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "C",
     "pista_inicial": (
-        "Troba la resposta que compleix les dues condicions. Recorda que la polsera és circular: el "
-        "primer i l'últim complement també són veïns."
+        "Comprova una per una les dues condicions a cada opció. Recorda que la polsera és "
+        "circular: el primer i l'últim complement també són veïns."
     ),
     "expected_reasoning": (
         "Cada polsera té sis complements distribuïts en cercle, de tres formes diferents: "
@@ -62,8 +62,9 @@ PROBLEMS["CAN-2ESO-2026-02"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "E",
     "pista_inicial": (
-        "Per exemple, B) i C) tenen la mateixa àrea, perquè una té un cercle i l'altra té dos "
-        "semicercles."
+        "Pren els quadrats de costat 2 (de manera que el radi r dels arcs val 1) i calcula "
+        "l'àrea ombrejada de cada diagrama en funció de r. Si en surt sempre el mateix valor, "
+        "totes són iguals."
     ),
     "expected_reasoning": (
         "Considerem un quadrat de costat 2 (radi r = 1) en tots els diagrames. Al diagrama B "
@@ -100,8 +101,9 @@ PROBLEMS["CAN-2ESO-2026-03"] = {
     "opcions":    {"A": None, "B": None, "C": None, "D": None, "E": None},
     "resposta_correcta":      "D",
     "pista_inicial": (
-        "2002 no serveix, perquè és anterior a 2026. 2086 seria una opció, però abans hi ha altres "
-        "opcions."
+        "Les xifres parelles disponibles són 0, 2, 4, 6 i 8. Els dos primers dígits de l'any "
+        "ja són 2 i 0; quines dues xifres parelles diferents (i diferents de 2 i 0) hi pots "
+        "afegir per formar el primer any superior a 2026?"
     ),
     "expected_reasoning": (
         "Les xifres parelles són 0, 2, 4, 6 i 8. Un any del segle XXI s'escriu 20XY, així "
