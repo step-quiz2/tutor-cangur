@@ -715,7 +715,7 @@ with st.expander("📚 Escull un problema", expanded=(not _session_active)):
         # Any: seleccio UNICA (mutuament excloent).
         any_filter = st.pills(
             "Any",
-            options=[2024, 2025, 2026],
+            options=[2023, 2024, 2025, 2026],
             selection_mode="single",
             default=2026,
         )
